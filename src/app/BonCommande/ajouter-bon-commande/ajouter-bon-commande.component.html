@@ -1,0 +1,233 @@
+<h1 class="col-xs-8 text-center">Ajouter Bon Commande Fournisseur</h1>
+<mat-horizontal-stepper [linear]="isLinearBE" #stepperbonEntree>
+  <mat-step [stepControl]="InformationsGeneralesForm">
+    <form [formGroup]="InformationsGeneralesForm">
+      <ng-template matStepLabel>Informations générales</ng-template>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Fournisseur</mat-label>
+            <mat-select formControlName="Fournisseur" required>
+              <mat-option value=""></mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date</mat-label>
+            <input matInput formControlName="DateEntree" type="date" required class="form-control"
+              placeholder="DD/MM/YYYY">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date Livraison</mat-label>
+            <input matInput formControlName="DateLivraison" type="date" required class="form-control"
+              placeholder="JJD/MM/AAAA">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Remise Globale(%)</mat-label>
+            <input matInput formControlName="Remise_Globale" type="text" required class="form-control">
+          </mat-form-field>
+        </div>
+        <div class="cell">
+          <div>
+            <mat-checkbox class="check-margin" color="primary">Fodec
+            </mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox class="check-margin" color="primary">Timbre
+            </mat-checkbox>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Famille</mat-label>
+            <mat-select formControlName="Famille" required>
+              <mat-option value=""></mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Sous-Famille</mat-label>
+            <mat-select formControlName="Sous_Famille" required>
+              <mat-option value=""></mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field class="full-width">
+        <mat-label>Note</mat-label>
+        <textarea matInput placeholder="Note" type="text" id="Des" name="Des" class="form-control" matInput
+          formControlName="Des"></textarea>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+          Suivant</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="ListeArticleForm" label=" Articles">
+    <div class='table'>
+      <div class='row2'>
+        <div class='cell1'>
+          <table class="table table-striped ">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Id produit</th>
+                <th>Nom produit</th>
+                <th>Qte</th>
+                <th>UN</th>
+                <th>Prix U HT</th>
+                <th>TVA(%)</th>
+                <th>Prix U TTC</th>
+                <th>Montant HT</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <i class="pe-7s-pen" title="Modifier Article"></i>
+                </td>
+                <td>
+                  <input type="text" size="3" disabled />
+                </td>
+                <td>
+                  <input type="text" disabled />
+                </td>
+                <td>
+                  <input type="text" size="1" disabled />
+                </td>
+                <td>
+                  <input type="text" size="2" disabled />
+                </td>
+                <td>
+                  <input type="text" disabled size="6" />
+                </td>
+
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <i class="pe-7s-trash" title="Supprimer Article"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='cell '>
+          <div class='cell'>
+            <div>
+              <ng-select bindLabel="nom_Produit" placeholder="Article" appendTo="body" autofocus [searchable]="true"
+                [clearable]="true">
+                <ng-option [value]="">
+                </ng-option>
+              </ng-select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Ref_Article_FR</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Quantité</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Prix U HT</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="text-center">
+            <button class="btn btn-primary" type="button">Ajouter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <label for="Totale_HT">Total HT : </label>&nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      <label for="Totale_TVA">Total TVA : </label>&nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      <label for="Totale_Fodec">Total Fodec : </label>&nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      <label for="Timbre_Fiscal">Timbre Fiscal : </label>&nbsp;
+    </div>
+    <div>
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+        Suivant</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Récaputilation</ng-template>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="Date"> Date : </label>&nbsp; {{InformationsGeneralesForm.get('DateEntree').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Fournisseur">Fournisseur: </label>&nbsp; {{InformationsGeneralesForm.get('Fournisseur').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Autre_Charge_Fixe"> Date Livraison : </label>&nbsp;
+          {{InformationsGeneralesForm.get('DateLivraison').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Date"> Remise Globale : </label>&nbsp; {{InformationsGeneralesForm.get('Remise_Globale').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Fournisseur">Famille: </label>&nbsp; {{InformationsGeneralesForm.get('Famille').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Autre_Charge_Fixe"> Sous-Famille : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Sous_Famille').value}}
+        </div>
+      </div><br>
+      <div class="col-md-3 mb-3">
+        <label for="Des">Note : </label> &nbsp; {{InformationsGeneralesForm.get('Des').value}}
+      </div>
+    </div>
+    <div>
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+      <button mat-button (click)="stepperbonEntree.reset()" class="btn" style="margin-top: 20px;">
+        Réinitialiser</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+        Valider</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Terminé</ng-template>
+    <p>
+      Bon Commande ajouté avec succès.</p>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+      </div>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

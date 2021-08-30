@@ -1,0 +1,100 @@
+<h1 class="col-xs-8 text-center">Liste Des Locaux</h1>
+<br>
+<br>
+<br>
+<div class="row">
+   <div class="col-md-3 mb-3">
+      <select id="filtre_par" class="form-control" #mySelect (change)='onOptionsSelectionner(mySelect.value)'>
+         <option value="">Filtrer par :</option>
+         <option *ngFor="let champ of liste_champs_local; let i=index;" [value]="champ">
+            <span *ngIf="champ  == 'id_local'">Id Local</span>
+            <span *ngIf="champ  == 'categorie_local'">Catégorie Local</span>
+            <span *ngIf="champ  == 'description_local'">Description Local</span>
+            <span *ngIf="champ  == 'hauteur'">Hauteur</span>
+            <span *ngIf="champ  == 'largeur'">Largeur</span>
+            <span *ngIf="champ  == 'profondeur'">Profondeur</span>
+            <span *ngIf="champ  == 'nom_local'">Nom Local</span>
+            <span *ngIf="champ  == 'date_debut'">Date Début Contrat</span>
+            <span *ngIf="champ  == 'date_fin'">Date Fin Contrat</span>
+            <span *ngIf="champ  == 'longitude'">Longitude</span>
+            <span *ngIf="champ  == 'latitude'">Latitude</span>
+            <span *ngIf="champ  == 'nature_contrat'">Nature Contrat</span>
+            <span *ngIf="champ  == 'nature_frais'">Nature Frais</span>
+            <span *ngIf="champ  == 'responsable'">Responsable</span>
+            <span *ngIf="champ  == 'tel'">Tél.Mobile</span>
+            <span *ngIf="champ  == 'adresse'">Adresse</span>
+            <span *ngIf="champ  == 'detail'">Piéce Jointe Contrat</span>
+            <span *ngIf="champ  == 'detail_type'">Type Détail</span>
+            <span *ngIf="champ  == 'date_creation'">Date Création</span>
+            <span *ngIf="champ  == 'email'">Adresse Email</span>
+            <span *ngIf="champ  == 'fax'">Fax</span>
+            <span *ngIf="champ  == 'frais'">Frais</span>
+         </option>
+      </select>
+   </div>
+   <div class="col-md-3 mb-3">
+      <div class=" input-icons ">
+         <i class="fa fa-search icon" style="right: 0;" (click)="filtrerLocal()"></i>
+         <input class="form-control " type="text" placeholder="Rechercher..." [(ngModel)]="recherche" value=""
+            (keyup)="$event.keyCode == 13 && filtrerLocal()">
+      </div>
+   </div>
+</div>
+<table class="mb-0 table" mat-table [dataSource]="locals" matSort>
+   <ng-container matColumnDef="modifier">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"> <i class="pe-7s-pen" title="Modifier Local "
+            routerLink="/Menu/Menu-depot/Modifier-depot/{{element.id_Local}}"></i> </td>
+   </ng-container>
+   <ng-container matColumnDef="id_Local">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id Local </th>
+      <td mat-cell *matCellDef="let element" id="element.id_Local"> {{element.id_Local}} </td>
+   </ng-container>
+   <ng-container matColumnDef="nom_Local">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom </th>
+      <td mat-cell *matCellDef="let element"> {{element.nom_Local}} </td>
+   </ng-container>
+   <ng-container matColumnDef="categorie_Local">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Categorie </th>
+      <td mat-cell *matCellDef="let element"> {{element.categorie_Local}} </td>
+   </ng-container>
+   <ng-container matColumnDef="adresse">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Adresse </th>
+      <td mat-cell *matCellDef="let element"> {{element.adresse}} </td>
+   </ng-container>
+   <ng-container matColumnDef="responsable">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Responsable </th>
+      <td mat-cell *matCellDef="let element"> {{element.responsable}} </td>
+   </ng-container>
+   <ng-container matColumnDef="tel">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Tél.Mobile </th>
+      <td mat-cell *matCellDef="let element"> {{element.tel}} </td>
+   </ng-container>
+   <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Adresse Email </th>
+      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+   </ng-container>
+   <ng-container matColumnDef="nature_contrat">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nature Contrat </th>
+      <td mat-cell *matCellDef="let element"> {{element.nature_Contrat}} </td>
+   </ng-container>
+   <ng-container matColumnDef="description_Local">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+      <td mat-cell *matCellDef="let element"> {{element.description_Local}} </td>
+   </ng-container>
+   <ng-container matColumnDef="supprimer">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"> <i class="pe-7s-trash" (click)="SupprimerLocal(element.id_Local)"
+            title="Supprimer Local" style="color: red;"></i> </td>
+   </ng-container>
+   <ng-container matColumnDef="exporter_pdf">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell *matCellDef="let element"> <i class="pe-7s-look"
+            (click)="genererPDF(element.id_Local,element.nom_Local,element.categorie_Local,element.description_Local,element.largeur,element.profondeur,element.hauteur,element.adresse,element.fax,element.tel,element.date_Debut,element.date_Fin,element.email,element.nature_Contrat,element.responsable,element.surface,element.frais)"
+            title="Voir PDF" style="color: darkblue;"></i> </td>
+   </ng-container>
+   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+<div class="align-self-center mx-auto">

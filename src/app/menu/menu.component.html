@@ -1,0 +1,521 @@
+<div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
+   <div class="app-header header-shadow">
+      <div class="app-header__logo">
+         <div class="logo-src"></div>
+         <div class="header__pane ml-auto">
+            <div>
+               <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
+                  <span class="hamburger-box">
+                     <span class="hamburger-inner"></span>
+                  </span>
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="app-header__mobile-menu">
+         <div>
+            <button type="button" class="hamburger hamburger--elastic mobile-toggle-nav">
+               <span class="hamburger-box">
+                  <span class="hamburger-inner"></span>
+               </span>
+            </button>
+         </div>
+      </div>
+      <div class="app-header__menu">
+         <span>
+            <button type="button" class="btn-icon btn-icon-only btn btn-primary btn-sm mobile-toggle-header-nav">
+               <span class="btn-icon-wrapper">
+                  <i class="fa fa-ellipsis-v fa-w-6"></i>
+               </span>
+            </button>
+         </span>
+      </div>
+      <div class="app-header__content">
+         <div class="app-header-left">
+            <div class="search-wrapper">
+               <div class="input-holder">
+                  <input type="text" class="search-input" placeholder="Type to search">
+                  <button class="search-icon"><span></span></button>
+               </div>
+               <button class="close"></button>
+            </div>
+         </div>
+         <div class="app-header-right">
+            <div class="header-btn-lg pr-0">
+               <div class="widget-content p-0">
+                  <div class="widget-content-wrapper">
+                     <div class="widget-content-left">
+                        <div class="btn-group">
+                           <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="p-0 btn">
+                              <img width="42" class="rounded-circle" src="assets/images/avatars/1.jpg" alt="">
+                              <i class="fa fa-angle-down ml-2 opacity-8"></i>
+                           </a>
+                           <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-right">
+                              <button type="button" tabindex="0" class="dropdown-item">Profile </button>
+                              <h6 tabindex="-1" class="dropdown-header">Projet</h6>
+                              <button type="button" tabindex="0" class="dropdown-item">Taches</button>
+                              <div tabindex="-1" class="dropdown-divider"></div>
+                              <button type="button" tabindex="0" class="dropdown-item"> Déconnecter</button>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="widget-content-left  ml-3 header-user-info">
+                        <div class="widget-heading">
+                           Alina Mclourd
+                        </div>
+                        <div class="widget-subheading">
+                           VP People Manager
+                        </div>
+                     </div>
+                     <div class="widget-content-right header-user-info ml-3">
+                        <button type="button" class="btn-shadow p-1 btn btn-primary btn-sm show-toastr-example">
+                           <i class="fa text-white fa-calendar pr-1 pl-1"></i>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="ui-theme-settings">
+      <button type="button" id="TooltipDemo" class="btn-open-options btn btn-warning">
+         <i class="fa fa-cog fa-w-16 fa-spin fa-2x"></i>
+      </button>
+      <div class="theme-settings__inner">
+         <div class="scrollbar-container">
+            <div class="theme-settings__options-wrapper">
+               <h3 class="themeoptions-heading"> navbar couleur </h3>
+               <div class="p-3">
+                  <ul class="list-group">
+                     <li class="list-group-item">
+                        <h5 class="pb-2">Choose Color Scheme
+                        </h5>
+                        <div class="theme-settings-swatches">
+                           <div class="swatch-holder bg-primary switch-header-cs-class"
+                              data-class="bg-primary header-text-light">
+                           </div>
+                           <div class="swatch-holder bg-secondary switch-header-cs-class"
+                              data-class="bg-secondary header-text-light">
+                           </div>
+                           <div class="swatch-holder bg-success switch-header-cs-class"
+                              data-class="bg-success header-text-dark">
+                           </div>
+                           <div class="swatch-holder bg-info switch-header-cs-class"
+                              data-class="bg-info header-text-dark">
+                           </div>
+                           <div class="swatch-holder bg-warning switch-header-cs-class"
+                              data-class="bg-warning header-text-dark">
+                           </div>
+                           <div class="swatch-holder bg-danger switch-header-cs-class"
+                              data-class="bg-danger header-text-light">
+                           </div>
+                           <div class="swatch-holder bg-light switch-header-cs-class"
+                              data-class="bg-light header-text-dark">
+                           </div>
+                           <div class="swatch-holder bg-dark switch-header-cs-class"
+                              data-class="bg-dark header-text-light">
+                           </div>
+                           <div class="swatch-holder bg-focus switch-header-cs-class"
+                              data-class="bg-focus header-text-light">
+                           </div>
+                           <div class="swatch-holder bg-alternate switch-header-cs-class"
+                              data-class="bg-alternate header-text-light">
+                           </div>
+                        </div>
+                     </li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="app-main">
+      <div class="app-sidebar sidebar-shadow">
+         <div class="app-header__logo">
+            <div class="logo-src"></div>
+            <div class="header__pane ml-auto">
+               <div>
+                  <button type="button" class="hamburger close-sidebar-btn hamburger--elastic"
+                     data-class="closed-sidebar">
+                     <span class="hamburger-box">
+                        <span class="hamburger-inner"></span>
+                     </span>
+                  </button>
+               </div>
+            </div>
+         </div>
+         <div class="app-header__mobile-menu">
+            <div>
+               <button type="button" class="hamburger hamburger--elastic mobile-toggle-nav">
+                  <span class="hamburger-box">
+                     <span class="hamburger-inner"></span>
+                  </span>
+               </button>
+            </div>
+         </div>
+         <div class="app-header__menu">
+            <span>
+               <button type="button" class="btn-icon btn-icon-only btn btn-primary btn-sm mobile-toggle-header-nav">
+                  <span class="btn-icon-wrapper">
+                     <i class="fa fa-ellipsis-v fa-w-6"></i>
+                  </span>
+               </button>
+            </span>
+         </div>
+         <div class="scrollbar-sidebar">
+            <div class="app-sidebar__inner">
+               <ul class="vertical-nav-menu">
+                  <li class="app-sidebar__heading">Profil</li>
+                  <li>
+                     <a href="menu/Profil"><i class="metismenu-icon pe-7s-display2"></i> Compte </a>
+                  </li>
+                  <li>
+                     <a href="menu/Tache"><i class="metismenu-icon pe-7s-mouse"></i> Taches </a>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-pendrive"></i>
+                        liste des données
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="/menu/Fournisseur">
+                              <i class="metismenu-icon"></i>
+                              Fournisseur
+                           </a>
+                        </li>
+                        <li>
+                           <a href="elements-dropdowns.html">
+                              <i class="metismenu-icon">
+                              </i>Client
+                           </a>
+                        </li>
+                        <li>
+                           <a href="Menu/Menu-depot">
+                              <i class="metismenu-icon">
+                              </i>Local
+                           </a>
+                        </li>
+                        <li>
+                           <a href="elements-badges-labels.html">
+                              <i class="metismenu-icon">
+                              </i>Magasin
+                           </a>
+                        </li>
+                        <li>
+                           <a href="Menu/Menu-donnees">
+                              <i class="metismenu-icon">
+                              </i>Données
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li class="app-sidebar__heading">ERP Services</li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-diamond"></i>
+                        Module des Achats
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="Menu/Menu-bon-entree">
+                              <i class="metismenu-icon"></i>
+                              Bon d'entrée
+                           </a>
+                        </li>
+                        <li>
+                           <a href="Menu/Menu-bon-entree-importation">
+                              <i class="metismenu-icon">
+                              </i>Bon d'importation
+                           </a>
+                        </li>
+                        <li>
+                           <a href="Menu/Menu-bon-commande">
+                              <i class="metismenu-icon">
+                              </i>Bon du commande
+                           </a>
+                        </li>
+                        <li>
+                           <a href="elements-icons.html">
+                              <i class="metismenu-icon">
+                              </i>Bon de retour
+                           </a>
+                        </li>
+                        <li>
+                           <a href="elements-badges-labels.html">
+                              <i class="metismenu-icon">
+                              </i>Bon de transfert
+                           </a>
+                        </li>
+                        <li>
+                           <a href="elements-cards.html">
+                              <i class="metismenu-icon">
+                              </i>Archive
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-diamond"></i>
+                        Module des Ventes
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a routerLink="Menu-Devis">
+                              <i class="metismenu-icon">
+                              </i>Devis
+                           </a>
+                        </li>
+                        <li>
+                           <a routerLink="Menu-BonLivraison">
+                              <i class="metismenu-icon">
+                              </i>Bon De Livraison
+                           </a>
+                        </li>
+                        <li>
+                           <a routerLink="Menu-facture">
+                              <i class="metismenu-icon">
+                              </i>Facture
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-diamond"></i>
+                        Module Administrative
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="elements-buttons-standard.html">
+                              <i class="metismenu-icon"></i>
+                              option
+                           </a>
+                        </li>
+                        <li>
+                           <a href="elements-dropdowns.html">
+                              <i class="metismenu-icon">
+                              </i>option
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-diamond"></i>
+                        Module Analyse
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="components-tabs.html">
+                              <i class="metismenu-icon">
+                              </i>option
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-accordions.html">
+                              <i class="metismenu-icon">
+                              </i>option
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-diamond"></i>
+                        Module Logistique
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="elements-buttons-standard.html">
+                              <i class="metismenu-icon"></i>
+                              option
+                           </a>
+                        </li>
+                        <li>
+                           <a href="elements-dropdowns.html">
+                              <i class="metismenu-icon">
+                              </i>option
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-diamond"></i>
+                        Module Controle
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="components-tabs.html">
+                              <i class="metismenu-icon">
+                              </i>option
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-accordions.html">
+                              <i class="metismenu-icon">
+                              </i>option
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-diamond"></i>
+                        Ressource Humaine
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="components-tabs.html">
+                              <i class="metismenu-icon">
+                              </i>Tabs
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-accordions.html">
+                              <i class="metismenu-icon">
+                              </i>Accordions
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-notifications.html">
+                              <i class="metismenu-icon">
+                              </i>Notifications
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-modals.html">
+                              <i class="metismenu-icon">
+                              </i>Modals
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-progress-bar.html">
+                              <i class="metismenu-icon">
+                              </i>Progress Bar
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-tooltips-popovers.html">
+                              <i class="metismenu-icon">
+                              </i>Tooltips &amp; Popovers
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-carousel.html">
+                              <i class="metismenu-icon">
+                              </i>Carousel
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-calendar.html">
+                              <i class="metismenu-icon">
+                              </i>Calendar
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-pagination.html">
+                              <i class="metismenu-icon">
+                              </i>Pagination
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-scrollable-elements.html">
+                              <i class="metismenu-icon">
+                              </i>Scrollable
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-maps.html">
+                              <i class="metismenu-icon">
+                              </i>Maps
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li class="app-sidebar__heading">Paramétrage</li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-eyedropper"></i>
+                        Accès
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="components-tabs.html">
+                              <i class="metismenu-icon">
+                              </i>Droit Accès
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-accordions.html">
+                              <i class="metismenu-icon">
+                              </i>Compte
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-notifications.html">
+                              <i class="metismenu-icon">
+                              </i>Bloque
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-eyedropper"></i>
+                        Documentation
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="components-tabs.html">
+                              <i class="metismenu-icon">
+                              </i>doc Bon d'entrée
+                           </a>
+                        </li>
+                        <li>
+                           <a href="components-accordions.html">
+                              <i class="metismenu-icon">
+                              </i>doc Facture
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+                  <li>
+                     <a href="#">
+                        <i class="metismenu-icon pe-7s-eyedropper"></i>
+                        Theme
+                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+                     </a>
+                     <ul>
+                        <li>
+                           <a href="components-tabs.html">
+                              <i class="metismenu-icon">
+                              </i>option
+                           </a>
+                        </li>
+                     </ul>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </div>
+      <div class="app-main__outer">
+         <div class="app-main__inner">
+            <router-outlet></router-outlet>
+            <!--     Contenu  des pages -->
+         </div>
+      </div>
+   </div>

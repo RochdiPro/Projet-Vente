@@ -1,0 +1,75 @@
+<h1 class="col-xs-8 text-center">Liste Bon Commande</h1>
+<br>
+<br>
+<br>
+<div class="row">
+  <div class="col-md-3 mb-3">
+    <select id="filtre_par" class="form-control" #mySelect>
+      <option value="">Filtrer par :</option>
+    </select>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class=" input-icons ">
+      <i class="fa fa-search icon" style="right: 0;"></i>
+      <input class="form-control my-0 py-1 red-border" type="text" placeholder="Rechercher.." name="recherche"
+        (keyup)="$event.keyCode == 13 " id="recherche" value="">
+    </div><br>
+  </div>
+</div>
+<table class="mb-0 table" mat-table matSort>
+  <ng-container matColumnDef="modifier">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> <i class="pe-7s-pen" title="Modifier Bon Commande "></i> </td>
+  </ng-container>
+  <ng-container matColumnDef="id_Bon_Commande">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Id Bon </th>
+    <td mat-cell *matCellDef="let element;let i=index;"> </td>
+  </ng-container>
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+  <ng-container matColumnDef="id_Fr">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ref FR </th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+  <ng-container matColumnDef="date_Livraison">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date Livraison</th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+  <ng-container matColumnDef="Remise_Globale">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Remise Globale</th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+  <ng-container matColumnDef="Famille">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Famille</th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+  <ng-container matColumnDef="Sous_Famille">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Sous-Famille</th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+  <ng-container matColumnDef="des">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Note </th>
+    <td mat-cell *matCellDef="let element"> </td>
+  </ng-container>
+  <ng-container matColumnDef="supprimer">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> <i class="pe-7s-trash" title="Supprimer Bon Commande"
+        style="color: red;"></i> </td>
+  </ng-container>
+  <ng-container matColumnDef="Voir_pdf">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element;let i=index;"> <i class="pe-7s-look" title="Voir PDF"
+        style="color: darkblue;"></i> </td>
+  </ng-container>
+  <ng-container matColumnDef="exporter_pdf">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element;let i=index;"> <i class="pe-7s-cloud-download" title="Télécharger PDF"
+        style="color: darkblue;"></i> </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+<div class="align-self-center mx-auto">

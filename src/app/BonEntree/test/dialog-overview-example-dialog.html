@@ -1,0 +1,56 @@
+<h1 mat-dialog-title>Modifier Article</h1>
+<div class="container">
+<div mat-dialog-content>
+    <div class="form-group">
+        <mat-label for="name">Id_produit </mat-label>
+        <input matInput type="text" class="form-control"  disabled>
+     </div>
+     <div class="form-group">
+        <mat-label for="name">Nom_produit </mat-label>
+        <input type="text" class="form-control" disabled >
+  
+     </div>
+        <div class="form-group">
+            <mat-label for="name">Quantité </mat-label>
+            <input  type="text" class="form-control" formControlName="reason"  >
+          
+           <!-- <input type="text" class="form-control" id="Cat_Depot" [(ngModel)]="depotData.cat_Depot" name="Cat_Depot" >-->
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Ref_FR </mat-label>
+            <input  type="text" class="form-control" disabled >
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Prix_HT_U </mat-label>
+            <input  type="text" class="form-control"  >
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Total_HT </mat-label>
+            <input  type="text" class="form-control" disabled >
+        </div>
+        <div class="form-group">
+            <mat-label for="name">TVA(%) </mat-label>
+            <input  type="text" class="form-control" disabled >
+        </div>
+        <div class="form-group">
+            <mat-label for="name">M_TVA </mat-label>
+            <input  type="text" class="form-control" disabled >
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Fodec(%) </mat-label>
+            <input  type="text" class="form-control" disabled >
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Remise </mat-label>
+            <input  type="text" class="form-control"  >
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Total_TTC </mat-label>
+            <input  type="text" class="form-control" disabled >
+        </div>
+</div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button  class="btn btn-default " click)="close()">Fermer</button>
+  <button mat-button  class="btn btn-primary " cdkFocusInitial >Sauvegarder</button>
+</div>

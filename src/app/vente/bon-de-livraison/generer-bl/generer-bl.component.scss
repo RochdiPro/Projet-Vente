@@ -1,0 +1,62 @@
+.mat-stepper-horizontal {
+  margin-top: 8px;
+}
+
+.mat-form-field {
+  margin-top: 16px;
+  width: 225px !important;
+}
+
+.mat-form-field-infix {
+  display: block;
+  position: relative;
+  flex: auto;
+  min-width: 0;
+}
+table {
+  width: 100%;
+}
+
+th.mat-sort-header-sorted {
+  color: black;
+}
+.add-article {
+  color: #fff;
+  background-color: #3f6ad8;
+}
+.right {
+  float: right;
+}
+
+.full-width {
+  margin-top: 16px;
+  width: 100% !important;
+}
+.add-reglement {
+  color: #3f6ad8 !important;
+  cursor: pointer;
+  display: inline;
+  bottom: 10px;
+  position: absolute;
+}
+.delete-reglement {
+  color: red !important;
+  cursor: pointer;
+  display: inline;
+  bottom: 10px;
+  position: absolute;
+}
+.pe-7s-trash {
+  cursor: pointer;
+}
+.search {
+  height: 42%;
+  margin: 5px;
+  color: #fff;
+  background-color: #3f6ad8;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+}

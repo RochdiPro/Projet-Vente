@@ -1,0 +1,573 @@
+<h1 class="col-xs-8 text-center">Ajouter Bon Entrée Local</h1>
+<mat-horizontal-stepper [linear]="lineaire" #stepperbonEntree>
+  <mat-step [stepControl]="InformationsGeneralesForm">
+    <form [formGroup]="InformationsGeneralesForm">
+      <ng-template matStepLabel>Informations Générales</ng-template>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="Type" required>
+              <mat-option value=""></mat-option>
+              <mat-option value="BL">BL</mat-option>
+              <mat-option value="Facture">Facture</mat-option>
+            </mat-select>
+            <mat-error *ngIf="InformationsGeneralesForm.get('Type').invalid">
+              {{MessageErreurType()}}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>N° BL/Facture</mat-label>
+            <div class="form-group">
+              <input type="text" id="N_Facture" name="N_Facture" formControlName="N_Facture" matInput placeholder="0 "
+                [(ngModel)]="N_Facture" required>
+            </div>
+            <mat-error *ngIf="InformationsGeneralesForm.get('N_Facture').invalid">
+              {{MessageErreurNFacture()}}</mat-error>
+          </mat-form-field>
+        </div>
+        <!-- <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="picker3" [ngModel]="date_de_jour" formControlName="DateEntree">
+            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+            <mat-datepicker #picker3 [startAt]="date_de_jour"></mat-datepicker>
+            <mat-error *ngIf="InformationsGeneralesForm.get('DateEntree').invalid">
+              {{MessageErreurDate()}}</mat-error>
+          </mat-form-field>
+        </div> -->
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Fournisseur</mat-label>
+            <mat-select formControlName="Fournisseur" required>
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id_Fr">
+                {{fournisseur.nom_Fournisseur}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="InformationsGeneralesForm.get('Fournisseur').invalid">
+              {{MessageErreurFournisseur()}}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Local</mat-label>
+            <mat-select formControlName="Local" required>
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let Local of locals" [value]="Local.nom_Local">{{Local.nom_Local}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="InformationsGeneralesForm.get('Local').invalid">
+              {{MessageErreurLocal()}}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Mode Paiement</mat-label>
+            <mat-select formControlName="Mode_Paiement" required>
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let categorie of categorie_paiement" [value]="categorie.nom">
+                {{categorie.nom}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="InformationsGeneralesForm.get('Mode_Paiement').invalid">
+              {{MessageErreurMode()}}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Agence Transport</mat-label>
+            <mat-select formControlName="Ag_Ttransport">
+              <mat-option value=""></mat-option>
+              <mat-option value="agence x">agence x</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Charge TTC Transport</mat-label>
+            <div class="form-group">
+              <input type="text" id="ChargeTransport" name="ChargeTransport" formControlName="ChargeTransport" matInput
+                placeholder="0 " [(ngModel)]="ChargeTransport">
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Autre Charge TTC Fixe</mat-label>
+            <div class="form-group">
+              <input type="text" id="Autre_Charge_Fixe" name="Autre_Charge_Fixe" formControlName="Autre_Charge_Fixe"
+                matInput placeholder="0 " [(ngModel)]="Autre_Charge_Fixe">
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Total Facture HT</mat-label>
+            <div class="form-group">
+              <input type="text" id="Totale_Facture" name="Totale_Facture" formControlName="Totale_Facture" required
+                matInput placeholder="0 " [(ngModel)]="Totale_Facture">
+            </div>
+            <mat-error *ngIf="InformationsGeneralesForm.get('Totale_Facture').invalid">
+              {{MessageErreurTotaleFacture()}}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Total Facture TTC</mat-label>
+            <div class="form-group">
+              <input type="text" id="Totale_Facture_TTC" name="Totale_Facture_TTC" formControlName="Totale_Facture_TTC"
+                matInput placeholder="0 " [(ngModel)]="Totale_Facture_TTC">
+            </div>
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Note</mat-label>
+        <textarea matInput placeholder="Note" type="text" id="Des" name="Des" class="form-control" matInput
+          formControlName="Des"></textarea>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;" >
+          Suivant</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="ListeArticleForm" label=" Articles">
+    <div class='table'>
+      <div class='row2'>
+        <div class='cell1'>
+          <table class="table table-striped ">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Id produit</th>
+                <th>Nom produit</th>
+                <th>Ref FR</th>
+                <th>Qte</th>
+                <th>Prix U HT</th>
+                <th>TVA(%)</th>
+                <th>Remise(%)</th>
+                <th>Fodec(%)</th>
+                <th>M_TVA_U</th>
+                <th>Prix U TTC</th>
+                <th>Total HT</th>
+                <th>Total TTC</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let field of fieldArray; let i = index; ">
+                <td>
+                  <i class="pe-7s-pen" (click)="ouvreDialogueArticle(i,field,fieldArray)" title="Modifier article"></i>
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Id_Produit" class="form-control" type="text" name="{{field.Id_Produit}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Nom_Produit" class="form-control" type="text" name="{{field.Nom_Produit}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Ref_FR" class="form-control" type="text" name="{{field.Ref_FR}}" disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Quantite" class="form-control" type="text" name="{{field.Quantite}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.PrixU" class="form-control" type="text" name="{{field.PrixU}}" disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Tva" class="form-control" type="text" name="{{field.Tva}}" size="1"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Remise" class="form-control" type="text" name="{{field.Remise}}" disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Fodec" class="form-control" type="text" name="{{field.Fodec}}" disabled
+                    size="1" />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Total_TVA" class="form-control" type="text" name="{{field.Total_TVA}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Prix_U_TTC" class="form-control" type="text" name="{{field.Prix_U_TTC}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Montant_HT" class="form-control" type="text" name="{{field.Montant_HT}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Montant_TTC" class="form-control" type="text" name="{{field.Montant_TTC}}"
+                    disabled />
+                </td>
+                <td>
+                  <i class="pe-7s-trash" (click)="deleteFieldValue(i)" title="Supprimer article"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='cell2'>
+          <div>
+            <ng-select (ngModelChange)="ProduitSelectionner($event)" bindLabel="nom_Produit" placeholder="Produit"
+              appendTo="body" autofocus [searchable]="true" [clearable]="true" [(ngModel)]="newAttribute.Id_produit"
+              id="newAttributeId_produit">
+              <ng-option [value]="produit.id_Produit" [disabled]="produit.disabled" *ngFor="let produit of produits">
+                {{produit.id_Produit}} : {{produit.nom_Produit}}
+              </ng-option>
+            </ng-select>
+          </div>
+          <div class="col-md-3 mb-3">
+            <mat-form-field>
+              <mat-label>Ref_Article_FR</mat-label>
+              <input matInput class="form-control" type="text" id="Ref_FR_article" [(ngModel)]="Ref_FR_article"
+                name="Ref_FR_article">
+            </mat-form-field>
+          </div>
+          <div class="col-md-3 mb-3">
+            <mat-form-field hintLabel=" La quantité ne doit pas être nulle">
+              <mat-label>Quantité</mat-label>
+              <input matInput class="form-control" type="text" id="newAttributeQuantite" min="0.1"
+                [(ngModel)]="newAttribute.Quantite" name="newAttributeQuantite" (keyup)="Quantite_Valeur($event)">
+              <mat-error *ngIf="ListeArticleForm.get('Quantite').invalid">{{MessageErreurQte()}}</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-3 mb-3">
+            <mat-form-field>
+              <mat-label>Prix U HT</mat-label>
+              <input matInput class="form-control" type="text" id="newAttributePrixU" [(ngModel)]="newAttribute.PrixU"
+                name="newAttributePrixU" (keyup)="Prix_Valeur($event)">
+            </mat-form-field>
+          </div>
+          <div class="col-md-3 mb-3">
+            <mat-form-field>
+              <mat-label>Remise(%)</mat-label>
+              <input matInput class="form-control" type="text" id="newAttributeRemise" [(ngModel)]="newAttribute.Remise"
+                name="newAttributeRemise" (keyup)="Remise_Valeur($event)">
+            </mat-form-field>
+          </div>
+          <div class="col-md-3 mb-3">
+            <button class="btn btn-primary" type="button" (click)="ajouter()" [disabled]="click">Ajouter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <table class="tableau">
+        <tr>
+          <th style="text-align: left;">Total H.T Brut :</th>
+          <td>{{totalHTBrut}} </td>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Total Remise :</th>
+          <td> {{totalRemise}} </td>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Total H.T Net :</th>
+          <td>{{totalHT}} </td>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Total Fodec :</th>
+          <td>{{totalMontantFodec}}</td>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Total TVA :</th>
+          <td> {{totalMontantTVA}}</td>
+        </tr>
+        <tr>
+          <th style="text-align: left;">Total T.T.C : </th>
+          <td>{{totalTTc}}</td>
+        </tr>
+      </table>
+      <div>
+        <table class="tableau2">
+          <tr style=" text-align: right;">
+            <th style="text-align: right;">T.V.A(%)</th>
+            <td style=" text-align: right;" *ngFor="let element of tvaType">{{element}} </td>
+          </tr>
+          <tr style="text-align: right;">
+            <th style="text-align: right;">Assiette</th>
+            <td *ngIf="assiettetva19">{{assiette19}} </td>
+            <td *ngIf="assiettetva7">{{assiettetva7}} </td>
+            <td *ngIf="assiettetva13">{{assiettetva13}} </td>
+          </tr>
+          <tr style="text-align: right;">
+            <th style="text-align: right;">Montant</th>
+            <td *ngIf="Montanttva19">{{Montant19}}</td>
+            <td *ngIf="Montanttva7">{{Montanttva7}}</td>
+            <td *ngIf="Montanttva13">{{Montanttva13}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+    <div class="bas">
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;"
+        (click)="tableAssiette()">Précédent</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;"
+        (click)="alertDifferentTotal()" [disabled]="verifTotal">
+        Suivant</button>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="ChargeForm" label=" Charges">
+    <div>
+      <mat-checkbox class="check-margin" [checked]="cocher" color="primary" (change)="testCheck($event)">Charge
+        automatique</mat-checkbox>
+    </div>
+    <div class='table'>
+      <div class='row2'>
+        <div class='cell1'>
+          <table class="table table-striped ">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Id produit</th>
+                <th>Ref FR</th>
+                <th>Qte</th>
+                <th>Prix U HT</th>
+                <th>TVA(%)</th>
+                <th>Remise(%)</th>
+                <th>Fodec(%)</th>
+                <th>M_TVA_U</th>
+                <th>Prix U TTC</th>
+                <th>Prix R U HT</th>
+                <th>Charge(%)</th>
+                <th>Charge/Piéce</th>
+                <th>Signaler Problème</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let field of fieldArray; let i = index; ">
+                <td>
+                  <i class="pe-7s-pen" (click)="ouvreDialogCharge(i,field,fieldArray)" title="Modifier"></i>
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Id_produit" class="form-control" type="text" name="{{field.Id_produit}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Ref_FR" class="form-control" type="text" name="{{field.Ref_FR}}" disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Quantite" class="form-control" type="text" name="{{field.Quantite}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.PrixU" class="form-control" type="text" name="{{field.PrixU}}" disabled />
+                </td>
+
+                <td>
+                  <input [(ngModel)]="field.Tva" class="form-control" type="text" name="{{field.Tva}}" size="1"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Remise" class="form-control" type="text" name="{{field.Remise}}" disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Fodec" class="form-control" type="text" name="{{field.Fodec}}" size="1"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Montant_TVA" class="form-control" type="text" name="{{field.Montant_TVA}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Prix_U_TTC" class="form-control" type="text" name="{{field.Prix_U_TTC}}"
+                    disabled />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.PrixRevientU" class="form-control" type="text" name="{{field.PrixRevientU}}"
+                    disabled />
+                </td>
+                <td>
+                  <input class="form-control" type="text" max="100" min="0" [(ngModel)]="field.Ch" name="{{field.Ch}}"
+                    (keyup)="calculChPiece(i)" [disabled]="field.valide" />
+                </td>
+                <td>
+                  <input [(ngModel)]="field.Ch_Piece" class="form-control" type="text" name="{{field.Ch_Piece}}"
+                    disabled />
+                </td>
+                <td>
+                  <mat-checkbox [(ngModel)]="field.signaler_probleme" class="form-control" class="check-margin"
+                    [checked]="field.signaler_probleme" color="primary"></mat-checkbox>
+                </td>
+                <td>
+                  <i class="pe-7s-trash" (click)="deleteFieldValue(i)" title="Supprimer"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="tableau">
+            <tr>
+              <th style="text-align: left;">Total H.T Brut :</th>
+              <td>{{totalHTBrut}} </td>
+            </tr>
+            <tr>
+              <th style="text-align: left;">Total Remise :</th>
+              <td> {{totalRemise}} </td>
+            </tr>
+            <tr>
+              <th style="text-align: left;">Total H.T Net :</th>
+              <td>{{totalHT}} </td>
+            </tr>
+            <tr>
+              <th style="text-align: left;">Total Fodec :</th>
+              <td>{{totalMontantFodec}}</td>
+            </tr>
+            <tr>
+              <th style="text-align: left;">Total TVA :</th>
+              <td> {{totalMontantTVA}}</td>
+            </tr>
+            <tr>
+              <th style="text-align: left;">Total T.T.C : </th>
+              <td>{{totalTTc}}</td>
+            </tr>
+            <tr>
+              <th style="text-align: left;">Total R.H.T :</th>
+              <td> {{totalRHT}}</td>
+            </tr>
+            <tr>
+              <th style="text-align: left;">Total R.T.T.C : </th>
+              <td> {{totalRTTC}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div>
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;" [disabled]="verif">
+        Suivant</button>
+    </div>
+  </mat-step>
+  <mat-step [stepControl]="EntreeForm" label="Entrée">
+    <table class="table table-striped ">
+      <thead>
+        <tr style="text-align:center;">
+          <th>Id produit</th>
+          <th>Nom produit</th>
+          <th>Quantité Entrée</th>
+          <th>Entrée En Stock</th>
+          <th>Vérification Entrée En Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let field of fieldArray; let i = index; ">
+          <td>
+            <input type="text" [(ngModel)]="field.Id_produit" class="form-control" type="text"
+              name="{{field.Id_produit}}" size="2" disabled />
+          </td>
+          <td>
+            <input type="text" [(ngModel)]="field.Nom_Produit" class="form-control" type="text"
+              name="{{field.Nom_Produit}}" size="6" disabled />
+          </td>
+          <td>
+            <input type="text" [(ngModel)]="field.Quantite" class="form-control" type="text" name="{{field.Quantite}}"
+              size="2" disabled />
+          </td>
+          <td style="text-align:center;">
+            <i class="pe-7s-note" (click)="testerType(i)"></i>
+          </td>
+          <td style="text-align:center;">
+            <input type="text" [(ngModel)]="field.EtatEntree" class="form-control" name="{{field.EtatEntree}}"
+              disabled />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+        Suivant</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Récaputilation</ng-template>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="Type">Type : </label>&nbsp; {{InformationsGeneralesForm.get('Type').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="N_Facture"> N° BL/Facture : </label>&nbsp; {{InformationsGeneralesForm.get('N_Facture').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Date"> Date : </label>&nbsp; {{InformationsGeneralesForm.get('DateEntree').value |
+          date:'dd-MM-yyyy'}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Fournisseur">Fournisseur: </label>&nbsp; {{InformationsGeneralesForm.get('Fournisseur').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Local">Local : </label>&nbsp; {{InformationsGeneralesForm.get('Local').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Mode_Paiement"> Mode Paiement :
+          </label>&nbsp; {{InformationsGeneralesForm.get('Mode_Paiement').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for=" Ag_Ttransport">Agence Transport :
+          </label>&nbsp; {{InformationsGeneralesForm.get('Ag_Ttransport').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Charge_Transport"> Charge TTC Transport :
+          </label>&nbsp;{{InformationsGeneralesForm.get('ChargeTransport').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Autre_Charge_Fixe"> Autre Charge TTC Fixe : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Autre_Charge_Fixe').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_HT">Total_HT_Calculé : {{totalHT}} </label>&nbsp;
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TVA">Total_TVA : {{totalMontantTVA}} </label>&nbsp;
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_Remise">Total_Fodec: {{totalFodec}} </label>&nbsp;
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_Remise">Total_Remise : {{totalRemise}} </label>&nbsp;
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_R_HT">Total_R_HT : {{totalRHT}} </label>&nbsp;
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_Facture"> Total_Facture_HT : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Totale_Facture').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_R_TTC">Total_R_TTC : {{totalRTTC}}</label>&nbsp;
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TTC">Total_TTC_Calculé : {{totalTTc}}</label>&nbsp;
+        </div>
+      </div><br>
+      <div class="col-md-3 mb-3">
+        <label for="Des">Note : </label> &nbsp; {{InformationsGeneralesForm.get('Des').value}}
+      </div>
+    </div>
+    <div>
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+      <button mat-button (click)="stepperbonEntree.reset()" class="btn" style="margin-top: 20px;">
+        Réinitialiser</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;"
+        (click)="ajouterFicheBonEntreeLocal() ">
+        Valider</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Terminé</ng-template>
+    <p>
+      Bon d'entrée local ajouté avec succès.</p>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+      </div>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

@@ -1,0 +1,16 @@
+npm i @angular/material    //dependance pour utiliser mat-stepper
+npm i @angular/cdk        //dependance pour utiliser mat-stepper
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';  //à ajouter dans styles.scss
+
+npm i pdfmake  //pdfmake pour exporter PDF
+npm i sweetalert2 //alert + confirmation
+
+npm i ng2-search-filter  //filtrer la liste des produits dans la table articles (bon d'entrée local)
+
+npm i angular-material-pagination // pagination des listes
+npm i angular-material-sort // trie des listes
+npm i material-table  // table material
+npm install --save stream timers 
+npm i @angular-material-components/file-input // les documents liées BEI (input type fichier)
+
+npm i @angular-material-components/file-input // Matinput de type file

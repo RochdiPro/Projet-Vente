@@ -1,0 +1,41 @@
+.cell2 {
+    display:table-cell;
+    width:15%;
+}
+.cell1 {
+    display:table-cell;
+    width:85%;
+}
+.cell {
+    display:table-cell;
+    width:100%;
+}
+.row2 {
+    display:table-row;
+}
+.example-full-width {
+    width: 100%;
+  }
+.check-margin {
+    margin: 0 12px;
+    
+}
+.tableau{
+    float: right;
+    text-align:right;
+    border-collapse: collapse;
+    }
+.tableau2{
+    float: left;
+    text-align:right;
+    border-collapse : separate;
+    border-spacing : 10px;
+   
+} 
+::ng-deep  .mat-horizontal-stepper-header{
+    pointer-events: none !important;
+}
+    
+.bas{
+    clear:right; 
+    }  

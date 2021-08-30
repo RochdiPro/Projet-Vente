@@ -1,0 +1,112 @@
+<h1 class="col-xs-8 text-center">Liste Bon Entrée Local</h1>
+<br>
+<br>
+<br>
+<div class="row">
+  <div class="col-md-3 mb-3">
+    <select id="filtre_par" class="form-control" #mySelect (change)='onOptionsSelected(mySelect.value)'>
+      <option value="">Filtrer par :</option>
+      <option *ngFor="let champ of liste_champs_bon_Entree_Local; let i=index;" [value]="champ">
+        <span *ngIf="champ  == 'id_bon_entree_local'">Id Bon Entreé Local</span>
+        <span *ngIf="champ  == 'ag_transport'">Agence Transport</span>
+        <span *ngIf="champ  == 'autre_charge_fixe'">Autre Charge Fixe</span>
+        <span *ngIf="champ  == 'charge_transport'">Charge Transport</span>
+        <span *ngIf="champ  == 'date_bel'">Date Bon Entrée Local</span>
+        <span *ngIf="champ  == 'date_creation'">Date Création</span>
+        <span *ngIf="champ  == 'description'">Description</span>
+        <span *ngIf="champ  == 'details'">Détails</span>
+        <span *ngIf="champ  == 'etat'">Etat</span>
+        <span *ngIf="champ  == 'id_fr'">Id Fournisseur</span>
+        <span *ngIf="champ  == 'id_responsable'">Id Responsable</span>
+        <span *ngIf="champ  == 'local'">Local</span>
+        <span *ngIf="champ  == 'mode_paiement'">Mode Paiement</span>
+        <span *ngIf="champ  == 'n_facture'">N° Facture</span>
+        <span *ngIf="champ  == 'total_fodec'">Total Fodec</span>
+        <span *ngIf="champ  == 'total_ht_brut'">Total H.T Brut</span>
+        <span *ngIf="champ  == 'total_ht_net'">Total H.T Net</span>
+        <span *ngIf="champ  == 'total_r_ht'">Total R.H.T</span>
+        <span *ngIf="champ  == 'total_r_ttc'">Total R.T.T.C</span>
+        <span *ngIf="champ  == 'total_remise'">Total Remise</span>
+        <span *ngIf="champ  == 'total_ttc'">Total T.T.C</span>
+        <span *ngIf="champ  == 'total_tva'">Total TVA</span>
+        <span *ngIf="champ  == 'type'">Type</span>
+        <span *ngIf="champ  == 'type_detail'">Type Détail</span>
+      </option>
+    </select>
+  </div>
+  <div class="col-md-3 mb-3">
+    <div class=" input-icons ">
+      <i class="fa fa-search icon" style="right: 0;" (click)="filtrerBonEntreeLocal()"></i>
+      <input class="form-control my-0 py-1 red-border" type="text" placeholder="Rechercher.." name="recherche"
+        (keyup)="$event.keyCode == 13 && filtrerBonEntreeLocal()" id="recherche" [(ngModel)]="recherche" value="">
+    </div><br>
+  </div>
+</div>
+<table class="mb-0 table" mat-table [dataSource]="bonEntreeLocals" matSort>
+  <ng-container matColumnDef="modifier">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> <i class="pe-7s-pen" title="Modifier Bon Entrée Local "
+        routerLink="/Menu/Menu-bon-entree/Modifier-bon-entree/{{element.id_Bon_Entree_Local}}"></i> </td>
+  </ng-container>
+  <ng-container matColumnDef="id_Bon_Entree_Local">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Id Bon </th>
+    <td mat-cell *matCellDef="let element;let i=index;" id="element.id_Bon_Entree_Local">
+      {{element.id_Bon_Entree_Local}} </td>
+  </ng-container>
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Type </th>
+    <td mat-cell *matCellDef="let element"> {{element.type}} </td>
+  </ng-container>
+  <ng-container matColumnDef="n_Facture">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Facture </th>
+    <td mat-cell *matCellDef="let element"> {{element.n_Facture}} </td>
+  </ng-container>
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+    <td mat-cell *matCellDef="let element"> {{element.date_BEL| date:'dd-MM-yyyy'}} </td>
+  </ng-container>
+  <ng-container matColumnDef="id_Fr">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ref FR </th>
+    <td mat-cell *matCellDef="let element"> {{element.id_Fr}} </td>
+  </ng-container>
+  <ng-container matColumnDef="depot">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Local </th>
+    <td mat-cell *matCellDef="let element"> {{element.local}} </td>
+  </ng-container>
+  <ng-container matColumnDef="mode_Paiement">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Mode Paiement </th>
+    <td mat-cell *matCellDef="let element"> {{element.mode_Paiement}} </td>
+  </ng-container>
+  <ng-container matColumnDef="ag_Transport">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ag Transport</th>
+    <td mat-cell *matCellDef="let element"> {{element.ag_Transport}} </td>
+  </ng-container>
+  <ng-container matColumnDef="charge_Transport">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>charge Transport </th>
+    <td mat-cell *matCellDef="let element"> {{element.charge_Transport}} </td>
+  </ng-container>
+  <ng-container matColumnDef="autre_Charge_Fixe">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Autre Charge Fixe </th>
+    <td mat-cell *matCellDef="let element"> {{element.autre_Charge_Fixe}} </td>
+  </ng-container>
+  <ng-container matColumnDef="des">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Note </th>
+    <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+  </ng-container>
+  <ng-container matColumnDef="supprimer">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element"> <i class="pe-7s-trash"
+        (click)="SupprimerBonEntreeLocal(element.id_Bon_Entree_Local)" title="Supprimer Bon Entrée Local"
+        style="color: red;"></i> </td>
+  </ng-container>
+  <ng-container matColumnDef="Voir_pdf">
+    <th mat-header-cell *matHeaderCellDef> </th>
+    <td mat-cell *matCellDef="let element;let i=index"> <i class="pe-7s-look"
+        (click)='visualiserPDF(element.id_Bon_Entree_Local,element.id_Fr,element.ag_Transport,element.charge_Transport,element.autre_Charge_Fixe,element.date_BEL,element.description,element.etat,element.id_Responsable,element.local,element.mode_Paiement,element.n_Facture,element.type)'
+        title="Voir PDF" style="color: darkblue;"></i> </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+<div class="align-self-center mx-auto">

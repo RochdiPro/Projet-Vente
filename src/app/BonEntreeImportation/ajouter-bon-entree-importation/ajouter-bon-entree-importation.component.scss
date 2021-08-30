@@ -1,0 +1,41 @@
+.full-width {
+    width: 100%;
+  }
+  .cell1 {
+    display:table-cell;
+    width:85%;
+}
+.cell {
+    display:table-cell;
+    width:15%;
+}
+.row2 {
+    display:table-row;
+}
+.table2 {
+    display: flex;
+    
+  }
+  
+  .row2 {
+   
+    flex: 1;
+    display: flex;
+  }
+  
+  .row2:first-of-type {
+    
+    flex-flow: wrap;
+  }
+  
+  .row2 .rowspan2 {
+    
+    flex: 1 1 100%;
+  }
+  
+  .row2 div {
+    
+    padding: 1em;
+    flex: 1;
+  }
+ 

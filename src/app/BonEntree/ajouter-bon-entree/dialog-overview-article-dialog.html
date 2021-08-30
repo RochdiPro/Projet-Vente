@@ -1,0 +1,43 @@
+<h1 class="col-xs-8 text-center" mat-dialog-title>Modifier Article</h1>
+<div class="container" *ngIf='ligne_table'>
+    <div mat-dialog-content [formGroup]="form_modifier_article">
+        <div class="form-group">
+            <mat-label for="name">Id Produit </mat-label>
+            <input type="text" class="form-control" formControlName="Id_Produit">
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Nom Produit </mat-label>
+            <input type="text" class="form-control" formControlName="Nom_Produit">
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Quantité </mat-label>
+            <input type="text" class="form-control" formControlName="qte_modifier" min="0.1"
+                (keyup)="calculCharge($event)">
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Ref Fournisseur </mat-label>
+            <input type="text" class="form-control" formControlName="Ref_FR">
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Prix H.T U </mat-label>
+            <input type="text" class="form-control" formControlName="prixU_modifier" (keyup)="calculCharge($event)">
+        </div>
+        <div class="form-group">
+            <mat-label for="name">TVA(%) </mat-label>
+            <input type="text" class="form-control" formControlName="Tva">
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Fodec(%) </mat-label>
+            <input type="text" class="form-control" formControlName="Fodec">
+        </div>
+        <div class="form-group">
+            <mat-label for="name">Remise(%) </mat-label>
+            <input type="text" class="form-control" formControlName="remise_modifier" max="100">
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button class="btn btn-default " (click)="fermerDialogue()">Fermer</button>
+    <button mat-button class="btn btn-primary " [mat-dialog-close]="data.index"
+        (click)="editerLigneTable()">Sauvegarder</button>
+</div>

@@ -1,0 +1,40 @@
+<h1 class="col-xs-8 text-center" mat-dialog-title>Type : 4G</h1>
+&nbsp;
+&nbsp;
+<div class="container">
+    <div mat-dialog-content>
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th>Numéro Série</th>
+                    <th>Numéro IMEI 1</th>
+                    <th>Numéro IMEI 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let qte of nbrQte;let i = index;">
+
+                    <td>
+                        <input type="text" name="{{i}}" [(ngModel)]="Numero_Serie[i]" placeholder="Numéro Série"
+                            (keyup)="verifN_serieProduit($event)" />
+                    </td>
+
+                    <td>
+                        <input type="text" name="{{i}}" [(ngModel)]="E1[i]" placeholder="Numéro IMEI 1"
+                            (keyup)="verifE1Produit($event)" />
+                    </td>
+
+                    <td>
+                        <input type="text" name="{{i}}" [(ngModel)]="E2[i]" placeholder="Numéro IMEI 2"
+                            (keyup)="verifE2Produit($event)" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div mat-dialog-actions>
+    <button mat-button class="btn btn-default " (click)="fermerDialogue()">Fermer</button>
+    <button mat-button class="btn btn-primary " [disabled]="verifStock" (click)="VerifVide()">Valider</button>
+</div>

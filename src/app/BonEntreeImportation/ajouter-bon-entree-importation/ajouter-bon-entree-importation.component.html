@@ -1,0 +1,633 @@
+<h1 class="col-xs-8 text-center">Ajouter Bon Entrée Importation</h1>
+<mat-horizontal-stepper [linear]="lineaire" #stepperbonEntree>
+  <mat-step [stepControl]="InformationsGeneralesForm">
+    <form [formGroup]="InformationsGeneralesForm">
+      <ng-template matStepLabel>Informations générales</ng-template>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Type</mat-label>
+            <mat-select formControlName="Type" required>
+              <mat-option value=""></mat-option>
+              <mat-option value="BL">BL</mat-option>
+              <mat-option value="Facture">Facture</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>N° Proforma</mat-label>
+            <div class="form-group">
+              <input type="text" id="N_Proforma" name="N_Proforma" formControlName="N_Proforma" matInput required>
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>N° BL/Facture</mat-label>
+            <div class="form-group">
+              <input type="text" id="N_Facture" name="N_Facture" formControlName="N_Facture" matInput required>
+            </div>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date</mat-label>
+            <input matInput formControlName="DateEntree" type="date" required class="form-control"
+              placeholder="JJ/MM/AAAA">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Fournisseur</mat-label>
+            <mat-select formControlName="Fournisseur" required>
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id_Fr">
+                {{fournisseur.nom_Fournisseur}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Local</mat-label>
+            <mat-select formControlName="Local" required>
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let depot of locals" [value]="depot.nom_Local">{{depot.nom_Local}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Mode Paiement</mat-label>
+            <mat-select formControlName="Mode_Paiement" required>
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let categorie of categorie_paiement" [value]="categorie.nom">
+                {{categorie.nom}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date Paiement</mat-label>
+            <input matInput formControlName="DatePaiement" type="date" required class="form-control"
+              placeholder="JJ/MM/AAAA">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Type Livraison</mat-label>
+            <mat-select formControlName="Type_Livraison">
+              <mat-option value=""></mat-option>
+              <mat-option value="agence x">AIR</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date Livraison</mat-label>
+            <input matInput formControlName="DateLivraison" type="date" required class="form-control"
+              placeholder="JJ/MM/AAAA">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Agence Transport</mat-label>
+            <mat-select formControlName="Ag_Transport">
+              <mat-option value=""></mat-option>
+              <mat-option value="agence x">agence x</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Transport Importation DV</mat-label>
+            <input matInput formControlName="Transport_Importation_DV" type="text" required class="form-control">
+          </mat-form-field>
+        </div>
+      </div>
+      <div>
+        <mat-checkbox class="check-margin" color="primary">Inclut Facture
+        </mat-checkbox>
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Mode Livraison</mat-label>
+            <input matInput formControlName="Mode_Livraison" type="text" required class="form-control">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Agence Transitaire</mat-label>
+            <mat-select formControlName="Ag_Transitaire">
+              <mat-option value=""></mat-option>
+              <mat-option value="agence x">agence y</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Assurance Importation DT</mat-label>
+            <input matInput formControlName="Assurance_Importation_DT" type="text" required class="form-control">
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date Proforma</mat-label>
+            <input matInput formControlName="DateProforma" type="date" required class="form-control"
+              placeholder="JJ/MM/AAAA">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date Facture</mat-label>
+            <input matInput formControlName="DateFacture" type="date" required class="form-control"
+              placeholder="JJ/MM/AAAA">
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field class="full-width">
+        <mat-label>Note</mat-label>
+        <textarea matInput placeholder="Note" type="text" id="Des" name="Des" class="form-control" matInput
+          formControlName="Des"></textarea>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+          Suivant</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="InformationsBanquesForm">
+    <form [formGroup]="InformationsBanquesForm">
+      <ng-template matStepLabel>Informations Banques</ng-template>
+      <div class="table2">
+        <div class="row2">
+          <div class="cell">
+            <h3 style="margin-right: 200px;" class="col-xs-8 text-center">Informations Banques</h3>
+            <div class="cell">
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label>Titre</mat-label>
+                  <div class="form-group">
+                    <input type="text" id="Titre" name="Titre" formControlName="Titre" matInput required>
+                  </div>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label>L/C</mat-label>
+                  <div class="form-group">
+                    <input type="text" id="LC" name="LC" formControlName="LC" matInput required>
+                  </div>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="cell">
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label>Transfert</mat-label>
+                  <div class="form-group">
+                    <input type="text" id="Transfert" name="Transfert" formControlName="Transfert" matInput required>
+                  </div>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label>FED</mat-label>
+                  <div class="form-group">
+                    <input type="text" id="FED" name="FED" formControlName="FED" matInput required>
+                  </div>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="cell">
+              <h3 style="margin-right: 200px;" class="col-xs-8 text-center">Charge Globale</h3>
+              <div class="cell">
+                <div class="col-md-3 mb-3">
+                  <mat-form-field>
+                    <mat-label>Charge Transport</mat-label>
+                    <div class="form-group">
+                      <input type="text" id="Transport" name="Transport" formControlName="Transport" matInput required>
+                    </div>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <mat-form-field>
+                    <mat-label>Charge Transitaire</mat-label>
+                    <div class="form-group">
+                      <input type="text" id="Transitaire" name="Transitaire" formControlName="Transitaire" matInput
+                        required>
+                    </div>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <mat-form-field>
+                    <mat-label>Charge Banque</mat-label>
+                    <div class="form-group">
+                      <input type="text" id="Banque" name="Banque" formControlName="Banque" matInput required>
+                    </div>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="cell">
+                <div class="col-md-3 mb-3">
+                  <mat-form-field>
+                    <mat-label>Charge Magasinage</mat-label>
+                    <div class="form-group">
+                      <input type="text" id="Magasinage" name="Magasinage" formControlName="Magasinage" matInput
+                        required>
+                    </div>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <mat-form-field>
+                    <mat-label>Charge Pénalité</mat-label>
+                    <div class="form-group">
+                      <input type="text" id="Penalite" name="Penalite" formControlName="Penalite" matInput required>
+                    </div>
+                  </mat-form-field>
+                </div>
+                <div class="col-md-3 mb-3">
+                  <mat-form-field>
+                    <mat-label>Autre Charge </mat-label>
+                    <div class="form-group">
+                      <input type="text" id="AutreCharge" name="AutreCharge" formControlName="AutreCharge" matInput
+                        required>
+                    </div>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cell rowspan2">
+            <h3 class="col-xs-8 ">Documents liées</h3>
+            <div class="row">
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label for="Document_Banque"> Document Banque </mat-label>
+                  <ngx-mat-file-input matInput id="Document_Banque" name="Document_Banque"
+                    formControlName="Document_Banque" placeholder="Selectionner Document Banque" [accept]="'.pdf'">
+                  </ngx-mat-file-input>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label for="Document_Importation"> Document Importation </mat-label>
+                  <ngx-mat-file-input matInput id="Document_Importation" name="Document_Importation"
+                    formControlName="Document_Importation" placeholder="Selectionner Document Importation"
+                    [accept]="'.pdf'">
+                  </ngx-mat-file-input>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label for="Document_Transitaire"> Document Transitaire </mat-label>
+                  <ngx-mat-file-input matInput id="Document_Transitaire" name="Document_Transitaire"
+                    formControlName="Document_Transitaire" placeholder="Selectionner Document Transitaire"
+                    [accept]="'.pdf'">
+                  </ngx-mat-file-input>
+                </mat-form-field>
+              </div>
+              <div class="col-md-3 mb-3">
+                <mat-form-field>
+                  <mat-label for="Document_Transport"> Document Transport </mat-label>
+                  <ngx-mat-file-input matInput id="Document_Transport" name="Document_Transport"
+                    formControlName="Document_Transport" placeholder="Selectionner Document Transport"
+                    [accept]="'.pdf'">
+                  </ngx-mat-file-input>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+        <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+          Suivant</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="ListeArticleForm" label=" Articles">
+    <div class='table'>
+      <div class='row2'>
+        <div class='cell1'>
+          <table class="table table-striped ">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Id produit</th>
+                <th>Nom produit</th>
+                <th>Ref FR</th>
+                <th>Qte</th>
+                <th>Prix U DV</th>
+                <th>Total_DV</th>
+                <th>NGP</th>
+                <th>Devise</th>
+                <th>Prix U Déclaré</th>
+                <th>TVA(%)</th>
+                <th>Taxe_TVA</th>
+                <th>Autre_Taxe</th>
+                <th>%Ch</th>
+                <th>Ch Affecté</th>
+                <th>Cout_R_HT</th>
+                <th>Cout_R_TTC</th>
+                <th>Total TTC</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <i class="pe-7s-pen" title="Modifier Article"></i>
+                </td>
+                <td>
+                  <input type="text" size="3" disabled />
+                </td>
+                <td>
+                  <input type="text" disabled />
+                </td>
+                <td>
+                  <input type="text" size="1" disabled />
+                </td>
+                <td>
+                  <input type="text" size="2" disabled />
+                </td>
+                <td>
+                  <input type="text" disabled size="6" />
+                </td>
+
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="6" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <input type="text" size="4" disabled />
+                </td>
+                <td>
+                  <i class="pe-7s-trash" title="Supprimer Article"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='cell '>
+          <div class='cell'>
+            <div>
+              <ng-select bindLabel="nom_Produit" placeholder="Article" appendTo="body" autofocus [searchable]="true"
+                [clearable]="true">
+                <ng-option [value]="">
+                </ng-option>
+              </ng-select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Ref_Article_FR</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Quantité</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Prix U DV</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class='cell'>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Cours Devise</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>NGP</mat-label>
+                <mat-select required>
+                  <mat-option value=""></mat-option>
+                  <mat-option value="NGP1">NGP1</mat-option>
+                  <mat-option value="NGP2">NGP2</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Devise</mat-label>
+                <mat-select required>
+                  <mat-option value=""></mat-option>
+                  <mat-option value="USD">USD</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Prix U Déclaré</mat-label>
+                <input matInput type="text">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="text-center">
+            <button class="btn btn-primary" type="button">Ajouter</button>
+          </div>
+          <div class='cell '>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Taxe 001</mat-label>
+                <div>
+                  <input type="text" id="T001" name="T001" matInput required>
+                </div>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Taxe 105</mat-label>
+                <div>
+                  <input type="text" id="T105" name="T105" matInput required>
+                </div>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Taxe 093</mat-label>
+                <div>
+                  <input type="text" id="T093" name="T093" matInput required>
+                </div>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class='cell '>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Taxe 094</mat-label>
+                <div>
+                  <input type="text" id="T094" name="T094" matInput required>
+                </div>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Taxe 473</mat-label>
+                <div>
+                  <input type="text" id="T473" name="T473" matInput required>
+                </div>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3 mb-3">
+              <mat-form-field>
+                <mat-label>Autre Taxe</mat-label>
+                <div>
+                  <input type="text" id="AutreTaxe" name="AutreTaxe" matInput required>
+                </div>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <label for="Totale_HT">Total_Facture : </label>&nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      <label for="Totale_TVA">Total_Déclaré : </label>&nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      &nbsp;
+      <label for="Totale_TTC">Total_R : </label>&nbsp;
+    </div>
+    <div>
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+        Suivant</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Récaputilation</ng-template>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="Type">Type : </label>&nbsp; {{InformationsGeneralesForm.get('Type').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="N_Facture"> N° Proforma : </label>&nbsp; {{InformationsGeneralesForm.get('N_Proforma').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Date"> Date : </label>&nbsp; {{InformationsGeneralesForm.get('DateEntree').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Fournisseur">Fournisseur: </label>&nbsp; {{InformationsGeneralesForm.get('Fournisseur').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Depot">Local : </label>&nbsp; {{InformationsGeneralesForm.get('Local').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Mode_Paiement"> Mode Paiement :
+          </label>&nbsp; {{InformationsGeneralesForm.get('Mode_Paiement').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for=" Ag_Ttransport">Date Paiement :
+          </label>&nbsp; {{InformationsGeneralesForm.get('DatePaiement').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Charge_Transport"> Type Livraison :
+          </label>&nbsp;{{InformationsGeneralesForm.get('Type_Livraison').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Autre_Charge_Fixe"> Date Livraison : </label>&nbsp;
+          {{InformationsGeneralesForm.get('DateLivraison').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Autre_Charge_Fixe">Ag_Transport : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Ag_Transport').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TVA">Transport_Importation_DV : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Transport_Importation_DV').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TVA">Mode Livraison : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Mode_Livraison').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TVA">Ag_Transitaire : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Ag_Transitaire').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TVA">Assurance_Importation_DT : </label>&nbsp;
+          {{InformationsGeneralesForm.get('Assurance_Importation_DT').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_Facture"> Date Proforma : </label>&nbsp;
+          {{InformationsGeneralesForm.get('DateProforma').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TVA">Date Facture : </label>&nbsp;
+          {{InformationsGeneralesForm.get('DateFacture').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Totale_TTC">Total_TTC_Calculé : </label>&nbsp;
+        </div>
+      </div><br>
+      <div class="col-md-3 mb-3">
+        <label for="Des">Note : </label> &nbsp; {{InformationsGeneralesForm.get('Des').value}}
+      </div>
+    </div>
+    <div>
+      <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+      <button mat-button (click)="stepperbonEntree.reset()" class="btn" style="margin-top: 20px;">
+        Réinitialiser</button>
+      <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+        Valider</button>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Terminé</ng-template>
+    <p>
+      Bon d'entrée Importation ajouté avec succès.</p>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+      </div>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

@@ -1,0 +1,251 @@
+<h1 class="col-xs-8 text-center">Ajouter Local</h1>
+<mat-horizontal-stepper [linear]="Lineaire" #stepperLocal>
+  <mat-step [stepControl]="Informations_Generales_Local">
+    <form [formGroup]="Informations_Generales_Local">
+      <ng-template matStepLabel>Entrez Informations Générales</ng-template>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <mat-form-field hintLabel=" Max 30 caractéres">
+            <mat-label>Nom </mat-label>
+            <input type="text" id="Nom" name="Nom" maxlength="30"
+              [formControl]="Informations_Generales_Local.get('Nom')" matInput placeholder="Nom " required>
+            <mat-error *ngIf="Informations_Generales_Local.get('Nom').invalid">{{MessageErreurNomLocal()}}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Catégorie </mat-label>
+            <mat-select formControlName="Categorie">
+              <mat-option value=""></mat-option>
+              <mat-option *ngFor="let categorie of cat_Local" [value]="categorie.nom">{{categorie.nom}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="Informations_Generales_Local.get('Categorie').invalid">{{MessageErreurCatLocal()}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Adresse </mat-label>
+            <input type="text" id="Adresse" name="Adresse" [formControl]="Informations_Generales_Local.get('Adresse')"
+              matInput required placeholder="Adresse ">
+            <mat-error *ngIf="Informations_Generales_Local.get('Adresse').invalid">{{MessageErreurAdresseLocal()}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Responsable </mat-label>
+            <input type="text" id="Responsable" name="Responsable"
+              [formControl]="Informations_Generales_Local.get('Responsable')" matInput placeholder="Responsable ">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Tél.Mobile </mat-label>
+            <input type="tel" id="Tel_Mobile" name="Tel_Mobile"
+              [formControl]="Informations_Generales_Local.get('Tel_Mobile')" matInput placeholder="+21699999999 ">
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Fax </mat-label>
+            <input type="tel" id="Fax" name="Fax" [formControl]="Informations_Generales_Local.get('Fax')" matInput
+              placeholder="Fax ">
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Adresse E-mail </mat-label>
+            <input type="email" id="Email" name="Email" [formControl]="Informations_Generales_Local.get('Email')"
+              matInput placeholder="Ex. pat@example.com ">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="Informations_Generales_Local.get('Email').invalid">
+              {{MessageErreurEmailLocal()}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Nature Contrat </mat-label>
+            <mat-select formControlName="Nature_Contrat" #NatureContratSelect
+              (selectionChange)='NatureContratSelectionnee(NatureContratSelect.value)'>
+              <mat-option value="Location">Location</mat-option>
+              <mat-option value="Achat">Achat</mat-option>
+            </mat-select>
+
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row" hidden="true" id="DatesContrat">
+        <!-- <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date Début Contrat </mat-label>
+            <input matInput [matDatepicker]="picker3" formControlName="Date_Debut_Contrat" id="Date_Debut_Contrat"
+              name="Date_Debut_Contrat">
+            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+            <mat-datepicker #picker3 [startAt]="date_de_jour"></mat-datepicker>
+          </mat-form-field>
+        </div> -->
+        <!-- <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Date Fin Contrat </mat-label>
+            <input matInput [matDatepicker]="picker4" formControlName="Date_Fin_Contrat" id="Date_Fin_Contrat"
+              name="Date_Fin_Contrat">
+            <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+            <mat-datepicker #picker4 [startAt]="date_de_jour"></mat-datepicker>
+          </mat-form-field>
+        </div> -->
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Piece_Jointe_Contrat </mat-label>
+            <ngx-mat-file-input [formControl]="Informations_Generales_Local.get('Piece_Jointe_Contrat')"
+              placeholder="Choisir Fichier">
+              <mat-icon ngxMatFileInputIcon>folder</mat-icon>
+            </ngx-mat-file-input>
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Nature Frais </mat-label>
+            <mat-select formControlName="Nature_Frais">
+              <mat-option value="Annuel">Annuel</mat-option>
+              <mat-option value="Mensuel">Mensuel</mat-option>
+              <mat-option value="Trimestriel">Trimestriel</mat-option>
+            </mat-select>
+
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Frais</mat-label>
+            <input type="text" id="Frais" name="Frais" [formControl]="Informations_Generales_Local.get('Frais')"
+              matInput>
+          </mat-form-field>
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">
+          Suivant</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="Informations_Specifiques_Local" label="Entrez Informations Spécifiques">
+    <form [formGroup]="Informations_Specifiques_Local">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Largeur(m) </mat-label>
+            <input type="text" id="Largeur" name="Largeur" class="form-control" matInput formControlName="Largeur"
+              placeholder="Largeur ">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Profondeur(m) </mat-label>
+            <input type="text" id="Profondeur" name="Profondeur" class="form-control" matInput
+              formControlName="Profondeur" placeholder="Profondeur ">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Hauteur(m) </mat-label>
+            <input type="text" id="Hauteur" name="Hauteur" class="form-control" matInput formControlName="Hauteur"
+              placeholder="Hauteur ">
+          </mat-form-field>
+        </div>
+        <div class="col-md-3 mb-3">
+          <mat-form-field>
+            <mat-label>Surface(m²) </mat-label>
+            <input type="text" id="Surface" name="Surface" class="form-control" matInput formControlName="Surface"
+              placeholder="Surface ">
+          </mat-form-field>
+        </div>
+      </div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Description </mat-label>
+        <textarea type="text" id="Description" name="Description" class="form-control" matInput
+          formControlName="Description" placeholder="Description "></textarea>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+        <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;">Suivant</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Récapitulation</ng-template>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local"> Nom de local :
+          </label> {{Informations_Generales_Local.get('Nom').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local">Catégorie local :
+          </label> {{Informations_Generales_Local.get('Categorie').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local">Adresse local :
+          </label> {{Informations_Generales_Local.get('Adresse').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local">Responsable local :
+          </label> {{Informations_Generales_Local.get('Responsable').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local">Tél.Mobile local :
+          </label> {{Informations_Generales_Local.get('Tel_Mobile').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local">Fax local :
+          </label> {{Informations_Generales_Local.get('Fax').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local">Email local :
+          </label> {{Informations_Generales_Local.get('Email').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Generales_Local">Nature Contrat local :
+          </label> {{Informations_Generales_Local.get('Nature_Contrat').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Specifiques_Local">Largeur local: </label>
+          {{Informations_Specifiques_Local.get('Largeur').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Specifiques_Local">Profondeur local: </label>
+          {{Informations_Specifiques_Local.get('Profondeur').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Specifiques_Local">Hauteur local: </label>
+          {{Informations_Specifiques_Local.get('Hauteur').value}}
+        </div>
+        <div class="col-md-3 mb-3">
+          <label for="Informations_Specifiques_Local">Description : </label>
+          {{Informations_Specifiques_Local.get('Description').value}}
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Précédent</button>
+        <button mat-button (click)="stepperLocal.reset()" class="btn" style="margin-top: 20px;">
+          Réinitialiser</button>
+        <button mat-button matStepperNext class="btn btn-primary" style="margin-top: 20px;" (click)="ajouterLocal()">
+          Valider</button>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Terminé</ng-template>
+    <p>
+      Local ajouté avec succès.</p>
+    <div id="contentToConvert" style="margin-left: 45px;" class="main-container">
+      <div class="row">
+        <div>
+          <button mat-button matStepperPrevious class="btn btn-default" style="margin-top: 20px;">Retour</button>
+        </div>
+      </div>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

@@ -30,7 +30,6 @@
           <th></th>
           <th>Id produit</th>
           <th>Nom produit</th>
-          <th>Qte</th>
           <th>Prix U HT</th>
           <th>TVA(%)</th>
           <th>Fodec(%)</th>
@@ -46,10 +45,6 @@
           <td>
             <input [ngModel]="item.nom_Produit" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
               name="{{item.nom_Produit}}" disabled />
-          </td>
-          <td>
-            <input [ngModel]="Quantite" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
-              name="{{Quantite}}" disabled />
           </td>
           <td>
             <input [ngModel]="item.prixU" [ngModelOptions]="{standalone: true}" class="form-control" type="text"

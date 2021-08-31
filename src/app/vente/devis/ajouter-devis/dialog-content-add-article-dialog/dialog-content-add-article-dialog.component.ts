@@ -151,7 +151,6 @@ filterByChamp(event : any ){
   this.loading = true;  
   this.prouduits = [];
   this.value = event.target.value
-  console.log(this.champ, this.value);
   if((this.prouduits.length =0) || (this.champ ==='') || (this.champ == undefined)){
     Swal.fire("Produit non trouvé!");
     this.loading = false;
@@ -164,7 +163,7 @@ filterByChamp(event : any ){
       data.body.map((ele: any)=>{
         this.devisService.getInfoProductByIdFromStock(ele.id_Produit.toString()).subscribe((result : any)=>{
           if(result.body != null){
-            this.devisService.getArticleById(ele.id_Produit.toString()).subscribe((res) => { 
+            this.devisService.getArticleById(ele.id_Produit.toString()).subscribe((res) => {    
               this.dataArticle = res.body; 
               this.newAttribute.id_Produit = ele.id_Produit;
               this.newAttribute.nom_Produit = this.dataArticle.nom_Produit;
@@ -185,9 +184,9 @@ filterByChamp(event : any ){
               }
            
                 this.fodec = this.newAttribute.fodec;
-                this.newAttribute.prixU = result.body.prix; 
-                this.newAttribute.quantite =result.body.quantite;
-                this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                this.newAttribute.prixU = Number(result.body.prix).toFixed(3); 
+                this.newAttribute.quantite =1;
+                this.newAttribute.finalPrice=  Number(this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
 
                 this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
                 this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
@@ -243,7 +242,7 @@ filterByCodeAbare(code : string){
         console.log('ele', ele);    
         this.devisService.getInfoProductByIdFromStock(ele.id_Produit.toString()).subscribe((result : any)=>{
           if(result.body != null){
-            this.devisService.getArticleById(ele.id_Produit.toString()).subscribe((res) => { 
+            this.devisService.getArticleById(ele.id_Produit.toString()).subscribe((res) => {               
               this.dataArticle = res.body; 
               this.newAttribute.id_Produit = ele.id_Produit;
               this.newAttribute.nom_Produit = this.dataArticle.nom_Produit;
@@ -264,10 +263,10 @@ filterByCodeAbare(code : string){
               }
            
                 this.fodec = this.newAttribute.fodec;
-                this.newAttribute.prixU = result.body.prix; 
-                this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                this.newAttribute.prixU = Number(result.body.prix).toFixed(3); 
+                this.newAttribute.finalPrice=  Number(this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
 
-                this.newAttribute.quantite =result.body.quantite;
+                this.newAttribute.quantite =1;
                 this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
                 this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
                 this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
@@ -328,7 +327,7 @@ getKeyWord(){
     this.devisService.getListChampsProduit().subscribe(res => this.keyWord = res)
   }
 
-  sendProd(){
+sendProd(){
     this.dialogRef.close({ event: 'close', data: this.prodChecked });
     this.dialogRef.afterClosed().subscribe(result => {  
       this.fromPage = result; 

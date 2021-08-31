@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { DevisService } from '../../services/devis.service';
 import { DialogContentAddArticleDialogComponent } from './dialog-content-add-article-dialog/dialog-content-add-article-dialog.component';
 import { UpdateDialogOverviewArticleDialogComponent } from './update-dialog-overview-article-dialog/update-dialog-overview-article-dialog.component';
+import { VoirPlusDialogComponent } from './voir-plus-dialog/voir-plus-dialog.component';
 //** import pdf maker */
 const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
@@ -29,7 +30,7 @@ export class AjouterDevisComponent implements OnInit {
   addArticleFormGroup: FormGroup;
   addReglementFormGroup: FormGroup;
   modepaiement: any =[{id:1,name:'Virement'},{id:2,name:'Chèque'},{id:3,name:'Carte monétique'},{id:4,name:'Espèces'}]; 
-  currency:  string []= ['Euro', 'DT', 'Dollar'];
+  currency:  string []= ['Euro', 'TND', 'Dollar'];
   show : number = 0; 
   visibel : boolean = false; 
   ligneOne: boolean = false;
@@ -110,7 +111,7 @@ export class AjouterDevisComponent implements OnInit {
   verifTotal: boolean = true;
   sum = 0;
   modePaiement : any ; 
-  typeDevis: string = '';
+  typeDevis: string = 'Estimatif';
   isCompleted: boolean = false;
   getProdId : boolean = false; 
   getProdCode: boolean = false; 
@@ -175,6 +176,19 @@ export class AjouterDevisComponent implements OnInit {
       valueTree : ['0',],
       note: ['',]
     });
+  }
+
+  // viewPlus 
+  viewPlus(prod: any ){
+    const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
+      width: '100%', data : {
+        formPage: prod
+      }
+    });
+    dialogRef.afterClosed().subscribe(()=>{
+      console.log('Closed');
+      
+    })
   }
   //** Convert the Image in base64  */
   getBase64ImageFromURL(url : any) {
@@ -287,7 +301,7 @@ export class AjouterDevisComponent implements OnInit {
     }
   }
  
-  //** open Dialog */
+  //** open Dialog  add Articles*/
   openDialog(){
     const dialogRef = this.dialog.open(DialogContentAddArticleDialogComponent,{
       width: '100%',data: {
@@ -334,6 +348,8 @@ export class AjouterDevisComponent implements OnInit {
         }
 
       });
+      this.calculTotal();
+      this.calculAssiettes();
   }
   //** Plz choose at least one product in the next step */
   nextStep(stepper : MatStepper){
@@ -923,6 +939,8 @@ export class AjouterDevisComponent implements OnInit {
         }else{
           item.etat = 'Dispo.'
         } 
+        this.calculTotal();
+        this.calculAssiettes();
       });
     },1000);
     this.calculTotal();
@@ -964,6 +982,7 @@ export class AjouterDevisComponent implements OnInit {
     var typeElement = doc.createElement("Type");
     var idFrElement = doc.createElement("Id_Fr");
     var idCLTElement = doc.createElement("Id_Clt");
+    var typeDevise = doc.createElement('Devise')
     var adress = doc.createElement("Local"); 
     var modepaiement = doc.createElement("Mode_Paiement");
     var totalHTBrut = doc.createElement("TotalHTBrut");
@@ -1028,6 +1047,7 @@ export class AjouterDevisComponent implements OnInit {
     
     var nameEtat ="En cours";
     var typeName = "Devis";
+    var devise = this.infoFormGroup.get('devise').value;
     var signaler_Prob = doc.createTextNode("True");
     var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
     var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
@@ -1047,6 +1067,7 @@ export class AjouterDevisComponent implements OnInit {
     idCLTElement.appendChild(id_Clt);
     idFrElement.appendChild(id_Fr);
     typeElement.innerHTML = typeName;
+    typeDevise.innerHTML=devise
     adress.appendChild(adressName);
     modepaiement.appendChild(modepaiementName);
 
@@ -1062,6 +1083,7 @@ export class AjouterDevisComponent implements OnInit {
     infoElement.appendChild(typeElement);
     infoElement.appendChild(adress);
     infoElement.appendChild(modepaiement);
+    infoElement.appendChild(typeDevise);
 
     total.appendChild(totalHTBrut);
     total.appendChild(totalRemise);
@@ -1077,6 +1099,7 @@ export class AjouterDevisComponent implements OnInit {
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.devisArticls[i].id_Produit
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.devisArticls[i].etat;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.devisArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.devisArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.devisArticls[i].produits_simple;
@@ -1119,6 +1142,7 @@ export class AjouterDevisComponent implements OnInit {
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat)
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1141,7 +1165,8 @@ export class AjouterDevisComponent implements OnInit {
         this.devisArticls[i].signaler_probleme= true; 
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.devisArticls[i].id_Produit;
-        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit;        
+        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit; 
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.devisArticls[i].etat;       
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.devisArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.devisArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.devisArticls[i].produits_simple;
@@ -1172,6 +1197,7 @@ export class AjouterDevisComponent implements OnInit {
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1195,6 +1221,7 @@ export class AjouterDevisComponent implements OnInit {
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.devisArticls[i].id_Produit;
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit;
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.devisArticls[i].etat;
         var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.devisArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.devisArticls[i].n_Serie;
@@ -1214,6 +1241,7 @@ export class AjouterDevisComponent implements OnInit {
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1258,17 +1286,27 @@ export class AjouterDevisComponent implements OnInit {
 
     //** Generate the PDF file  */
   async generatePDF(id :any){
-    // check type de reglement 
-    let typeRegTwo : any ; 
-    if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
-                typeRegTwo ='Espèces';
-               else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
-                 typeRegTwo ='Virement';
-               }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
-                 typeRegTwo ='Chèque';
-              }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
-                 typeRegTwo ='monétique';
-              }
+        // check type de reglement 
+        let typeRegTwo : any ; 
+        let typeRegTree: any ; 
+        if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
+          typeRegTwo ='Espèces';
+        else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
+          typeRegTwo ='Virement';
+        }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
+          typeRegTwo ='Chèque';
+        }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
+                    typeRegTwo ='monétique';
+        }
+        if(this.addReglementFormGroup.get('typeRegTree').value=='4')
+          typeRegTree ='Espèces';
+        else if (this.addReglementFormGroup.get('typeRegTree').value=='1'){
+          typeRegTree ='Virement';
+        }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
+          typeRegTree ='Chèque';
+        }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
+                    typeRegTree ='monétique';
+        }
         // check if this "Devis" is Proforma or "simple/estimatif"
         let imgUrl : string ; 
         if( this.typeDevis === 'Estimatif'){
@@ -1290,16 +1328,6 @@ export class AjouterDevisComponent implements OnInit {
           content: [
            { columns : [
             {
-              text: 'Informations Générales :' ,
-              fontSize: 15,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              text: '\t'
-            },
-            {
               text:'Devis n° ' +id + ' | ' + this.date+ '\n\n',
               fontSize: 15,
               alignment: 'left',
@@ -1315,8 +1343,7 @@ export class AjouterDevisComponent implements OnInit {
                 {   
                   text: 
                   'Type Devis :'+ '\t' + this.infoFormGroup.get('typeDevis').value + '\n' 
-                  + 'Devise avec :' + '\t' + this.infoFormGroup.get('devise').value + '\n'
-                  + 'Nom Fournisseur :' + '\t' + 'InfoNet' + '\n\n'
+                  + 'Nom du responsable :' + '\t' + '' + '\n\n'
                 ,
                 fontSize: 12,
                 alignment: 'left',
@@ -1329,9 +1356,6 @@ export class AjouterDevisComponent implements OnInit {
                   text: 
                  'Code Client :' + '\t' + this.infoFormGroup.get('custemerName').value.id_Clt + '\n'
                   + 'Nom Client :' + '\t' + this.infoFormGroup.get('custemerName').value.nom_Client + '\n'
-                  + 'Adresse :' + '\t' + this.infoFormGroup.get('adresse').value + '\n\n' 
-                  
-                
                   ,
                   fontSize: 12,
                   alignment: 'left',
@@ -1343,7 +1367,7 @@ export class AjouterDevisComponent implements OnInit {
               text: '\n'
             },
             {
-              text: 'Mode Paiement :' ,
+              text: 'Modalité du paiement :' ,
               fontSize: 20,
               alignment: 'left',
               color: 'black',
@@ -1355,9 +1379,21 @@ export class AjouterDevisComponent implements OnInit {
             {
               columns: [
                 {
-                  text:'Type de règlement n° 1: ' + '\t'+this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
-                  +'Type de règlement n° 2: ' + '\t'+ typeRegTwo +' : '+ this.addReglementFormGroup.get('valueTwo').value+'\n'
-                  +'Type de règlement n° 3: ' + '\t'+this.addReglementFormGroup.get('typeRegTree').value +' : '+ this.addReglementFormGroup.get('valueTree').value +'\n'
+                  ul : [
+                  this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
+                  ]
+                },{
+                  ul : [
+                    (typeRegTwo !== undefined)?
+                    typeRegTwo +' : '+Number( this.addReglementFormGroup.get('valueTwo').value).toFixed(3)+'\n' : 
+                    ''
+                    ]
+                },{
+                  ul:[
+                    (typeRegTree !==  undefined)?
+                    typeRegTree +' : '+ Number(this.addReglementFormGroup.get('valueTree').value).toFixed(3)+'\n' : 
+                    ''
+                  ]
                 }
               ]
             },
@@ -1374,7 +1410,7 @@ export class AjouterDevisComponent implements OnInit {
             {
               text: '\n\n'
             },
-            this.generateTable(this.devisArticls, ['Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
+            this.generateTable(this.devisArticls, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+this.infoFormGroup.get('devise').value+')', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
             {
               text: '\n\n\n'
             },
@@ -1399,12 +1435,12 @@ export class AjouterDevisComponent implements OnInit {
                   table: {
                     heights: [20],
                     body: [
-                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut, alignment: 'right' }],
-                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff, alignment: 'right' }],
-                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT, alignment: 'right' }],
-                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec, alignment: 'right' }],
-                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA, alignment: 'right' }],
-                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc, alignment: 'right' }],
+                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff +' ' +this.infoFormGroup.get('devise').value ,alignment: 'right' }],
+                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                     ]
                   },
                   layout: 'lightHorizontalLines',

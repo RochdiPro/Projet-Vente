@@ -1,0 +1,72 @@
+<div class="row mat-elevation-z8">
+    <!-- Lignes d'article  -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id produit</th>
+                <th>Nom produit</th>
+                <th>Qte</th>
+                <th>Prix U HT</th>
+                <th>TVA(%)</th>
+                <th>Remise(%)</th>
+                <th>Fodec(%)</th>
+                <th>M_TVA_U</th>
+                <th>Prix U TTC</th>
+                <th>Total HT</th>
+                <th>Total TTC</th>
+                <th>Disponibilité</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input [ngModel]="item.id_Produit" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.id_Produit}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.nom_Produit" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.nom_Produit}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.quantite" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.quantite}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.prixU" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
+                        name="{{item.prixU}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.tva" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
+                        name="{{item.tva}}" size="1" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.remise" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.remise}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.fodec" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
+                        name="{{item.fodec}}" disabled size="1" />
+                </td>
+                <td>
+                    <input [ngModel]="item.montant_TVA" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.montant_TVA}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.prix_U_TTC" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.prix_U_TTC}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.total_HT" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.total_HT}}" disabled />
+                </td>
+                <td>
+                    <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}" class="form-control"
+                        type="text" name="{{item.totale_TTC}}" disabled />
+                </td>
+                <td>
+                    <i title="Etat">{{item.etat}}</i>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

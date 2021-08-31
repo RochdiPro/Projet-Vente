@@ -19,6 +19,7 @@ import { UpdateDialogOverviewArticleDialogComponent } from './ajouter-devis/upda
 import { DevisRoutingModule } from './devis-routing.module';
 import { ListerDevisComponent } from './lister-devis/lister-devis.component';
 import { UpdateDevisComponent } from './update-devis/update-devis.component';
+import { VoirPlusDialogComponent } from './ajouter-devis/voir-plus-dialog/voir-plus-dialog.component';
 
 
 
@@ -28,7 +29,7 @@ import { UpdateDevisComponent } from './update-devis/update-devis.component';
 
 
 @NgModule({
-  declarations: [AjouterDevisComponent, ListerDevisComponent, DialogContentAddArticleDialogComponent, UpdateDialogOverviewArticleDialogComponent, UpdateDevisComponent],
+  declarations: [AjouterDevisComponent, ListerDevisComponent, DialogContentAddArticleDialogComponent, UpdateDialogOverviewArticleDialogComponent, UpdateDevisComponent, VoirPlusDialogComponent],
   imports: [
     CommonModule,
     DevisRoutingModule,

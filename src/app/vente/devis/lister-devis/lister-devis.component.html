@@ -2,6 +2,9 @@
 <br>
 <br>
 <div>
+    <div class="row">
+        <h5 class="title">Vous pouvez filtrer le résultat: </h5>
+    </div>
     <div class="container">
         <div class="row ">
             <div class="col-md-4">
@@ -41,10 +44,6 @@
             <ng-container matColumnDef="date_Creation">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date </th>
                 <td mat-cell *matCellDef="let element">{{element.date_Creation | date: 'dd/MM/YYYY' }} </td>
-            </ng-container>
-            <ng-container matColumnDef="id_Responsable">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Id FR</th>
-                <td mat-cell *matCellDef="let element"> {{element.id_Responsable}}</td>
             </ng-container>
             <ng-container matColumnDef="mode_Paiement">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Mode Paiement</th>

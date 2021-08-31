@@ -29,7 +29,7 @@ export class ListerDevisComponent implements OnInit {
   clt : any;
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
-  displayedColumns: string[] = ['modifier','id_Devis', 'type', 'date_Creation', 'id_Responsable', 'mode_Paiement', 'total_ttc', 'supprimer', 'exporter_pdf','Voir_pdf'];
+  displayedColumns: string[] = ['modifier','id_Devis', 'type', 'date_Creation', 'mode_Paiement', 'total_ttc', 'supprimer', 'exporter_pdf','Voir_pdf'];
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
 
@@ -178,18 +178,30 @@ export class ListerDevisComponent implements OnInit {
         xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
           data =res.Devis;   
         });
+        console.log(data);
+        
         this.xmldata = data;        
-            // check type de reglement 
-    let typeRegTwo : any ; 
-              if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
-                typeRegTwo ='Espèces';
-               else if  (data.Type_Reglement[0].TypeRegTwo[0]=='1'){
-                 typeRegTwo ='Virement';
-               }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
-                 typeRegTwo ='Chèque';
-              }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
-                 typeRegTwo ='monétique';
-              }
+        // check type de reglement 
+        let typeRegTwo : any ; 
+        if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
+          typeRegTwo ='Espèces';
+          else if  (data.Type_Reglement[0].TypeRegTwo[0]=='1'){
+            typeRegTwo ='Virement';
+          }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
+            typeRegTwo ='Chèque';
+        }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
+            typeRegTwo ='monétique';
+        }
+        let typeRegTree : any ; 
+        if (data.Type_Reglement[0].TypeRegTree[0]=='4')
+          typeRegTree ='Espèces';
+          else if  (data.Type_Reglement[0].TypeRegTree[0]=='1'){
+            typeRegTree ='Virement';
+          }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
+            typeRegTree ='Chèque';
+        }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
+            typeRegTree ='monétique';
+        }
         
         // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
           if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
@@ -273,17 +285,7 @@ export class ListerDevisComponent implements OnInit {
               content: [
                 { columns : [
                   {
-                    text: 'Informations Générales :' ,
-                    fontSize: 15,
-                    alignment: 'left',
-                    color: 'black',
-                    bold: true
-                  },
-                  {
-                    text: '\t'
-                  },
-                  {
-                    text:'Devis n° ' +devis.id_Devis +'| ' +  this.date,
+                    text:'Devis n° ' +devis.id_Devis +' | ' +  this.date+'\n\n',
                     fontSize: 15,
                     alignment: 'left',
                     color: 'black',
@@ -298,9 +300,8 @@ export class ListerDevisComponent implements OnInit {
                     {   
                       text: 
                       'Type Devis :'+ '\t' + devis.type+ '\n' 
-                      + 'Devise avec :' + '\t' +'DT'+ '\n'
-                      + 'Nom Fournisseur :' + '\t' + 'InfoNet' + '\n'
-                    ,
+                      + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                      ,
                     fontSize: 12,
                     alignment: 'left',
                     color: 'black',
@@ -312,7 +313,6 @@ export class ListerDevisComponent implements OnInit {
                       text: 
                       'Code Client :' + '\t' + devis.id_Clt + '\n'
                       + 'Nom Client :' + '\t' + this.clt.nom_Client + '\n'
-                      + 'Adresse :' + '\t' + this.clt.adresse+ '\n' 
                       ,
                       fontSize: 12,
                       alignment: 'left',
@@ -324,7 +324,7 @@ export class ListerDevisComponent implements OnInit {
                   text: '\n'
                 },
                 {
-                  text: 'Mode Paiement :' ,
+                  text: 'Modalité du paiement :' ,
                   fontSize: 20,
                   alignment: 'left',
                   color: 'black',
@@ -336,9 +336,21 @@ export class ListerDevisComponent implements OnInit {
                 {
                   columns: [
                     {
-                      text:'Type de règlement n° 1: ' + '\t'+devis.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0] +'\n'
-                      +'Type de règlement n° 2: ' + '\t'+ typeRegTwo +' : '+data.Type_Reglement[0].ValueRegTwo[0]+'\n'
-                      +'Type de règlement n° 3: ' + '\t'+' : '+ data.Type_Reglement[0].ValueRegTree[0]   +'\n'
+                      ul : [
+                        devis.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                      ]
+                    },{
+                      ul : [
+                        (typeRegTwo !== undefined)?
+                        typeRegTwo +' : '+Number(data.Type_Reglement[0].ValueRegTwo[0]).toFixed(3)+'\n' : 
+                        ''
+                        ]
+                    },{
+                      ul:[
+                        (typeRegTree !==  undefined)?
+                        typeRegTree +' : '+ Number(data.Type_Reglement[0].ValueRegTree[0]).toFixed(3) +'\n' : 
+                        ''
+                      ]
                     }
                   ]
                 },
@@ -355,7 +367,7 @@ export class ListerDevisComponent implements OnInit {
                 {
                   text: '\n\n'
                 },
-                this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
+                this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+data["Informations-Generales"][0].Devise+')',  'Remise', 'Quantite', 'TVA', 'Total_HT']),
                 {
                   text: '\n\n\n'
                 },
@@ -380,12 +392,12 @@ export class ListerDevisComponent implements OnInit {
                       table: {
                         heights: [20],
                         body: [
-                          [{ text: 'Total H.T Brut', alignment: 'left' }, { text: data.Total[0].TotalHTBrut[0], alignment: 'right' }],
-                          [{ text: 'Total Remise', alignment: 'left' }, { text: data.Total[0].TotalRemise[0], alignment: 'right' }],
-                          [{ text: 'Total H.T Net', alignment: 'left' }, { text: data.Total[0].TotalHTNet[0], alignment: 'right' }],
-                          [{ text: 'Total Fodec', alignment: 'left' }, { text: data.Total[0].TotalFodec[0], alignment: 'right' }],
-                          [{ text: 'Total T.V.A', alignment: 'left' }, { text: data.Total[0].TotalTVA[0], alignment: 'right' }],
-                          [{ text: 'Total T.T.C', alignment: 'left' }, { text: data.Total[0].TotalTTC[0], alignment: 'right' }],
+                          [{ text: 'Total H.T Brut', alignment: 'left' }, { text: data.Total[0].TotalHTBrut[0] +' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total Remise', alignment: 'left' }, { text: data.Total[0].TotalRemise[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total H.T Net', alignment: 'left' }, { text: data.Total[0].TotalHTNet[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total Fodec', alignment: 'left' }, { text: data.Total[0].TotalFodec[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total T.V.A', alignment: 'left' }, { text: data.Total[0].TotalTVA[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total T.T.C', alignment: 'left' }, { text: data.Total[0].TotalTTC[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
                         ]
                       },
                       layout: 'lightHorizontalLines',
@@ -462,16 +474,26 @@ export class ListerDevisComponent implements OnInit {
         });
         this.xmldata = data;
                     // check type de reglement 
-    let typeRegTwo : any ; 
-    if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
-      typeRegTwo ='Espèces';
-     else if  (data.Type_Reglement[0].TypeRegTwo[0]=='1'){
-       typeRegTwo ='Virement';
-     }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
-       typeRegTwo ='Chèque';
-    }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
-       typeRegTwo ='monétique';
-    }
+        let typeRegTwo : any ; 
+        if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
+          typeRegTwo ='Espèces';
+        else if  (data.Type_Reglement[0].TypeRegTwo[0]=='1'){
+          typeRegTwo ='Virement';
+        }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
+          typeRegTwo ='Chèque';
+        }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
+          typeRegTwo ='monétique';
+        }
+        let typeRegTree : any ; 
+        if (data.Type_Reglement[0].TypeRegTree[0]=='4')
+          typeRegTree ='Espèces';
+          else if  (data.Type_Reglement[0].TypeRegTree[0]=='1'){
+            typeRegTree ='Virement';
+          }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
+            typeRegTree ='Chèque';
+        }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
+            typeRegTree ='monétique';
+        }
         // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
           if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
           for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
@@ -554,17 +576,7 @@ export class ListerDevisComponent implements OnInit {
               content: [
                 { columns : [
                   {
-                    text: 'Informations Générales :' ,
-                    fontSize: 15,
-                    alignment: 'left',
-                    color: 'black',
-                    bold: true
-                  },
-                  {
-                    text: '\t'
-                  },
-                  {
-                    text:'Devis n° ' +devis.id_Devis +'| ' +  this.date,
+                    text:'Devis n° ' +devis.id_Devis +' | ' +  this.date+'\n\n',
                     fontSize: 15,
                     alignment: 'left',
                     color: 'black',
@@ -579,9 +591,8 @@ export class ListerDevisComponent implements OnInit {
                     {   
                       text: 
                       'Type Devis :'+ '\t' + devis.type+ '\n' 
-                      + 'Devise avec :' + '\t' +'DT'+ '\n'
-                      + 'Nom Fournisseur :' + '\t' + 'InfoNet' + '\n'
-                    ,
+                      + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                      ,
                     fontSize: 12,
                     alignment: 'left',
                     color: 'black',
@@ -593,7 +604,6 @@ export class ListerDevisComponent implements OnInit {
                       text: 
                       'Code Client :' + '\t' + devis.id_Clt + '\n'
                       + 'Nom Client :' + '\t' + this.clt.nom_Client + '\n'
-                      + 'Adresse :' + '\t' + this.clt.adresse+ '\n' 
                       ,
                       fontSize: 12,
                       alignment: 'left',
@@ -605,7 +615,7 @@ export class ListerDevisComponent implements OnInit {
                   text: '\n'
                 },
                 {
-                  text: 'Mode Paiement :' ,
+                  text: 'Modalité du paiement :' ,
                   fontSize: 20,
                   alignment: 'left',
                   color: 'black',
@@ -617,9 +627,21 @@ export class ListerDevisComponent implements OnInit {
                 {
                   columns: [
                     {
-                      text:'Type de règlement n° 1: ' + '\t'+devis.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0] +'\n'
-                      +'Type de règlement n° 2: ' + '\t'+ typeRegTwo +' : '+data.Type_Reglement[0].ValueRegOne[0]+'\n'
-                      +'Type de règlement n° 3: ' + '\t'+' : '+ data.Type_Reglement[0].ValueRegTree[0]   +'\n'
+                      ul : [
+                        devis.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                      ]
+                    },{
+                      ul : [
+                        (typeRegTwo !== undefined)?
+                        typeRegTwo +' : '+Number(data.Type_Reglement[0].ValueRegTwo[0]).toFixed(3)+'\n' : 
+                        ''
+                        ]
+                    },{
+                      ul:[
+                        (typeRegTree !==  undefined)?
+                        typeRegTree +' : '+ Number(data.Type_Reglement[0].ValueRegTree[0]).toFixed(3) +'\n' : 
+                        ''
+                      ]
                     }
                   ]
                 },
@@ -636,7 +658,7 @@ export class ListerDevisComponent implements OnInit {
                 {
                   text: '\n\n'
                 },
-                this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
+                this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+data["Informations-Generales"][0].Devise+')',  'Remise', 'Quantite', 'TVA', 'Total_HT']),
                 {
                   text: '\n\n\n'
                 },
@@ -661,12 +683,12 @@ export class ListerDevisComponent implements OnInit {
                       table: {
                         heights: [20],
                         body: [
-                          [{ text: 'Total H.T Brut', alignment: 'left' }, { text: data.Total[0].TotalHTBrut[0], alignment: 'right' }],
-                          [{ text: 'Total Remise', alignment: 'left' }, { text: data.Total[0].TotalRemise[0], alignment: 'right' }],
-                          [{ text: 'Total H.T Net', alignment: 'left' }, { text: data.Total[0].TotalHTNet[0], alignment: 'right' }],
-                          [{ text: 'Total Fodec', alignment: 'left' }, { text: data.Total[0].TotalFodec[0], alignment: 'right' }],
-                          [{ text: 'Total T.V.A', alignment: 'left' }, { text: data.Total[0].TotalTVA[0], alignment: 'right' }],
-                          [{ text: 'Total T.T.C', alignment: 'left' }, { text: data.Total[0].TotalTTC[0], alignment: 'right' }],
+                          [{ text: 'Total H.T Brut', alignment: 'left' }, { text: data.Total[0].TotalHTBrut[0] +' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total Remise', alignment: 'left' }, { text: data.Total[0].TotalRemise[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total H.T Net', alignment: 'left' }, { text: data.Total[0].TotalHTNet[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total Fodec', alignment: 'left' }, { text: data.Total[0].TotalFodec[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total T.V.A', alignment: 'left' }, { text: data.Total[0].TotalTVA[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total T.T.C', alignment: 'left' }, { text: data.Total[0].TotalTTC[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
                         ]
                       },
                       layout: 'lightHorizontalLines',

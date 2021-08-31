@@ -124,12 +124,10 @@
               <th>TVA(%)</th>
               <th>Remise(%)</th>
               <th>Fodec(%)</th>
-              <th>M_TVA_U</th>
-              <th>Prix U TTC</th>
-              <th>Total HT</th>
               <th>Total TTC</th>
-              <th></th>
-              <th></th>
+              <th>Disponibilité</th>
+              <th>Voir plus</th>
+              <th>Supprimer</th>
             </tr>
           </thead>
           <tbody>
@@ -167,23 +165,13 @@
                   name="{{item.fodec}}" disabled size="1" />
               </td>
               <td>
-                <input [ngModel]="item.montant_TVA" [ngModelOptions]="{standalone: true}" class="form-control"
-                  type="text" name="{{item.montant_TVA}}" disabled />
-              </td>
-              <td>
-                <input [ngModel]="item.prix_U_TTC" [ngModelOptions]="{standalone: true}" class="form-control"
-                  type="text" name="{{item.prix_U_TTC}}" disabled />
-              </td>
-              <td>
-                <input [ngModel]="item.total_HT" [ngModelOptions]="{standalone: true}" class="form-control" type="text"
-                  name="{{item.total_HT}}" disabled />
-              </td>
-              <td>
                 <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}" class="form-control"
                   type="text" name="{{item.totale_TTC}}" disabled />
               </td>
               <td>
                 <i title="Etat">{{item.etat}}</i>
+              </td>
+              <td> <i class="pe-7s-look btn-b" title="Voir plus" (click)="viewPlus(item)"></i>
               </td>
               <td>
                 <i class="pe-7s-trash" (click)="deleteItemValue(i)" title="Supprimer article"></i>
@@ -265,7 +253,7 @@
 
   <!-- Therd Step -->
   <mat-step [stepControl]="addReglementFormGroup" [completed]="isCompleted">
-    <ng-template matStepLabel>Règlement Devis</ng-template>
+    <ng-template matStepLabel>Modalité du paiement</ng-template>
     <form [formGroup]="addReglementFormGroup">
       <br>
       <br>
@@ -345,7 +333,7 @@
     </form>
   </mat-step>
   <!-- Last step -->
-  <mat-step label="Imprimer le devis">
+  <mat-step label="Enregistrer & Imprimer le devis">
     <form>
       <br>
       <br>

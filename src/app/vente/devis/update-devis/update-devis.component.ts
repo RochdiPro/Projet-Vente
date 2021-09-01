@@ -335,7 +335,7 @@ export class UpdateDevisComponent implements OnInit {
           }
         });
         
-          if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
+        if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
           for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
           { 
             this.newAttribute = {};
@@ -943,7 +943,6 @@ export class UpdateDevisComponent implements OnInit {
         totalTTc_reg +=Number(this.devisArticls[i].totale_TTC);
       }
       addPrice =   Number(totalTTc_reg - this.totalTTc_reg).toFixed(3);
-      console.log(addPrice);
       if(addPrice<0){
         this.addReglementFormGroup.controls['valueOne'].setValue(Number(totalTTc_reg).toFixed(3));
         this.addReglementFormGroup.controls['valueTwo'].setValue(Number(0).toFixed(3))
@@ -969,7 +968,9 @@ export class UpdateDevisComponent implements OnInit {
   checkTotalTTC(stepper : MatStepper){
       this.isCompleted= false;
       this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));      
-      if(this.sum!=Number(this.totalTTc)){
+      console.log(this.sum);
+      
+      if(Number(this.sum).toFixed(3)!=Number(this.totalTTc).toFixed(3)){
         this.isCompleted= false;
         Swal.fire( 
         'Attention! vérifiez le totale',
@@ -1686,7 +1687,7 @@ export class UpdateDevisComponent implements OnInit {
     formData.append('Date_Creation', this.latest_date);
     formData.append('Description',this.addReglementFormGroup.get('note').value);
     formData.append('Frais_Livraison',frais_Livraison);
-    formData.append('Etat','En cours'); 
+    formData.append('Etat',this.devisData.etat); 
     formData.append('Type',this.infoFormGroup.get('typeDevis').value );
     formData.append('Total_HT_Brut', this.totalHTBrut);
     formData.append('Total_Remise', this.remiseDiff);

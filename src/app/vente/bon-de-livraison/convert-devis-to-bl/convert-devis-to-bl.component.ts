@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -126,6 +125,8 @@ export class ConvertDevisToBlComponent implements OnInit {
   nom_client : string = ''; 
   adresse_clt : string = ''; 
   client_id : string = ''
+  valueRegTree : any ; 
+  id_modeP_typeTree: any ;
   
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
@@ -135,7 +136,6 @@ export class ConvertDevisToBlComponent implements OnInit {
     this.subscription = interval(10000).subscribe((v) => {
       this.calculTotal();
       this.calculAssiettes();
-      this.modePaiement = this.infoFormGroup.get('modePaiement').value;
     });
    }
 
@@ -209,7 +209,6 @@ export class ConvertDevisToBlComponent implements OnInit {
       this.id_client = this.devisData.id_Clt
       this.typeDevis = this.devisData.type; 
       this.modePaiement = this.devisData.mode_Paiement;
-      this.devise = 'DT'
       this.note = this.devisData.description;  
       this.getClientId(this.id_client.toString());
     }); 
@@ -226,16 +225,18 @@ export class ConvertDevisToBlComponent implements OnInit {
           let data : any; 
           xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{      
             data =res.Devis;
+            this.devise= data["Informations-Generales"][0].Devise[0]
             this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
             this.totalMontantFodec= data.Total[0].TotalFodec[0];
             this.totalRemise = data.Total[0].TotalRemise[0];
             this.totalHT = data.Total[0].TotalHTNet[0];
             this.totalMontantTVA = data.Total[0].TotalTVA[0];
             this.totalTTc = data.Total[0].TotalTTC[0];
-            this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];          
+            this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];
             this.id_modeP_typeTwo = data.Type_Reglement[0].TypeRegTwo[0];
+            this.id_modeP_typeTree = data.Type_Reglement[0].TypeRegTree[0]
             this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
-            console.log(typeof(this.id_modeP_typeTwo));
+            this.valueRegTree = data.Type_Reglement[0].ValueRegTree[0]
             
             if (this.id_modeP_typeTwo !== undefined){
               // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
@@ -249,6 +250,19 @@ export class ConvertDevisToBlComponent implements OnInit {
                 this.typeRegTwo ='monétique';
               }
               this.ligneOne = true 
+            }
+            if (this.id_modeP_typeTree !== undefined){
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              if(this.id_modeP_typeTree =='4')
+               this.typeRegTree ='Espèces';
+               else if (this.id_modeP_typeTree =='1'){
+                this.typeRegTree ='Virement';
+               }else if (this.id_modeP_typeTree =='2'){
+                this.typeRegTree ='Chèque';
+              }else if (this.id_modeP_typeTree =='3'){
+                this.typeRegTree ='monétique';
+              }
+              this.ligneTwo = true 
             }
           });
           
@@ -469,98 +483,19 @@ export class ConvertDevisToBlComponent implements OnInit {
       }
     }
   }
-  
-  //** Delete Item from the Table */
-  deleteItemValue(index : any){
-    Swal.fire({
-      title: 'Êtes-vous sûr?',
-      icon: 'warning',
-      showCancelButton : true, 
-      confirmButtonText: 'Oui, supprimez le',
-      cancelButtonText: 'Non, garde le'
-    }).then((res)=> {
-      if(res.value){
-        this.devisArticls.splice(index, 1);
-        this.calculTotal();
-        this.calculAssiettes();
-      } else if (res.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire(
-          'Annulé',
-          '',
-          'error'
-        )
-      }
-    }
-    )
-  }
-
-  //** Go Forward  */
-  goForward(stepper : MatStepper){
-    stepper.next();
-  }
-
-  //** Plz choose at least one product in the next step */
-  nextStep(stepper : MatStepper){    
-    let addPrice : any = 0 
-    this.isNull = false;
-    if((this.totalTTc !=0)){
-      let totalTTc_reg = 0;
-      for(let i= 0 ; i < this.devisArticls.length; i++){
-        totalTTc_reg +=Number(this.devisArticls[i].totale_TTC);
-      }
-      addPrice =   Number(totalTTc_reg - this.totalTTc_reg).toFixed(3);
-      if(addPrice> this.addReglementFormGroup.get('valueTwo').value){
-        this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
-      }else{
-        this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
-      }
-      
-      this.addArticleFormGroup.controls['lengthTableDevis'].setValue(this.devisArticls.length);
-      this.goForward(stepper); 
-      this.isNull = true;
-    }else{
-      this.isNull = false;
-      Swal.fire( 
-        'Veuillez choisir au moins un produit');
-    }
-  }
-
-  //** Ckeck Total TTC in the reglement step */
-  checkTotalTTC(stepper : MatStepper){
-      this.isCompleted= false;
-      this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));      
-      if(this.sum!=Number(this.totalTTc)){
-        this.isCompleted= false;
-        Swal.fire( 
-        'Attention! vérifiez le totale',
-        'Total TTC!',
-        'error');
-      }else{
-        this.isCompleted= true;
-        this.goForward(stepper)
-      }
-  }
-  suivant(stepper : MatStepper){
-    this.calculTotal();
-    this.calculAssiettes();
-    this.goForward(stepper); 
-  }
 
   //** The XML structure */
   createXMLStructure(url: string , data : any){
-    console.log('xml',this.infoFormGroup.get('custemerName').value);
-    console.log('xml',this.id_client);
-    
-    var doc = document.implementation.createDocument(url, 'Devis', null);
+    var doc = document.implementation.createDocument(url, 'BL', null);
     var etatElement = doc.createElement("Etat");
     var infoElement = doc.createElement("Informations-Generales");
     var total = doc.createElement('Total'); 
     var typeElement = doc.createElement("Type");
     var idFrElement = doc.createElement("Id_Fr");
     var idCLTElement = doc.createElement("Id_Clt");
+    var typeDevise = doc.createElement('Devise')
     var adress = doc.createElement("Local"); 
     var modepaiement = doc.createElement("Mode_Paiement");
-    var numDevis = doc.createElement("N_Devis");
     var totalHTBrut = doc.createElement("TotalHTBrut");
     var totalRemise = doc.createElement("TotalRemise");
     var totalHTNet = doc.createElement("TotalHTNet");
@@ -598,37 +533,37 @@ export class ConvertDevisToBlComponent implements OnInit {
     Montant_TVA.appendChild(Montant_TVA19);
     Montant_TVA.appendChild(Montant_TVA7);
     Montant_TVA.appendChild(Montant_TVA13);
-    
-    //** Type de reglement  */
-    var Type_Reglement = doc.createElement("Type_Reglement");
 
-    var typeRegOne = doc.createElement("TypeRegOne"); typeRegOne.innerHTML = this.infoFormGroup.get('modePaiement').value; 
-    var typeRegTwo = doc.createElement("TypeRegTwo"); typeRegTwo.innerHTML= this.addReglementFormGroup.get('typeRegTwo').value;
-    var typeRegTree = doc.createElement("TypeRegTree");typeRegTree.innerHTML= this.addReglementFormGroup.get('typeRegTree').value;
+   //** Type de reglement  */
+   var Type_Reglement = doc.createElement("Type_Reglement");
 
-    var valueRegOne = doc.createElement("ValueRegOne"); valueRegOne.innerHTML =  this.price; 
-    var valueRegTwo = doc.createElement("ValueRegTwo"); valueRegTwo.innerHTML= this.addReglementFormGroup.get('valueTwo').value;
-    var valueRegTree = doc.createElement("ValueRegTree");valueRegTree.innerHTML= this.addReglementFormGroup.get('valueTree').value; 
-    
-    Type_Reglement.appendChild(typeRegOne);
-    Type_Reglement.appendChild(typeRegTwo);
-    Type_Reglement.appendChild(typeRegTree);
-    Type_Reglement.appendChild(valueRegOne);
-    Type_Reglement.appendChild(valueRegTwo);
-    Type_Reglement.appendChild(valueRegTree);
+   var typeRegOne = doc.createElement("TypeRegOne"); typeRegOne.innerHTML = this.infoFormGroup.get('modePaiement').value; 
+   var typeRegTwo = doc.createElement("TypeRegTwo"); typeRegTwo.innerHTML= this.addReglementFormGroup.get('typeRegTwo').value;
+   var typeRegTree = doc.createElement("TypeRegTree");typeRegTree.innerHTML= this.addReglementFormGroup.get('typeRegTree').value;
 
-    //******* */
+   var valueRegOne = doc.createElement("ValueRegOne"); valueRegOne.innerHTML =  this.price; 
+   var valueRegTwo = doc.createElement("ValueRegTwo"); valueRegTwo.innerHTML= this.addReglementFormGroup.get('valueTwo').value;
+   var valueRegTree = doc.createElement("ValueRegTree");valueRegTree.innerHTML= this.addReglementFormGroup.get('valueTree').value; 
+   
+   Type_Reglement.appendChild(typeRegOne);
+   Type_Reglement.appendChild(typeRegTwo);
+   Type_Reglement.appendChild(typeRegTree);
+   Type_Reglement.appendChild(valueRegOne);
+   Type_Reglement.appendChild(valueRegTwo);
+   Type_Reglement.appendChild(valueRegTree);
+
+   //******* */
     Produits.setAttribute('Fournisseur','InfoNet');
     Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
     
     var nameEtat ="En cours";
     var typeName = "Devis";
+    var devise = this.infoFormGroup.get('devise').value;
     var signaler_Prob = doc.createTextNode("True");
     var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
     var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
-    var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value);
+    var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value.id_Clt);
     var id_Fr = doc.createTextNode('1');
-
 
 
     var totalHTBrutName =doc.createTextNode(this.totalHTBrut);
@@ -637,16 +572,15 @@ export class ConvertDevisToBlComponent implements OnInit {
     var totalFodecName =doc.createTextNode(this.totalMontantFodec);
     var totalTVAName =doc.createTextNode(this.totalMontantTVA);
     var totalTTCName =doc.createTextNode(this.totalTTc);
-
     //******* */
     signaler_Probleme.appendChild(signaler_Prob)
     etatElement.innerHTML = nameEtat;
     idCLTElement.appendChild(id_Clt);
     idFrElement.appendChild(id_Fr);
     typeElement.innerHTML = typeName;
+    typeDevise.innerHTML=devise
     adress.appendChild(adressName);
     modepaiement.appendChild(modepaiementName);
-
 
     totalHTBrut.appendChild(totalHTBrutName);
     totalRemise.appendChild(totalRemisetName);
@@ -660,7 +594,7 @@ export class ConvertDevisToBlComponent implements OnInit {
     infoElement.appendChild(typeElement);
     infoElement.appendChild(adress);
     infoElement.appendChild(modepaiement);
-    infoElement.appendChild(numDevis);
+    infoElement.appendChild(typeDevise);
 
     total.appendChild(totalHTBrut);
     total.appendChild(totalRemise);
@@ -676,6 +610,7 @@ export class ConvertDevisToBlComponent implements OnInit {
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.devisArticls[i].id_Produit
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.devisArticls[i].etat;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.devisArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.devisArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.devisArticls[i].produits_simple;
@@ -691,6 +626,7 @@ export class ConvertDevisToBlComponent implements OnInit {
         var vProduit_4Gs = doc.createElement('Produit_4Gs');
         var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.devisArticls[i].prix_U_TTC;
         var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.devisArticls[i].total_HT;
+
         
         if(this.devisArticls[i].tableaux_produits_emie != undefined){
           for (let j = 0; j < this.devisArticls[i].tableaux_produits_emie.length; j++) {
@@ -717,6 +653,7 @@ export class ConvertDevisToBlComponent implements OnInit {
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat)
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -739,7 +676,8 @@ export class ConvertDevisToBlComponent implements OnInit {
         this.devisArticls[i].signaler_probleme= true; 
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.devisArticls[i].id_Produit;
-        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit;        
+        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit; 
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.devisArticls[i].etat;       
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.devisArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.devisArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.devisArticls[i].produits_simple;
@@ -756,6 +694,7 @@ export class ConvertDevisToBlComponent implements OnInit {
         var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.devisArticls[i].prix_U_TTC;
         var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.devisArticls[i].total_HT;
 
+
         if(this.devisArticls[i].tableaux_produits_serie != undefined){
           for (let j = 0; j < this.devisArticls[i].tableaux_produits_serie.length; j++) {
             var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = this.devisArticls[i].tableaux_produits_serie[j]
@@ -769,6 +708,7 @@ export class ConvertDevisToBlComponent implements OnInit {
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -792,6 +732,7 @@ export class ConvertDevisToBlComponent implements OnInit {
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.devisArticls[i].id_Produit;
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.devisArticls[i].nom_Produit;
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.devisArticls[i].etat;
         var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.devisArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.devisArticls[i].n_Serie;
@@ -803,13 +744,15 @@ export class ConvertDevisToBlComponent implements OnInit {
         var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
         var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
         var Charge = doc.createElement('charge'); Charge.innerHTML = this.devisArticls[i].ch
-        var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC    
+        var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.devisArticls[i].totale_TTC   
         var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.devisArticls[i].prix_U_TTC;
         var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.devisArticls[i].total_HT;
 
 
+
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -831,6 +774,8 @@ export class ConvertDevisToBlComponent implements OnInit {
     Produits.appendChild(Produits_Simples);
     Produits.appendChild(Produits_Series);
     Produits.appendChild(Produits_4Gs);
+
+
     //******* */
     doc.documentElement.appendChild(etatElement);
     doc.documentElement.appendChild(infoElement);
@@ -842,6 +787,7 @@ export class ConvertDevisToBlComponent implements OnInit {
     doc.documentElement.appendChild(Type_Reglement);
     return doc
   }
+
   convertFileXml(theBlob: Blob, fileName: string): File {
     var b: any = theBlob;
     b.lastModifiedDate = new Date();
@@ -911,17 +857,7 @@ export class ConvertDevisToBlComponent implements OnInit {
         content: [
           { columns : [
             {
-              text: 'Informations Générales :' ,
-              fontSize: 15,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              text: '\t'
-            },
-            {
-              text:'BL n° ' +id_bl+'| '+ '\t' + this.date+ '\n\n',
+              text:'BL n° ' +id_bl+' | '+ '\t' + this.date+ '\n\n',
               fontSize: 15,
               alignment: 'left',
               color: 'black',
@@ -935,9 +871,8 @@ export class ConvertDevisToBlComponent implements OnInit {
             columns: [
               {   
                 text: 
-                'Type:' + '\t' +this.infoFormGroup.get('typeDevis').value +' n° '+id_devis+'- BL'+' n°'+id_bl + '\n' 
-                + 'Devise avec :' + '\t' + this.infoFormGroup.get('devise').value + '\n'
-                + 'Nom Fournisseur :' + '\t' + 'InfoNet' + '\n'
+                'Type:' + '\t Devis' +this.infoFormGroup.get('typeDevis').value +' n° '+id_devis+'- BL'+' n°'+id_bl + '\n' 
+                + 'Nom du responsable :' + '\t' + '' + '\n'
               ,
               fontSize: 12,
               alignment: 'left',
@@ -949,8 +884,7 @@ export class ConvertDevisToBlComponent implements OnInit {
               {   
                 text: 
                 'Code Client :' + '\t' + this.client_id + '\n'
-                + 'Nom Client :' + '\t' + this.nom_client + '\n'
-                + 'Adresse :' + '\t' + this.adresse_clt + '\n' ,
+                + 'Nom Client :' + '\t' + this.nom_client + '\n',
                 fontSize: 12,
                 alignment: 'left',
                 color: 'black'
@@ -961,7 +895,7 @@ export class ConvertDevisToBlComponent implements OnInit {
             text: '\n'
           },
           {
-            text: 'Mode Paiement :' ,
+            text: 'Modalité du paiement:' ,
             fontSize: 20,
             alignment: 'left',
             color: 'black',
@@ -973,9 +907,21 @@ export class ConvertDevisToBlComponent implements OnInit {
           {
             columns: [
               {
-                text:'Type de règlement n° 1: ' + '\t'+this.infoFormGroup.get('modePaiement').value +' : '+ this.addReglementFormGroup.get('valueOne').value  +'\n'
-                +'Type de règlement n° 2: ' + '\t'+this.typeRegTwo +' : '+ this.addReglementFormGroup.get('valueTwo').value+'\n'
-                +'Type de règlement n° 3: ' + '\t'+this.addReglementFormGroup.get('typeRegTree').value +' : '+ this.addReglementFormGroup.get('valueTree').value +'\n'
+                ul : [
+                this.modePaiement+' : '+ Number(this.totalTTc_reg).toFixed(3)  +'\n'
+                ]
+              },{
+                ul : [
+                  (this.typeRegTwo !== undefined)?
+                  this.typeRegTwo +' : '+Number( this.valueRegTwo).toFixed(3)+'\n' : 
+                  ''
+                  ]
+              },{
+                ul:[
+                  (this.typeRegTree !==  undefined)?
+                  this.typeRegTree +' : '+ Number(this.valueRegTree).toFixed(3)+'\n' : 
+                  ''
+                ]
               }
             ]
           },
@@ -992,7 +938,7 @@ export class ConvertDevisToBlComponent implements OnInit {
           {
             text: '\n\n'
           },
-          this.generateTable(this.devisArticls, ['Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
+          this.generateTable(this.devisArticls, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+this.infoFormGroup.get('devise').value+')', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
           {
             text: '\n\n\n'
           },
@@ -1017,12 +963,12 @@ export class ConvertDevisToBlComponent implements OnInit {
                 table: {
                   heights: [20],
                   body: [
-                    [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut, alignment: 'right' }],
-                    [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff, alignment: 'right' }],
-                    [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT, alignment: 'right' }],
-                    [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec, alignment: 'right' }],
-                    [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA, alignment: 'right' }],
-                    [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc, alignment: 'right' }],
+                    [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                    [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                    [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                    [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                    [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                    [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                   ]
                 },
                 layout: 'lightHorizontalLines',

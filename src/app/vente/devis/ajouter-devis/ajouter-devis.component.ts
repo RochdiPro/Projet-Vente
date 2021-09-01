@@ -341,7 +341,9 @@ export class AjouterDevisComponent implements OnInit {
                 this.devisArticls[index].etat = 'Dispo.';
                }  
             }else{
-              this.devisArticls.push(res.data[i])
+              this.devisArticls.push(res.data[i]);
+              this.calculTotal();
+              this.calculAssiettes();
             }
             
           }
@@ -377,7 +379,7 @@ export class AjouterDevisComponent implements OnInit {
   checkTotalTTC(stepper : MatStepper){
       this.isCompleted= false;
       this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));
-      if(this.sum!=Number(this.totalTTc)){
+      if(Number(this.sum).toFixed(3)!=Number(this.totalTTc).toFixed(3)){
         this.isCompleted= false;
         Swal.fire( 
         'Attention! vérifiez le totale',
@@ -898,11 +900,12 @@ export class AjouterDevisComponent implements OnInit {
         )
       }
     }
-    )
+    );
+    this.calculTotal();
+    this.calculAssiettes();
   }
   //** Update item from the Table  */
   async ouvreDialogueArticle(index : number, item: any , table : any ){
-    setTimeout(()=>{
       const dialogRef = this.dialog.open(UpdateDialogOverviewArticleDialogComponent, {
         width: '500px',
         data: { index: index, ligne: item, table: table}
@@ -942,7 +945,7 @@ export class AjouterDevisComponent implements OnInit {
         this.calculTotal();
         this.calculAssiettes();
       });
-    },1000);
+
     this.calculTotal();
     this.calculAssiettes();
   }

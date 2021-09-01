@@ -41,9 +41,16 @@ export class ListerDevisComponent implements OnInit {
   //** Get All Quote (Deviss) */
   async getAllDeviss(){
     this.loading = true; 
+    let devis_en_cours : any =[]; 
     this.devisService.getAllDevis().subscribe((res: any)=>{
       res = res.sort((a:any , b : any )=> b.id_Devis -a.id_Devis);
-    this.dataSourceDevis= new MatTableDataSource(res);   
+      let data : any =[]
+      data = res ; 
+      data.map((ele: any)=>{ 
+        if (ele.etat ==='En cours')
+         devis_en_cours.unshift(ele)
+      });  
+    this.dataSourceDevis= new MatTableDataSource(devis_en_cours);   
     this.dataSourceDevis.sort = this.sort; 
     this.dataSourceDevis.paginator = this.paginator;
     this.loading = false; 
@@ -177,9 +184,7 @@ export class ListerDevisComponent implements OnInit {
         let data : any; 
         xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
           data =res.Devis;   
-        });
-        console.log(data);
-        
+        });        
         this.xmldata = data;        
         // check type de reglement 
         let typeRegTwo : any ; 

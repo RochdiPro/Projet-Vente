@@ -5,64 +5,42 @@
         <span class="sr-only">Loading...</span>
     </div>
 </div>
-
-<mat-horizontal-stepper linear #stepper *ngIf="loading">
-    <ng-template matStepLabel>Informations Générales</ng-template>
-    <mat-step [stepControl]="infoFormGroup">
+<br>
+<div class="container">
+    <div>
+        <h5>1- Informations Générales</h5>
+        <br>
         <form [formGroup]="infoFormGroup">
-            <ng-template matStepLabel>Informations Générales</ng-template>
             <div class="row">
                 <!-- Type devis  -->
                 <div class="col-md-4 mb-3">
-                    <mat-form-field>
-                        <mat-label>Type Devis</mat-label>
-                        <mat-select formControlName="typeDevis" [(ngModel)]="typeDevis" [disabled]="true">
-                            <mat-option value="Proforma">Proforma</mat-option>
-                            <mat-option value="Estimatif">Devis estimatif</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <mat-label><b> Type Devis : </b></mat-label>
+                    <mat-label>{{typeDevis}}</mat-label>
                 </div>
                 <!-- Mode paiement -->
                 <div class="col-md-4 mb-3">
-                    <mat-form-field>
-                        <mat-label>Mode paiement</mat-label>
-                        <mat-select formControlName="modePaiement" [(ngModel)]="modePaiement" [disabled]="true">
-                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.name">{{mp.name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <mat-label><b> Mode paiement : </b></mat-label>
+                    <mat-label>{{modePaiement}}</mat-label>
                 </div>
                 <!-- select Currency  -->
                 <div class="col-md-4 mb-3">
-                    <mat-form-field>
-                        <mat-label>Devise</mat-label>
-                        <mat-select formControlName="devise" [(ngModel)]="devise" [disabled]="true">
-                            <mat-option [value]="c" *ngFor="let c of currency">{{c}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <mat-label><b> Devise : </b></mat-label>
+                    <mat-label>{{devise}}</mat-label>
                 </div>
             </div>
             <!-- +++++++++++++++++++++++++++++++++ -->
             <div class="row">
                 <!-- select Custemer  -->
                 <div class="col-md-4 mb-3" *ngIf="loading">
-                    <mat-form-field>
-                        <mat-label>Client(e)</mat-label>
-                        <mat-select formControlName="custemerName" [disabled]="true" [(ngModel)]="custemerName.id_Clt"
-                            (ngModelChange)="getClientId($event)">
-                            <mat-option *ngFor="let c of clients" [value]="c.id_Clt">{{c.nom_Client}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <mat-label><b> Client(e) : </b></mat-label>
+                    <mat-label>{{custemerName.nom_Client}}</mat-label>
                 </div>
             </div>
-            <br><br>
-            <div>
-                <button mat-button (click)="suivant(stepper)" class="btn btn-primary">Suivant</button>
-            </div>
+            <br>
         </form>
-    </mat-step>
-    <!-- Second step -->
-    <mat-step [stepControl]="addArticleFormGroup">
-        <ng-template matStepLabel>Les Article(s)</ng-template>
+    </div>
+    <div>
+        <h5>2- Les Article(s)</h5>
         <form>
             <!-- List Article -->
             <div class="row mat-elevation-z8">
@@ -77,9 +55,6 @@
                             <th>TVA(%)</th>
                             <th>Remise(%)</th>
                             <th>Fodec(%)</th>
-                            <th>M_TVA_U</th>
-                            <th>Prix U TTC</th>
-                            <th>Total HT</th>
                             <th>Total TTC</th>
                         </tr>
                     </thead>
@@ -112,18 +87,6 @@
                             <td>
                                 <input [ngModel]="item.fodec" [ngModelOptions]="{standalone: true}" class="form-control"
                                     type="text" name="{{item.fodec}}" disabled size="1" />
-                            </td>
-                            <td>
-                                <input [ngModel]="item.montant_TVA" [ngModelOptions]="{standalone: true}"
-                                    class="form-control" type="text" name="{{item.montant_TVA}}" disabled />
-                            </td>
-                            <td>
-                                <input [ngModel]="item.prix_U_TTC" [ngModelOptions]="{standalone: true}"
-                                    class="form-control" type="text" name="{{item.prix_U_TTC}}" disabled />
-                            </td>
-                            <td>
-                                <input [ngModel]="item.total_HT" [ngModelOptions]="{standalone: true}"
-                                    class="form-control" type="text" name="{{item.total_HT}}" disabled />
                             </td>
                             <td>
                                 <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}"
@@ -197,20 +160,14 @@
                         </table>
                     </div>
                 </div>
-                <hr><br>
-                <button mat-button matStepperPrevious class="btn ">Retour</button>
-                <button mat-button class="btn btn-primary" (click)="nextStep(stepper)">Suivant</button>
+                <hr>
             </div>
         </form>
-    </mat-step>
-
-    <!-- Therd Step -->
-    <mat-step [stepControl]="addReglementFormGroup" [completed]="isCompleted">
-        <ng-template matStepLabel>Règlement Devis</ng-template>
+    </div>
+    <div>
+        <h5>3- Modalité du paiement</h5>
         <form [formGroup]="addReglementFormGroup">
             <br>
-            <br>
-
             <div class="row">
                 <div class="col-md-2">
                     <label> <b>Total TTC :</b> <span> {{totalTTc_}}</span> </label>
@@ -219,79 +176,49 @@
             <!-- first reg -->
             <div class="row">
                 <div class="col-md-2">
-                    <mat-form-field>
-                        <input matInput [(ngModel)]="modePaiement" [ngModelOptions]="{standalone: true}" disabled />
-                    </mat-form-field>
+                    <mat-label>{{modePaiement}}</mat-label>
                 </div>
                 <div class="col-md-2">
-                    <mat-form-field>
-                        <input type="number" matInput formControlName="valueOne" [(ngModel)]="totalTTc_reg" />
-                    </mat-form-field>
+                    <mat-label>{{totalTTc_reg}}</mat-label>
                 </div>
             </div>
             <!-- second reg -->
-            <div class="row" *ngIf="ligneOne">
+            <div class="row" *ngIf="id_modeP_typeTwo">
                 <div class="col-md-2">
-                    <mat-form-field>
-                        <mat-label>Type de Règlement</mat-label>
-                        <mat-select formControlName="typeRegTwo" [(ngModel)]="id_modeP_typeTwo" [disabled]="true">
-                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <mat-label>{{typeRegTwo}}</mat-label>
                 </div>
                 <div class="col-md-2">
-                    <mat-form-field>
-                        <input type="number" matInput formControlName="valueTwo" [disabled]="true" />
-                    </mat-form-field>
+                    <mat-label>{{valueRegTwo}}</mat-label>
                 </div>
             </div>
             <!-- therd reg -->
-            <div class="row" *ngIf="ligneTwo">
+            <div class="row" *ngIf="id_modeP_typeTree">
                 <div class="col-md-2">
-                    <mat-form-field>
-                        <mat-label>Type de Règlement</mat-label>
-                        <mat-select formControlName="typeRegTree" [disabled]="true">
-                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+                    <mat-label>{{typeRegTree}}</mat-label>
                 </div>
                 <div class="col-md-2">
-                    <mat-form-field>
-                        <input type="number" matInput formControlName="valueTree" [disabled]="true" />
-                    </mat-form-field>
+                    <mat-label>{{valueRegTree}}</mat-label>
                 </div>
             </div>
+            <br>
             <mat-form-field class="full-width">
                 <mat-label>Note</mat-label>
                 <textarea matInput placeholder="Note" type="text" class="form-control" formControlName="note"
                     [(ngModel)]=note></textarea>
             </mat-form-field>
             <br>
-            <br>
-            <div>
-                <button mat-button matStepperPrevious>Retour</button>
-                <button mat-button class="btn btn-primary" (click)="checkTotalTTC(stepper)">Suivant</button>
-            </div>
         </form>
-    </mat-step>
-    <!-- Last step -->
-    <mat-step label="Imprimer le devis">
+    </div>
+    <div>
         <form>
             <br>
             <br>
-            <br>
-            <div class="row">
-                <div class="col-md-4">
-                    <button mat-raised-button class="add-article" (click)="convertDevisDL()"> <i
-                            class="fas fa-file-pdf"></i>
-                        Convertir</button>
-                </div>
+            <div class="row right">
+                <button mat-raised-button class="add-article " (click)="convertDevisDL()"> <i
+                        class="fas fa-file-pdf"></i>
+                    Convertir</button>
             </div>
             <br>
-            <br>
-            <div>
-                <button mat-button matStepperPrevious>Retour</button>
-            </div>
         </form>
-    </mat-step>
-</mat-horizontal-stepper>
+    </div>
+</div>

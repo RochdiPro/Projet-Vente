@@ -41,10 +41,6 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date </th>
                 <td mat-cell *matCellDef="let element">{{element.date_Creation | date: 'dd/MM/YYYY' }} </td>
             </ng-container>
-            <ng-container matColumnDef="id_Responsable">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Id FR</th>
-                <td mat-cell *matCellDef="let element"> {{element.id_Responsable}}</td>
-            </ng-container>
             <ng-container matColumnDef="mode_Paiement">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Mode Paiement</th>
                 <td mat-cell *matCellDef="let element"> {{element.mode_Paiement}}</td>

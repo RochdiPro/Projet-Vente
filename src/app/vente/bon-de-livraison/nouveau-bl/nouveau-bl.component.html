@@ -8,15 +8,6 @@
         <form [formGroup]="infoFormGroup">
             <ng-template matStepLabel>Informations Générales</ng-template>
             <div class="row">
-                <!-- Type BL  -->
-                <!-- <div class="col-md-4 mb-3">
-                    <mat-form-field>
-                        <mat-label>Type BL</mat-label>
-                        <mat-select formControlName="typeBl" required>
-                            <mat-option value="BL">BL</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div> -->
                 <!-- Mode paiement -->
                 <div class="col-md-4 mb-3">
                     <mat-form-field>
@@ -72,12 +63,12 @@
 
     <!-- second step -->
     <mat-step [stepControl]="addArticleFormGroup" [completed]="isNull">
-        <ng-template matStepLabel>Ajouter BL(s)</ng-template>
+        <ng-template matStepLabel>Ajouter Produit(s)</ng-template>
         <form>
             <br>
             <div class="row right">
                 <div><button mat-raised-button class="add-article" (click)="openDialog()"><i class="fas fa-plus"></i>
-                        Ajouter BL</button></div>
+                        Ajouter Article</button></div>
             </div>
             <br>
             <div class="row">
@@ -116,12 +107,10 @@
                             <th>TVA(%)</th>
                             <th>Remise(%)</th>
                             <th>Fodec(%)</th>
-                            <th>M_TVA_U</th>
-                            <th>Prix U TTC</th>
-                            <th>Total HT</th>
                             <th>Total TTC</th>
-                            <th></th>
-                            <th></th>
+                            <th>Disponibilité</th>
+                            <th>Voir plus</th>
+                            <th>Supprimer</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -159,23 +148,13 @@
                                     type="text" name="{{item.fodec}}" disabled size="1" />
                             </td>
                             <td>
-                                <input [ngModel]="item.montant_TVA" [ngModelOptions]="{standalone: true}"
-                                    class="form-control" type="text" name="{{item.montant_TVA}}" disabled />
-                            </td>
-                            <td>
-                                <input [ngModel]="item.prix_U_TTC" [ngModelOptions]="{standalone: true}"
-                                    class="form-control" type="text" name="{{item.prix_U_TTC}}" disabled />
-                            </td>
-                            <td>
-                                <input [ngModel]="item.total_HT" [ngModelOptions]="{standalone: true}"
-                                    class="form-control" type="text" name="{{item.total_HT}}" disabled />
-                            </td>
-                            <td>
                                 <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}"
                                     class="form-control" type="text" name="{{item.totale_TTC}}" disabled />
                             </td>
                             <td>
                                 <i title="Etat">{{item.etat}}</i>
+                            </td>
+                            <td> <i class="pe-7s-look btn-b" title="Voir plus" (click)="viewPlus(item)"></i>
                             </td>
                             <td>
                                 <i class="pe-7s-trash" (click)="deleteItemValue(i)" title="Supprimer article"></i>
@@ -257,7 +236,7 @@
 
     <!-- 3thd step -->
     <mat-step [stepControl]="addReglementFormGroup" [completed]="isCompleted">
-        <ng-template matStepLabel>Règlement BL</ng-template>
+        <ng-template matStepLabel>Modalité du paiement</ng-template>
         <form [formGroup]="addReglementFormGroup">
             <br>
             <br>
@@ -334,7 +313,7 @@
     </mat-step>
 
     <!-- last Step -->
-    <mat-step label="Imprimer le BL">
+    <mat-step label="Enregistrer & Imprimer le BL">
         <form>
             <br>
             <br>

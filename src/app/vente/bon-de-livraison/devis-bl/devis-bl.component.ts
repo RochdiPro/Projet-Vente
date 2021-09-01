@@ -31,7 +31,7 @@ export class DevisBLComponent implements OnInit {
   id_Devis: any; 
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
-  displayedColumns: string[] = ['radio','id_Devis', 'type', 'date_Creation', 'id_Responsable', 'mode_Paiement', 'total_ttc' ,'Voir_pdf'];
+  displayedColumns: string[] = ['radio','id_Devis', 'type', 'date_Creation', 'mode_Paiement', 'total_ttc' ,'Voir_pdf'];
 
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
@@ -164,231 +164,288 @@ export class DevisBLComponent implements OnInit {
     }else{
       imgUrl = "../../../assets/images/template-proforma.jpg"
     }
-this.getClientId(devis.id_Clt);
-this.date =  this.datepipe.transform(devis.date_Creation, 'dd/MM/YYYY');
-this.devisService.detail(devis.id_Devis.toString()).subscribe((detail: any)=>{
-  var devisArr :any = [];
-  //** Parsing an XML file unisng  'xml2js' lebraby*/
-  const fileReader = new FileReader(); 
-  // Convert blob to base64 with onloadend function
-  fileReader.onloadend = () =>{
-    this.detail = fileReader.result; // data: application/xml in base64
-    let data : any; 
-    xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
-      data =res.Devis;   
-    });
-    this.xmldata = data;
-    // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
-      if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
-      for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
-      { 
-         let Id_Produit: any =data.Produits[0].Produits_Simples[0].Produit[i].Id;  
-         let Nom_Produit: any  =data.Produits[0].Produits_Simples[0].Produit[i].Nom;
-         let Quantite: any =data.Produits[0].Produits_Simples[0].Produit[i].Qte ;
-         let Prix_U: any=Number (data.Produits[0].Produits_Simples[0].Produit[i].PrixU).toFixed(3);
-         let Remise : any =(data.Produits[0].Produits_Simples[0].Produit[i].Remise)
-         let TVA : any = data.Produits[0].Produits_Simples[0].Produit[i].Tva;
-         let Total_HT :any = data.Produits[0].Produits_Simples[0].Produit[i].Total_HT
-         devisArr.push(
-          {
-            ID:  Id_Produit,
-            Nom:  Nom_Produit,
-            Quantité: Quantite,
-            Prix_U:  Prix_U,
-            Remise:Remise,
-            TVA:TVA,
-            Total_HT: Total_HT
-          });
-        
-      }
-       }
-      if(data.Produits[0].Produits_4Gs[0].Produit!= undefined){
-      for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit.length; i++) 
-      {   
-       let Id_Produit: any =data.Produits[0].Produits_4Gs[0].Produit[i].Id;  
-       let Nom_Produit: any  =data.Produits[0].Produits_4Gs[0].Produit[i].Nom;
-       let Quantite: any =data.Produits[0].Produits_4Gs[0].Produit[i].Qte ;
-       let Prix_U: any=Number (data.Produits[0].Produits_4Gs[0].Produit[i].PrixU).toFixed(3);
-       let Remise : any =(data.Produits[0].Produits_4Gs[0].Produit[i].Remise)
-       let TVA : any = data.Produits[0].Produits_4Gs[0].Produit[i].Tva;
-       let Total_HT :any = data.Produits[0].Produits_4Gs[0].Produit[i].Total_HT
-                        
-        devisArr.push(
-          {
-            ID:  Id_Produit,
-            Nom:  Nom_Produit,
-            Quantité: Quantite,
-            Prix_U:  Prix_U,
-            Remise:Remise,
-            TVA:TVA,
-            Total_HT: Total_HT
-          });
-        
-       
-      }}
-      if(data.Produits[0].Produits_Series[0].Produit!= undefined){
-      for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit.length; i++) 
-      { 
-        let Id_Produit: any =data.Produits[0].Produits_Series[0].Produit[i].Id;  
-        let Nom_Produit: any  =data.Produits[0].Produits_Series[0].Produit[i].Nom;
-        let Quantite: any =data.Produits[0].Produits_Series[0].Produit[i].Qte ;
-        let Prix_U: any=Number (data.Produits[0].Produits_Series[0].Produit[i].PrixU).toFixed(3);
-        let Remise : any =(data.Produits[0].Produits_Series[0].Produit[i].Remise)
-        let TVA : any = data.Produits[0].Produits_Series[0].Produit[i].Tva;
-        let Total_HT :any = data.Produits[0].Produits_Series[0].Produit[i].Total_HT
-      
-        devisArr.push(
-          {
-            ID:  Id_Produit,
-            Nom:  Nom_Produit,
-            Quantité: Quantite,
-            Prix_U:  Prix_U,
-            Remise:Remise,
-            TVA:TVA,
-            Total_HT: Total_HT
-          }); 
-        
-      }}
-      setTimeout(async ()=>{
-        //** Generate the pdf file */ 
-        let pdf_devis = {
-          background: [
-            {
-              image: await this.getBase64ImageFromURL(imgUrl), width: 600
-            }
-          ],
-          content: [
-            {
-              text: 'Informations Générales :' + '\n\n',
-              fontSize: 15,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              columns: [
-                {   
-                  text: 
-                  'Type Devis n° '+devis.id_Devis+ ':'+ '\t' + devis.type+ '\n\n' 
-                  + 'Devise avec :' + '\t' +'DT'+ '\n\n'
-                  + 'Nom Fournisseur :' + '\t' + 'InfoNet' + '\n\n'
-                  + 'Mode Paiement :' + '\t' + devis.mode_Paiement+ '\n\n'
-                ,
-                fontSize: 12,
-                alignment: 'left',
-                color: 'black',
-              },
+
+
+    this.getClientId(devis.id_Clt);
+    this.date =  this.datepipe.transform(devis.date_Creation, 'dd/MM/YYYY');
+    this.devisService.detail(devis.id_Devis.toString()).subscribe((detail: any)=>{
+      var devisArr :any = [];
+      //** Parsing an XML file unisng  'xml2js' lebraby*/
+      const fileReader = new FileReader(); 
+      // Convert blob to base64 with onloadend function
+      fileReader.onloadend = () =>{
+        this.detail = fileReader.result; // data: application/xml in base64
+        let data : any; 
+        xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
+          data =res.Devis;   
+        });
+        this.xmldata = data;
+           // check type de reglement 
+           let typeRegTwo : any ; 
+           if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
+             typeRegTwo ='Espèces';
+             else if  (data.Type_Reglement[0].TypeRegTwo[0]=='1'){
+               typeRegTwo ='Virement';
+             }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
+               typeRegTwo ='Chèque';
+           }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
+               typeRegTwo ='monétique';
+           }
+           let typeRegTree : any ; 
+           if (data.Type_Reglement[0].TypeRegTree[0]=='4')
+             typeRegTree ='Espèces';
+             else if  (data.Type_Reglement[0].TypeRegTree[0]=='1'){
+               typeRegTree ='Virement';
+             }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
+               typeRegTree ='Chèque';
+           }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
+               typeRegTree ='monétique';
+           }
+        // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
+          if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
+          for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
+          { 
+            let Id_Produit: any =data.Produits[0].Produits_Simples[0].Produit[i].Id;  
+            let Nom_Produit: any  =data.Produits[0].Produits_Simples[0].Produit[i].Nom;
+            let Quantite: any =data.Produits[0].Produits_Simples[0].Produit[i].Qte ;
+            let Prix_U: any=Number (data.Produits[0].Produits_Simples[0].Produit[i].PrixU).toFixed(3);
+            let Remise : any =(data.Produits[0].Produits_Simples[0].Produit[i].Remise)
+            let TVA : any = data.Produits[0].Produits_Simples[0].Produit[i].Tva;
+            let Total_HT :any = data.Produits[0].Produits_Simples[0].Produit[i].Total_HT
+            devisArr.push(
+              {
+                ID:  Id_Produit,
+                Nom:  Nom_Produit,
+                Quantité: Quantite,
+                Prix_U:  Prix_U,
+                Remise:Remise,
+                TVA:TVA,
+                Total_HT: Total_HT
+              });
+            
+          }
+          }
+          if(data.Produits[0].Produits_4Gs[0].Produit!= undefined){
+          for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit.length; i++) 
+          {   
+          let Id_Produit: any =data.Produits[0].Produits_4Gs[0].Produit[i].Id;  
+          let Nom_Produit: any  =data.Produits[0].Produits_4Gs[0].Produit[i].Nom;
+          let Quantite: any =data.Produits[0].Produits_4Gs[0].Produit[i].Qte ;
+          let Prix_U: any=Number (data.Produits[0].Produits_4Gs[0].Produit[i].PrixU).toFixed(3);
+          let Remise : any =(data.Produits[0].Produits_4Gs[0].Produit[i].Remise)
+          let TVA : any = data.Produits[0].Produits_4Gs[0].Produit[i].Tva;
+          let Total_HT :any = data.Produits[0].Produits_4Gs[0].Produit[i].Total_HT
+                            
+            devisArr.push(
+              {
+                ID:  Id_Produit,
+                Nom:  Nom_Produit,
+                Quantité: Quantite,
+                Prix_U:  Prix_U,
+                Remise:Remise,
+                TVA:TVA,
+                Total_HT: Total_HT
+              });
+            
+          
+          }}
+          if(data.Produits[0].Produits_Series[0].Produit!= undefined){
+          for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit.length; i++) 
+          { 
+            let Id_Produit: any =data.Produits[0].Produits_Series[0].Produit[i].Id;  
+            let Nom_Produit: any  =data.Produits[0].Produits_Series[0].Produit[i].Nom;
+            let Quantite: any =data.Produits[0].Produits_Series[0].Produit[i].Qte ;
+            let Prix_U: any=Number (data.Produits[0].Produits_Series[0].Produit[i].PrixU).toFixed(3);
+            let Remise : any =(data.Produits[0].Produits_Series[0].Produit[i].Remise)
+            let TVA : any = data.Produits[0].Produits_Series[0].Produit[i].Tva;
+            let Total_HT :any = data.Produits[0].Produits_Series[0].Produit[i].Total_HT
+          
+            devisArr.push(
+              {
+                ID:  Id_Produit,
+                Nom:  Nom_Produit,
+                Quantité: Quantite,
+                Prix_U:  Prix_U,
+                Remise:Remise,
+                TVA:TVA,
+                Total_HT: Total_HT
+              }); 
+            
+          }}
+          setTimeout(async ()=>{
+            //** Generate the pdf file */ 
+            let pdf_devis = {
+              background: [
                 {
-                  text: '\t'
-                },
-                {   
-                  text: 
-                  'Code Client :' + '\t' + devis.id_Clt + '\n\n'
-                  + 'Nom Client :' + '\t' + this.clt.nom_Client + '\n\n'
-                  + 'Adresse :' + '\t' + this.clt.adresse+ '\n\n' 
-                  + 'Date:' + '\t' + this.date+ '\n\n'
-                
-                  ,
-                  fontSize: 12,
-                  alignment: 'left',
-                  color: 'black'
+                  image: await this.getBase64ImageFromURL(imgUrl), width: 600
                 }
-              ]
-            },
-            {
-              text: '\n\n'+'\n\n'
-            },
-            {
-              text: 'Détails :' + '\t',
-              fontSize: 20,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              text: '\n\n'
-            },
-            this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
-            {
-              text: '\n\n\n'
-            },
-            , {
-              columns: [
-                {
-                  table: {
-                    alignment: 'right',
-                    body: [
-                      [{ text: 'T.V.A %', alignment: 'left' }, '7%', '13%', '19%'],
-                      [{ text: 'Assiette', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7, data.Taxes[0].TVA[0].TVA13, data.Taxes[0].TVA[0].TVA19],
-                      [{ text: 'Montant', alignment: 'left' }, data.Montant_TVA[0].Montant_TVA7, data.Montant_TVA[0].Montant_TVA13, data.Montant_TVA[0].Montant_TVA19],
-                    ]
+              ],
+              content: [
+                { columns : [
+                  {
+                    text:'Devis n° ' +devis.id_Devis +' | ' +  this.date+'\n\n',
+                    fontSize: 15,
+                    alignment: 'left',
+                    color: 'black',
+                    bold: true
                   },
-                  layout: 'lightHorizontalLines',
-                  alignment: 'right',
-                },
-                {
-                },
-                {
-                  style: 'tableExample',
-                  table: {
-                    heights: [20],
-                    body: [
-                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: data.Total[0].TotalHTBrut[0], alignment: 'right' }],
-                      [{ text: 'Total Remise', alignment: 'left' }, { text: data.Total[0].TotalRemise[0], alignment: 'right' }],
-                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: data.Total[0].TotalHTNet[0], alignment: 'right' }],
-                      [{ text: 'Total Fodec', alignment: 'left' }, { text: data.Total[0].TotalFodec[0], alignment: 'right' }],
-                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: data.Total[0].TotalTVA[0], alignment: 'right' }],
-                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: data.Total[0].TotalTTC[0], alignment: 'right' }],
-                    ]
+                  ]},
+                  {
+                    text: '\n'
                   },
-                  layout: 'lightHorizontalLines',
-                }]
-            },
-            {
-              text: 'Note :' + '\n\n',
-              fontSize: 15,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              columns: [
-                {   
-                  text: devis.description + '\n\n' 
-                ,
-                fontSize: 12,
-                alignment: 'left',
-                color: 'black',
-              },
                 {
-                  text: '\t'
-                },
-              ]
-            },
-          ],
-          footer: function (currentPage: any, pageCount: any) {
-            return {
-              margin: 35,
-              columns: [
-                {
-                  fontSize: 9,
-                  text: [
+                  columns: [
+                    {   
+                      text: 
+                      'Type Devis :'+ '\t' + devis.type+ '\n' 
+                      + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                      ,
+                    fontSize: 12,
+                    alignment: 'left',
+                    color: 'black',
+                  },
                     {
-                      text: currentPage.toString() + '/' + pageCount,
+                      text: '\t'
+                    },
+                    {   
+                      text: 
+                      'Code Client :' + '\t' + devis.id_Clt + '\n'
+                      + 'Nom Client :' + '\t' + this.clt.nom_Client + '\n'
+                      ,
+                      fontSize: 12,
+                      alignment: 'left',
+                      color: 'black'
                     }
-                  ],
-                  alignment: 'center'
-                }
-              ]
+                  ]
+                },
+                {
+                  text: '\n'
+                },
+                {
+                  text: 'Modalité du paiement :' ,
+                  fontSize: 20,
+                  alignment: 'left',
+                  color: 'black',
+                  bold: true
+                },
+                {
+                  text: '\t'
+                },
+                {
+                  columns: [
+                    {
+                      ul : [
+                        devis.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                      ]
+                    },{
+                      ul : [
+                        (typeRegTwo !== undefined)?
+                        typeRegTwo +' : '+Number(data.Type_Reglement[0].ValueRegTwo[0]).toFixed(3)+'\n' : 
+                        ''
+                        ]
+                    },{
+                      ul:[
+                        (typeRegTree !==  undefined)?
+                        typeRegTree +' : '+ Number(data.Type_Reglement[0].ValueRegTree[0]).toFixed(3) +'\n' : 
+                        ''
+                      ]
+                    }
+                  ]
+                },
+                {
+                  text: '\n\n'
+                },
+                {
+                  text: 'Détails :' + '\t',
+                  fontSize: 20,
+                  alignment: 'left',
+                  color: 'black',
+                  bold: true
+                },
+                {
+                  text: '\n\n'
+                },
+                this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+data["Informations-Generales"][0].Devise+')',  'Remise', 'Quantite', 'TVA', 'Total_HT']),
+                {
+                  text: '\n\n\n'
+                },
+                , {
+                  columns: [
+                    {
+                      table: {
+                        alignment: 'right',
+                        body: [
+                          [{ text: 'T.V.A %', alignment: 'left' }, '7%', '13%', '19%'],
+                          [{ text: 'Assiette', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7, data.Taxes[0].TVA[0].TVA13, data.Taxes[0].TVA[0].TVA19],
+                          [{ text: 'Montant', alignment: 'left' }, data.Montant_TVA[0].Montant_TVA7, data.Montant_TVA[0].Montant_TVA13, data.Montant_TVA[0].Montant_TVA19],
+                        ]
+                      },
+                      layout: 'lightHorizontalLines',
+                      alignment: 'right',
+                    },
+                    {
+                    },
+                    {
+                      style: 'tableExample',
+                      table: {
+                        heights: [20],
+                        body: [
+                          [{ text: 'Total H.T Brut', alignment: 'left' }, { text: data.Total[0].TotalHTBrut[0] +' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total Remise', alignment: 'left' }, { text: data.Total[0].TotalRemise[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total H.T Net', alignment: 'left' }, { text: data.Total[0].TotalHTNet[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total Fodec', alignment: 'left' }, { text: data.Total[0].TotalFodec[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total T.V.A', alignment: 'left' }, { text: data.Total[0].TotalTVA[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                          [{ text: 'Total T.T.C', alignment: 'left' }, { text: data.Total[0].TotalTTC[0]+' '+data["Informations-Generales"][0].Devise, alignment: 'right' }],
+                        ]
+                      },
+                      layout: 'lightHorizontalLines',
+                    }]
+                },
+                {
+                  text: 'Note :' + '\n\n',
+                  fontSize: 15,
+                  alignment: 'left',
+                  color: 'black',
+                  bold: true
+                },
+                {
+                  columns: [
+                    {   
+                      text: devis.description + '\n\n' 
+                    ,
+                    fontSize: 12,
+                    alignment: 'left',
+                    color: 'black',
+                  },
+                    {
+                      text: '\t'
+                    },
+                  ]
+                },
+              ],
+              footer: function (currentPage: any, pageCount: any) {
+                return {
+                  margin: 35,
+                  columns: [
+                    {
+                      fontSize: 9,
+                      text: [
+                        {
+                          text: currentPage.toString() + '/' + pageCount,
+                        }
+                      ],
+                      alignment: 'center'
+                    }
+                  ]
+                };
+              },
+              pageMargins: [30, 125, 40, 60],
             };
-          },
-          pageMargins: [30, 125, 40, 60],
-        };
-        pdfMake.createPdf(pdf_devis).open();
-       },1000)
-  }      
-  fileReader.readAsDataURL(detail.body);
-});
+            pdfMake.createPdf(pdf_devis).open();
+          },1000)
+      }      
+      fileReader.readAsDataURL(detail.body);
+    });
 }
   
 }

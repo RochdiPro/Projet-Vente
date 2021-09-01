@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import * as xml2js from 'xml2js';
 import { DialogContentAddArticleDialogComponent } from '../../devis/ajouter-devis/dialog-content-add-article-dialog/dialog-content-add-article-dialog.component';
 import { UpdateDialogOverviewArticleDialogComponent } from '../../devis/ajouter-devis/update-dialog-overview-article-dialog/update-dialog-overview-article-dialog.component';
+import { VoirPlusDialogComponent } from '../../devis/ajouter-devis/voir-plus-dialog/voir-plus-dialog.component';
 import { BlService } from '../../services/bl.service';
 import { DevisService } from '../../services/devis.service';
 
@@ -27,7 +28,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class UpdateBlComponent implements OnInit {
 
   modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
-  currency:  string []= ['Euro', 'DT', 'Dollar'];
+  currency:  string []= ['Euro', 'TND', 'Dollar'];
   infoFormGroup : FormGroup; 
   addArticleFormGroup: FormGroup;
   addReglementFormGroup: FormGroup;
@@ -125,6 +126,10 @@ export class UpdateBlComponent implements OnInit {
   nom_client : string = ''; 
   adresse_clt : string = ''; 
   client_id : string = ''
+  id_modeP_typeTree : any ;
+  valueRegTree : any ;
+  typeRegTwo: any ; 
+  typeRegTree: any 
   
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
@@ -134,7 +139,6 @@ export class UpdateBlComponent implements OnInit {
     this.subscription = interval(10000).subscribe((v) => {
       this.calculTotal();
       this.calculAssiettes();
-      this.modePaiement = this.infoFormGroup.get('modePaiement').value;
     });
    }
 
@@ -180,6 +184,18 @@ export class UpdateBlComponent implements OnInit {
       note: ['',]
     });
   }
+      //** voir plus  */
+      viewPlus(prod: any ){
+        const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
+          width: '100%', data : {
+            formPage: prod
+          }
+        });
+        dialogRef.afterClosed().subscribe(()=>{
+          console.log('Closed');
+          
+        });
+    }
   //** Get All Client */
   async getAllClient(){
     this.devisService.getAllClient().subscribe( res => {
@@ -204,7 +220,6 @@ export class UpdateBlComponent implements OnInit {
       this.blData = data.body; 
       this.id_client = this.blData.id_Clt
       this.modePaiement = this.blData.mode_Paiement;
-      this.devise = 'DT'
       this.note = this.blData.description;  
       this.getClientId(this.id_client);
     }); 
@@ -312,6 +327,7 @@ export class UpdateBlComponent implements OnInit {
           if(res.Devis == null )    
           {
             data =res.BL;
+            this.devise= data["Informations-Generales"][0].Devise[0]
             this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
             this.totalMontantFodec= data.Total[0].TotalFodec[0];
             this.totalRemise = data.Total[0].TotalRemise[0];
@@ -320,13 +336,38 @@ export class UpdateBlComponent implements OnInit {
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];          
             this.id_modeP_typeTwo = data.Type_Reglement[0].TypeRegTwo[0];
-
+            this.id_modeP_typeTree = data.Type_Reglement[0].TypeRegTree[0]
             this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
+            this.valueRegTree = data.Type_Reglement[0].ValueRegTree[0]
             if (this.id_modeP_typeTwo !== undefined){
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              if(this.id_modeP_typeTwo =='4')
+               this.typeRegTwo ='Espèces';
+               else if (this.id_modeP_typeTwo =='1'){
+                this.typeRegTwo ='Virement';
+               }else if (this.id_modeP_typeTwo =='2'){
+                this.typeRegTwo ='Chèque';
+              }else if (this.id_modeP_typeTwo =='3'){
+                this.typeRegTwo ='monétique';
+              }
               this.ligneOne = true 
+            }
+            if (this.id_modeP_typeTree !== undefined){
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              if(this.id_modeP_typeTree =='4')
+               this.typeRegTree ='Espèces';
+               else if (this.id_modeP_typeTree =='1'){
+                this.typeRegTree ='Virement';
+               }else if (this.id_modeP_typeTree =='2'){
+                this.typeRegTree ='Chèque';
+              }else if (this.id_modeP_typeTree =='3'){
+                this.typeRegTree ='monétique';
+              }
+              this.ligneTwo = true 
             }
           }else{
             data =res.Devis;
+            this.devise= data["Informations-Generales"][0].Devise[0]
             this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
             this.totalMontantFodec= data.Total[0].TotalFodec[0];
             this.totalRemise = data.Total[0].TotalRemise[0];
@@ -335,10 +376,34 @@ export class UpdateBlComponent implements OnInit {
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];          
             this.id_modeP_typeTwo = data.Type_Reglement[0].TypeRegTwo[0];
-
+            this.id_modeP_typeTree = data.Type_Reglement[0].TypeRegTree[0]
             this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
+            this.valueRegTree = data.Type_Reglement[0].ValueRegTree[0]
             if (this.id_modeP_typeTwo !== undefined){
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              if(this.id_modeP_typeTwo =='4')
+               this.typeRegTwo ='Espèces';
+               else if (this.id_modeP_typeTwo =='1'){
+                this.typeRegTwo ='Virement';
+               }else if (this.id_modeP_typeTwo =='2'){
+                this.typeRegTwo ='Chèque';
+              }else if (this.id_modeP_typeTwo =='3'){
+                this.typeRegTwo ='monétique';
+              }
               this.ligneOne = true 
+            }
+            if (this.id_modeP_typeTree !== undefined){
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              if(this.id_modeP_typeTree =='4')
+               this.typeRegTree ='Espèces';
+               else if (this.id_modeP_typeTree =='1'){
+                this.typeRegTree ='Virement';
+               }else if (this.id_modeP_typeTree =='2'){
+                this.typeRegTree ='Chèque';
+              }else if (this.id_modeP_typeTree =='3'){
+                this.typeRegTree ='monétique';
+              }
+              this.ligneTwo = true 
             }
           }
         
@@ -351,6 +416,8 @@ export class UpdateBlComponent implements OnInit {
             this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
             this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
             this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
+            this.newAttribute.etat = (data.Produits[0].Produits_Simples[0].Produit[i].Etat[0]);
+
             this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
             this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
             // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Simples[0].Produit[i].Montant_Tva[0]);
@@ -385,6 +452,7 @@ export class UpdateBlComponent implements OnInit {
               this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
               this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
+              this.newAttribute.etat = (data.Produits[0].Produits_4Gs[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
               this.newAttribute.quantite=(data.Produits[0].Produits_4Gs[0].Produit[i].Qte[0]); 
               // this.newAttribute.montant_TVA=(data.Produits[0].Produits_4Gs[0].Produit[i].Montant_Tva[0]);
@@ -431,6 +499,7 @@ export class UpdateBlComponent implements OnInit {
               this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
               this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom); 
+              this.newAttribute.etat= (data.Produits[0].Produits_Series[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
               this.newAttribute.quantite=(data.Produits[0].Produits_Series[0].Produit[i].Qte[0]); 
               // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Series[0].Produit[i].Montant_Tva[0]);
@@ -934,7 +1003,9 @@ export class UpdateBlComponent implements OnInit {
                 this.blArticls[index].etat = 'Dispo.';
                }  
             }else{
-              this.blArticls.push(res.data[i])
+              this.blArticls.push(res.data[i]);
+              this.calculTotal();
+              this.calculAssiettes();
             }
             
           }
@@ -973,7 +1044,7 @@ export class UpdateBlComponent implements OnInit {
       this.isCompleted= false;
       this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));
       
-      if(this.sum!=Number(this.totalTTc)){
+      if(Number(this.sum).toFixed(3)!=Number(this.totalTTc).toFixed(3)){
         this.isCompleted= false;
         Swal.fire( 
         'Attention! vérifiez le totale',
@@ -1066,14 +1137,11 @@ export class UpdateBlComponent implements OnInit {
   }
   //** Update item from the Table  */
   async ouvreDialogueArticle(index : number, item: any , table : any ){
-    setTimeout(()=>{
       const dialogRef = this.dialog.open(UpdateDialogOverviewArticleDialogComponent, {
         width: '500px',
         data: { index: index, ligne: item, table: table}
       });
-      dialogRef.afterClosed().subscribe(res => {  
-        console.log('res', res);
-          
+      dialogRef.afterClosed().subscribe(res => {            
         item.quantite = res.qte_modifier;
         item.quantite = parseInt(item.quantite); 
         item.prixU = res.prixU_modifier;
@@ -1084,9 +1152,7 @@ export class UpdateBlComponent implements OnInit {
         item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
 
         this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
-        item.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-        console.log(item.montant_TVA);
-        
+        item.montant_TVA = Number(this.Montant_TVA).toFixed(3);        
         item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
        
         item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
@@ -1105,15 +1171,17 @@ export class UpdateBlComponent implements OnInit {
         }else{
           item.etat = 'Dispo.'
         } 
+        this.calculTotal();
+        this.calculAssiettes();
       });
-    },1000);
+ 
     this.calculTotal();
     this.calculAssiettes();
   }
 
   //** The XML structure */
   createXMLStructure(url: string , data : any){
-    var doc = document.implementation.createDocument(url, 'Devis', null);
+    var doc = document.implementation.createDocument(url, 'BL', null);
     var etatElement = doc.createElement("Etat");
     var infoElement = doc.createElement("Informations-Generales");
     var total = doc.createElement('Total'); 
@@ -1436,6 +1504,27 @@ export class UpdateBlComponent implements OnInit {
     this.bLservice.getBlByID(id).subscribe((res: any)=>{        
       this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
    }); 
+    // check type de reglement 
+    let typeRegTwo : any ; 
+    let typeRegTree: any ; 
+    if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
+       typeRegTwo ='Espèces';
+    else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
+       typeRegTwo ='Virement';
+    }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
+       typeRegTwo ='Chèque';
+    }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
+                     typeRegTwo ='monétique';
+    }
+      if(this.addReglementFormGroup.get('typeRegTree').value=='4')
+         typeRegTree ='Espèces';
+      else if (this.addReglementFormGroup.get('typeRegTree').value=='1'){
+         typeRegTree ='Virement';
+      }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
+         typeRegTree ='Chèque';
+      }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
+        typeRegTree ='monétique';
+      } 
        setTimeout(async ()=>{
         //** Generate the pdf file */ 
         let pdf_devis = {
@@ -1447,17 +1536,7 @@ export class UpdateBlComponent implements OnInit {
           content: [
             { columns : [
               {
-                text: 'Informations Générales :' ,
-                fontSize: 15,
-                alignment: 'left',
-                color: 'black',
-                bold: true
-              },
-              {
-                text: '\t'
-              },
-              {
-                text:'BL n° ' +id,
+                text:'BL n° ' +id +' | '+ '\t' + this.date+ '\n\n',
                 fontSize: 15,
                 alignment: 'left',
                 color: 'black',
@@ -1469,26 +1548,32 @@ export class UpdateBlComponent implements OnInit {
               },
             {
               columns: [
+                (this.blData.type == 'Estimatif' || this.blData.type=='Proforma')?
                 {   
                   text: 
-                  'Type :' + '\t' + this.blData.type + '- BL n°' +this.bl_ID+ '\n\n' 
-                  + 'Devise avec :' + '\t' + this.infoFormGroup.get('devise').value + '\n\n'
-                  + 'Nom Fournisseur :' + '\t' + 'InfoNet' + '\n\n'
-                  + 'Mode Paiement :' + '\t' + this.infoFormGroup.get('modePaiement').value + '\n\n'
-                ,
+                 'Type : Devis ' +this.blData.type + ' n° '+ this.blData.id_Devis+ '- BL' + '\n' 
+                 + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                 ,
                 fontSize: 12,
                 alignment: 'left',
                 color: 'black',
-              },
-                {
-                  text: '\t'
-                },
-                {   
+              }:
+              {   
+                text: 
+                'Nouveau Bon de Livraison'
+                + 'Nom du responsable :' + '\t' + '' + '\n\n'
+               ,
+              fontSize: 12,
+              alignment: 'left',
+              color: 'black',
+            },
+            {
+              text: '\t'
+            },
+             {   
                   text: 
-                  'Code Client :' + '\t' + this.client_id + '\n\n'
-                  + 'Nom Client :' + '\t' + this.nom_client + '\n\n'
-                  + 'Adresse :' + '\t' + this.adresse_clt + '\n\n' 
-                  + 'Date:' + '\t' + this.date+ '\n\n',
+                  'Code Client :' + '\t' + this.client_id + '\n'
+                  + 'Nom Client :' + '\t' + this.nom_client + '\n',
                   fontSize: 12,
                   alignment: 'left',
                   color: 'black'
@@ -1496,10 +1581,44 @@ export class UpdateBlComponent implements OnInit {
               ]
             },
             {
-              text: '\n\n'+'\n\n'
+              text: '\n'
             },
             {
-              text: 'Détails :' + '\t',
+              text: 'Modalité du paiement :' ,
+              fontSize: 20,
+              alignment: 'left',
+              color: 'black',
+              bold: true
+            },
+            {
+              text: '\t'
+            },
+            {
+              columns: [
+                {
+                  ul : [
+                  this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
+                  ]
+                },{
+                  ul : [
+                    (typeRegTwo !== undefined)?
+                    typeRegTwo +' : '+Number( this.addReglementFormGroup.get('valueTwo').value).toFixed(3)+'\n' : 
+                    ''
+                    ]
+                },{
+                  ul:[
+                    (typeRegTree !==  undefined)?
+                    typeRegTree +' : '+ Number(this.addReglementFormGroup.get('valueTree').value).toFixed(3)+'\n' : 
+                    ''
+                  ]
+                }
+              ]
+            },
+            {
+              text: '\n\n'
+            },
+            {
+              text: 'Détails :' ,
               fontSize: 20,
               alignment: 'left',
               color: 'black',
@@ -1508,7 +1627,7 @@ export class UpdateBlComponent implements OnInit {
             {
               text: '\n\n'
             },
-            this.generateTable(this.blArticls, ['Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
+            this.generateTable(this.blArticls, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+this.infoFormGroup.get('devise').value+')', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
             {
               text: '\n\n\n'
             },
@@ -1533,12 +1652,12 @@ export class UpdateBlComponent implements OnInit {
                   table: {
                     heights: [20],
                     body: [
-                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut, alignment: 'right' }],
-                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff, alignment: 'right' }],
-                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT, alignment: 'right' }],
-                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec, alignment: 'right' }],
-                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA, alignment: 'right' }],
-                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc, alignment: 'right' }],
+                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                     ]
                   },
                   layout: 'lightHorizontalLines',

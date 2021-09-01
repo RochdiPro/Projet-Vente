@@ -10,6 +10,7 @@ import { interval, Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DialogContentAddArticleDialogComponent } from '../../devis/ajouter-devis/dialog-content-add-article-dialog/dialog-content-add-article-dialog.component';
 import { UpdateDialogOverviewArticleDialogComponent } from '../../devis/ajouter-devis/update-dialog-overview-article-dialog/update-dialog-overview-article-dialog.component';
+import { VoirPlusDialogComponent } from '../../devis/ajouter-devis/voir-plus-dialog/voir-plus-dialog.component';
 import { BlService } from '../../services/bl.service';
 
 //** import pdf maker */
@@ -29,7 +30,7 @@ addReglementFormGroup : FormGroup;
 
 columns :any = ['id_Produit', 'nom_Produit', 'prixU', 'remise', 'quantite', 'tva', 'total_HT'];
 modepaiement: any =[{id:1,name:'Virement'},{id:2,name:'Chèque'},{id:3,name:'Carte monétique'},{id:4,name:'Espèces'}]; 
-currency:  string []= ['Euro', 'DT', 'Dollar'];
+currency:  string []= ['Euro', 'TND', 'Dollar'];
 
 currentDate = new Date();
 clients: any ; 
@@ -118,7 +119,6 @@ numBL : any = 0 ;
 
   ngOnInit(): void {
     //** init*/  
-    this.getAllBL()
     this.getAllClient();
     
     this.infoFormGroup = this._formBuilder.group({
@@ -155,6 +155,19 @@ numBL : any = 0 ;
       note: ['',]
     });
   }
+
+  //** voir plus  */
+  viewPlus(prod: any ){
+      const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
+        width: '100%', data : {
+          formPage: prod
+        }
+      });
+      dialogRef.afterClosed().subscribe(()=>{
+        console.log('Closed');
+        
+      });
+  }
   //** Error Message
   ErrorMessage(field: string) {
     if (this.infoFormGroup.get(field).hasError('required')) {
@@ -163,11 +176,6 @@ numBL : any = 0 ;
     else {
       return '';
     }
-  }
-  getAllBL(){
-    this.bLservice.getAllBL().subscribe((res : any )=>{
-      this.numBL+=res.length;
-    });
   }
   //** Get All Client  */
   getAllClient(){
@@ -287,6 +295,7 @@ numBL : any = 0 ;
       this.existInStoc = existInStoc;
     });
   }  
+
   //** open Dialog */
   openDialog(){
     const dialogRef = this.dialog.open(DialogContentAddArticleDialogComponent,{
@@ -327,7 +336,9 @@ numBL : any = 0 ;
                 this.blArticls[index].etat = 'Dispo.';
                }  
             }else{
-              this.blArticls.push(res.data[i])
+              this.blArticls.push(res.data[i]);
+              this.calculTotal();
+              this.calculAssiettes();
             }
             
           }
@@ -335,6 +346,7 @@ numBL : any = 0 ;
 
       });
   }  
+
   //** Get Article By ID */
   async getProuduitById(){
     this.getProdId = true;
@@ -741,12 +753,12 @@ numBL : any = 0 ;
             'error'
           )
         }
-      }
-      )
+      });
+      this.calculTotal();
+      this.calculAssiettes();
     }
   //** Update item from the Table  */
   async ouvreDialogueArticle(index : number, item: any , table : any ){
-    setTimeout(()=>{
       const dialogRef = this.dialog.open(UpdateDialogOverviewArticleDialogComponent, {
         width: '500px',
         data: { index: index, ligne: item, table: table}
@@ -785,8 +797,10 @@ numBL : any = 0 ;
         }else{
           item.etat = 'Dispo.'
         } 
+        this.calculTotal();
+        this.calculAssiettes();
       });
-    },1000);
+   
     this.calculTotal();
     this.calculAssiettes();
   }
@@ -951,9 +965,9 @@ numBL : any = 0 ;
     var typeElement = doc.createElement("Type");
     var idFrElement = doc.createElement("Id_Fr");
     var idCLTElement = doc.createElement("Id_Clt");
+    var typeDevise = doc.createElement('Devise')
     var adress = doc.createElement("Local"); 
     var modepaiement = doc.createElement("Mode_Paiement");
-    var numBL = doc.createElement("N_BL");
     var totalHTBrut = doc.createElement("TotalHTBrut");
     var totalRemise = doc.createElement("TotalRemise");
     var totalHTNet = doc.createElement("TotalHTNet");
@@ -1016,12 +1030,12 @@ numBL : any = 0 ;
     
     var nameEtat ="En cours";
     var typeName = "Devis";
+    var devise = this.infoFormGroup.get('devise').value;
     var signaler_Prob = doc.createTextNode("True");
     var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
     var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
     var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value.id_Clt);
     var id_Fr = doc.createTextNode('1');
-    var numD = doc.createTextNode(this.numBL.toString());
 
 
     var totalHTBrutName =doc.createTextNode(this.totalHTBrut);
@@ -1036,9 +1050,9 @@ numBL : any = 0 ;
     idCLTElement.appendChild(id_Clt);
     idFrElement.appendChild(id_Fr);
     typeElement.innerHTML = typeName;
+    typeDevise.innerHTML=devise
     adress.appendChild(adressName);
     modepaiement.appendChild(modepaiementName);
-    numBL.appendChild(numD);
 
     totalHTBrut.appendChild(totalHTBrutName);
     totalRemise.appendChild(totalRemisetName);
@@ -1052,7 +1066,7 @@ numBL : any = 0 ;
     infoElement.appendChild(typeElement);
     infoElement.appendChild(adress);
     infoElement.appendChild(modepaiement);
-    infoElement.appendChild(numBL);
+    infoElement.appendChild(typeDevise);
 
     total.appendChild(totalHTBrut);
     total.appendChild(totalRemise);
@@ -1068,6 +1082,7 @@ numBL : any = 0 ;
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.blArticls[i].produits_simple;
@@ -1110,6 +1125,7 @@ numBL : any = 0 ;
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat)
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1132,7 +1148,8 @@ numBL : any = 0 ;
         this.blArticls[i].signaler_probleme= true; 
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
-        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit;        
+        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit; 
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;       
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.blArticls[i].produits_simple;
@@ -1163,6 +1180,7 @@ numBL : any = 0 ;
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1186,6 +1204,7 @@ numBL : any = 0 ;
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit;
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
         var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
@@ -1205,6 +1224,7 @@ numBL : any = 0 ;
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1249,20 +1269,32 @@ numBL : any = 0 ;
 
     //** Generate the PDF file  */
   async generatePDF(id :any){    
-    // check type de reglement 
-      let typeRegTwo : any ; 
-      if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
-        typeRegTwo ='Espèces';
-      else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
-        typeRegTwo ='Virement';
-      }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
-        typeRegTwo ='Chèque';
-      }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
-          typeRegTwo ='monétique';
-      }     
-        this.bLservice.getBlByID(id).subscribe((res: any)=>{  
+        // check type de reglement 
+   let typeRegTwo : any ; 
+   let typeRegTree: any ; 
+   if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
+      typeRegTwo ='Espèces';
+   else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
+      typeRegTwo ='Virement';
+   }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
+      typeRegTwo ='Chèque';
+   }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
+                    typeRegTwo ='monétique';
+   }
+     if(this.addReglementFormGroup.get('typeRegTree').value=='4')
+        typeRegTree ='Espèces';
+     else if (this.addReglementFormGroup.get('typeRegTree').value=='1'){
+        typeRegTree ='Virement';
+     }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
+        typeRegTree ='Chèque';
+     }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
+       typeRegTree ='monétique';
+     } 
+     
+     
+    this.bLservice.getBlByID(id).subscribe((res: any)=>{  
           this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
-       });   
+    });   
        setTimeout(async ()=>{
         //** Generate the pdf file */ 
         let pdf_devis = {
@@ -1274,17 +1306,7 @@ numBL : any = 0 ;
           content: [
             { columns : [
               {
-                text: 'Informations Générales :' ,
-                fontSize: 15,
-                alignment: 'left',
-                color: 'black',
-                bold: true
-              },
-              {
-                text: '\t'
-              },
-              {
-                text:'BL n° ' +id + '| ' + this.date ,
+                text:'BL n° ' +id + ' | ' + this.date+ '\n\n',
                 fontSize: 15,
                 alignment: 'left',
                 color: 'black',
@@ -1298,9 +1320,8 @@ numBL : any = 0 ;
               columns: [
                 {   
                   text: 
-                  'Type:' + '\t' + 'Bon De Livraison n° '+id + '\n' 
-                  + 'Devise avec :' + '\t' + this.infoFormGroup.get('devise').value + '\n'
-                  + 'Nom Fournisseur :' + '\t' + 'InfoNet' + '\n'
+                  'Nouveau Bon de Livraison'
+                   +'Nom du responsable :' + '\t' + '' + '\n'
                 ,
                 fontSize: 12,
                 alignment: 'left',
@@ -1313,7 +1334,6 @@ numBL : any = 0 ;
                   text: 
                   'Code Client :' + '\t' + this.infoFormGroup.get('custemerName').value.id_Clt + '\n'
                   + 'Nom Client :' + '\t' + this.infoFormGroup.get('custemerName').value.nom_Client + '\n'
-                  + 'Adresse :' + '\t' + this.infoFormGroup.get('adresse').value + '\n' 
                   ,
                   fontSize: 12,
                   alignment: 'left',
@@ -1325,7 +1345,7 @@ numBL : any = 0 ;
               text: '\n'
             },
             {
-              text: 'Mode Paiement :' ,
+              text: 'Modalité du paiement:' ,
               fontSize: 20,
               alignment: 'left',
               color: 'black',
@@ -1337,9 +1357,21 @@ numBL : any = 0 ;
             {
               columns: [
                 {
-                  text:'Type de règlement n° 1: ' + '\t'+this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
-                  +'Type de règlement n° 2: ' + '\t'+ typeRegTwo +' : '+ this.addReglementFormGroup.get('valueTwo').value+'\n'
-                  +'Type de règlement n° 3: ' + '\t'+this.addReglementFormGroup.get('typeRegTree').value +' : '+ this.addReglementFormGroup.get('valueTree').value +'\n'
+                  ul : [
+                  this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
+                  ]
+                },{
+                  ul : [
+                    (typeRegTwo !== undefined)?
+                    typeRegTwo +' : '+Number( this.addReglementFormGroup.get('valueTwo').value).toFixed(3)+'\n' : 
+                    ''
+                    ]
+                },{
+                  ul:[
+                    (typeRegTree !==  undefined)?
+                    typeRegTree +' : '+ Number(this.addReglementFormGroup.get('valueTree').value).toFixed(3)+'\n' : 
+                    ''
+                  ]
                 }
               ]
             },
@@ -1356,7 +1388,7 @@ numBL : any = 0 ;
             {
               text: '\n\n'
             },
-            this.generateTable(this.blArticls, ['Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
+            this.generateTable(this.blArticls, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+this.infoFormGroup.get('devise').value+')', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
             {
               text: '\n\n\n'
             },
@@ -1381,12 +1413,12 @@ numBL : any = 0 ;
                   table: {
                     heights: [20],
                     body: [
-                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut, alignment: 'right' }],
-                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff, alignment: 'right' }],
-                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT, alignment: 'right' }],
-                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec, alignment: 'right' }],
-                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA, alignment: 'right' }],
-                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc, alignment: 'right' }],
+                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                     ]
                   },
                   layout: 'lightHorizontalLines',

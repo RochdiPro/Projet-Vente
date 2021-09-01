@@ -1407,8 +1407,6 @@ numBL : any = 0 ;
                   alignment: 'right',
                 },
                 {
-                },
-                {
                   style: 'tableExample',
                   table: {
                     heights: [20],

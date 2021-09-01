@@ -957,8 +957,6 @@ export class ConvertDevisToBlComponent implements OnInit {
                 alignment: 'right',
               },
               {
-              },
-              {
                 style: 'tableExample',
                 table: {
                   heights: [20],

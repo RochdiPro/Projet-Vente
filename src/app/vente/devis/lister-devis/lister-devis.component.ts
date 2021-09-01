@@ -43,13 +43,14 @@ export class ListerDevisComponent implements OnInit {
     this.loading = true; 
     let devis_en_cours : any =[]; 
     this.devisService.getAllDevis().subscribe((res: any)=>{
-      res = res.sort((a:any , b : any )=> b.id_Devis -a.id_Devis);
+      
       let data : any =[]
       data = res ; 
       data.map((ele: any)=>{ 
         if (ele.etat ==='En cours')
          devis_en_cours.unshift(ele)
       });  
+      devis_en_cours = devis_en_cours.sort((a:any , b : any )=> b.id_Devis -a.id_Devis);
     this.dataSourceDevis= new MatTableDataSource(devis_en_cours);   
     this.dataSourceDevis.sort = this.sort; 
     this.dataSourceDevis.paginator = this.paginator;
@@ -374,7 +375,7 @@ export class ListerDevisComponent implements OnInit {
                 },
                 this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+data["Informations-Generales"][0].Devise+')',  'Remise', 'Quantite', 'TVA', 'Total_HT']),
                 {
-                  text: '\n\n\n'
+                  text: '\n\n'
                 },
                 , {
                   columns: [
@@ -389,8 +390,6 @@ export class ListerDevisComponent implements OnInit {
                       },
                       layout: 'lightHorizontalLines',
                       alignment: 'right',
-                    },
-                    {
                     },
                     {
                       style: 'tableExample',
@@ -680,8 +679,6 @@ export class ListerDevisComponent implements OnInit {
                       },
                       layout: 'lightHorizontalLines',
                       alignment: 'right',
-                    },
-                    {
                     },
                     {
                       style: 'tableExample',

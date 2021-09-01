@@ -1645,8 +1645,7 @@ export class UpdateBlComponent implements OnInit {
                   layout: 'lightHorizontalLines',
                   alignment: 'right',
                 },
-                {
-                },
+          
                 {
                   style: 'tableExample',
                   table: {
@@ -1746,7 +1745,7 @@ export class UpdateBlComponent implements OnInit {
       formData.append('Id_Clt',this.client_id );
       formData.append('Id_Responsable','InfoNet' );
       formData.append('Type', this.blData.type +'- BL');
-      formData.append('Etat', 'En cours' );
+      formData.append('Etat', this.blData.etat );
       formData.append('Frais_Livraison', frais_Livraison);
       formData.append('Date_Creation',  this.latest_date);
       formData.append('Total_HT_Brut', this.totalHTBrut);

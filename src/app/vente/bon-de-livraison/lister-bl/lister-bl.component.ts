@@ -389,8 +389,6 @@ export class ListerBlComponent implements OnInit {
                       alignment: 'right',
                     },
                     {
-                    },
-                    {
                       style: 'tableExample',
                       table: {
                         heights: [20],

@@ -9,7 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class VoirPlusDialogComponent implements OnInit {
   item: any =[]; 
   constructor(public dialogRef: MatDialogRef<VoirPlusDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.item = data.formPage
+    this.item = data.formPage    
    }
 
   ngOnInit(): void {

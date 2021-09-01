@@ -1432,8 +1432,6 @@ export class AjouterDevisComponent implements OnInit {
                   alignment: 'right',
                 },
                 {
-                },
-                {
                   style: 'tableExample',
                   table: {
                     heights: [20],

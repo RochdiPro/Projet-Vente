@@ -1585,8 +1585,6 @@ export class UpdateDevisComponent implements OnInit {
                   alignment: 'right',
                 },
                 {
-                },
-                {
                   style: 'tableExample',
                   table: {
                     heights: [20],

@@ -384,8 +384,6 @@ export class DevisBLComponent implements OnInit {
                       alignment: 'right',
                     },
                     {
-                    },
-                    {
                       style: 'tableExample',
                       table: {
                         heights: [20],

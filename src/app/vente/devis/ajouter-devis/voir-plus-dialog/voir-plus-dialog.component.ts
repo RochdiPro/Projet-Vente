@@ -10,6 +10,8 @@ export class VoirPlusDialogComponent implements OnInit {
   item: any =[]; 
   constructor(public dialogRef: MatDialogRef<VoirPlusDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.item = data.formPage    
+    console.log(this.item);
+    
    }
 
   ngOnInit(): void {

@@ -337,6 +337,7 @@ export class AjouterDevisComponent implements OnInit {
                // Check availibility  * (1 - (Number(this.devisArticls[index].remise)) / 100)
               if(this.qteStock<this.devisArticls[index].quantite){
                 this.devisArticls[index].etat='Non Dispo.';
+                this.typeDevis ='Estimatif'
               }else{
                 this.devisArticls[index].etat = 'Dispo.';
                }  
@@ -624,6 +625,7 @@ export class AjouterDevisComponent implements OnInit {
             // check availability
             if(this.qteStock<this.newAttribute.quantite){
               this.newAttribute.etat='Non Dispo.';
+              this.typeDevis ='Estimatif'
             }else{
               this.newAttribute.etat = 'Dispo.'
             }  
@@ -678,6 +680,7 @@ export class AjouterDevisComponent implements OnInit {
         // Check availibility 
         if(this.qteStock<this.devisArticls[index].quantite){
           this.devisArticls[index].etat='Non Dispo.';
+          this.typeDevis ='Estimatif'
         }else{
           this.devisArticls[index].etat = 'Dispo.';
          }  
@@ -817,6 +820,7 @@ export class AjouterDevisComponent implements OnInit {
               // check availability
               if(this.qteStock<this.newAttribute.quantite){
                 this.newAttribute.etat='Non Dispo.';
+                this.typeDevis ='Estimatif'
               }else{
                 this.newAttribute.etat = 'Dispo.'
               }
@@ -857,6 +861,7 @@ export class AjouterDevisComponent implements OnInit {
              // Check availibility 
             if(this.qteStock<this.devisArticls[index].quantite){
               this.devisArticls[index].etat='Non Dispo.';
+              this.typeDevis ='Estimatif'
             }else{
               this.devisArticls[index].etat = 'Dispo.';
              }  

@@ -13,22 +13,25 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { MatPaginatorIntlCro } from '../matPaginatorIntlCro';
 import { AjouterBlComponent } from './ajouter-bl/ajouter-bl.component';
 import { BonDeLivraisonRoutingModule } from './bon-de-livraison-routing.module';
 import { ConvertDevisToBlComponent } from './convert-devis-to-bl/convert-devis-to-bl.component';
 import { DevisBLComponent } from './devis-bl/devis-bl.component';
-import { ListerBlComponent } from './lister-bl/lister-bl.component';
-import { NouveauBLComponent } from './nouveau-bl/nouveau-bl.component';
 import { GenererBlComponent } from './generer-bl/generer-bl.component';
+import { ListerBlComponent } from './lister-bl/lister-bl.component';
+import { InfosDialogComponent } from './nouveau-bl/infos-dialog/infos-dialog.component';
+import { NouveauBLComponent } from './nouveau-bl/nouveau-bl.component';
 import { UpdateBlComponent } from './update-bl/update-bl.component';
 
 
 
 
 
+
 @NgModule({
-  declarations: [NouveauBLComponent, DevisBLComponent, ConvertDevisToBlComponent, AjouterBlComponent, ListerBlComponent, GenererBlComponent, UpdateBlComponent],
+  declarations: [NouveauBLComponent, DevisBLComponent, ConvertDevisToBlComponent, AjouterBlComponent, ListerBlComponent, GenererBlComponent, UpdateBlComponent, InfosDialogComponent],
   imports: [
     CommonModule,
     BonDeLivraisonRoutingModule,
@@ -46,7 +49,8 @@ import { UpdateBlComponent } from './update-bl/update-bl.component';
     FormsModule,
     MatPaginatorModule,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgSelectModule
 
   ],
   providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro }]

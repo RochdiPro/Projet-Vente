@@ -201,7 +201,6 @@ export class UpdateDevisComponent implements OnInit {
       this.id_client = this.devisData.id_Clt
       this.typeDevis = this.devisData.type; 
       this.modePaiement = this.devisData.mode_Paiement;
-      this.devise = 'DT'
       this.note = this.devisData.description;  
       this.getClientId(this.id_client.toString());
     }); 
@@ -596,6 +595,7 @@ export class UpdateDevisComponent implements OnInit {
               // check availability
               if(this.qteStock<this.newAttribute.quantite){
                 this.newAttribute.etat='Non Dispo.';
+                this.typeDevis ='Estimatif'
               }else{
                 this.newAttribute.etat = 'Dispo.'
               }  
@@ -650,6 +650,7 @@ export class UpdateDevisComponent implements OnInit {
           // Check availibility 
           if(this.qteStock<this.devisArticls[index].quantite){
             this.devisArticls[index].etat='Non Dispo.';
+            this.typeDevis ='Estimatif'
           }else{
             this.devisArticls[index].etat = 'Dispo.';
            }  
@@ -750,6 +751,7 @@ export class UpdateDevisComponent implements OnInit {
                   this.devisArticls.paginator = this.paginator;
                   this.typeDevis = 'Estimatif'
                   this.newAttribute.etat= 'Non Dispo.'
+                  this.typeDevis ='Estimatif'
                   this.qteStock= 0; 
                 }
                 else {
@@ -789,6 +791,7 @@ export class UpdateDevisComponent implements OnInit {
                 // check availability
                 if(this.qteStock<this.newAttribute.quantite){
                   this.newAttribute.etat='Non Dispo.';
+                  this.typeDevis ='Estimatif'
                 }else{
                   this.newAttribute.etat = 'Dispo.'
                 }
@@ -829,6 +832,7 @@ export class UpdateDevisComponent implements OnInit {
                // Check availibility 
               if(this.qteStock<this.devisArticls[index].quantite){
                 this.devisArticls[index].etat='Non Dispo.';
+                this.typeDevis ='Estimatif'
               }else{
                 this.devisArticls[index].etat = 'Dispo.';
                }  
@@ -919,6 +923,7 @@ export class UpdateDevisComponent implements OnInit {
                // Check availibility  * (1 - (Number(this.devisArticls[index].remise)) / 100)
               if(this.qteStock<this.devisArticls[index].quantite){
                 this.devisArticls[index].etat='Non Dispo.';
+                this.typeDevis ='Estimatif'
               }else{
                 this.devisArticls[index].etat = 'Dispo.';
                }  
@@ -967,9 +972,7 @@ export class UpdateDevisComponent implements OnInit {
   //** Ckeck Total TTC in the reglement step */
   checkTotalTTC(stepper : MatStepper){
       this.isCompleted= false;
-      this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));      
-      console.log(this.sum);
-      
+      this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));            
       if(Number(this.sum).toFixed(3)!=Number(this.totalTTc).toFixed(3)){
         this.isCompleted= false;
         Swal.fire( 

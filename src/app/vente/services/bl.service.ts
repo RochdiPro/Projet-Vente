@@ -105,4 +105,12 @@ export class BlService {
   updateBL(formData : any ): Observable<any>{
     return this.http.post(_url+'Modifier_Bon_Livraison/', formData);
   }
+  //** Detail_Produit_4G_En_Json */
+  detailProdFourG(id: any){
+    return this.http.get(_url+'Detail_Produit_4G_En_Json/',{
+      params:{
+        Id: id, 
+      },observe:'response'
+    });
+  }
 }

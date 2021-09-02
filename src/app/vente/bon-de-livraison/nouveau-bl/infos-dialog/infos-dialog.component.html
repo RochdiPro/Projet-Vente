@@ -1,0 +1,59 @@
+<div class="container" *ngIf="item.n_Imei === 'true'">
+    <h5 mat-dialog-title>Type : 4G</h5>
+    <div mat-dialog-content class="mat-typography">
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                </tr>
+            </thead>
+            <tbody *ngFor="let qte of nbrQte;let i = index;">
+                <tr>{{i+1}}</tr>
+                <tr>
+                    <td>Numéro Série</td>
+                    <td>
+                        <div class="form-group">
+                            <ng-select [multiple]="false" [(ngModel)]="serie" placeholder="Numéro Série" name="{{i}}">
+                                <ng-option></ng-option>
+                            </ng-select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Numéro n_Imei 1</td>
+                    <td>
+                        <div class="form-group">
+                            <ng-select [multiple]="false" [(ngModel)]="n_ImeiOne" placeholder="n_Imei 1" name="{{i}}">
+                                <ng-option></ng-option>
+                            </ng-select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Numéro n_Imei 2</td>
+                    <td>
+                        <div class="form-group">
+                            <ng-select [multiple]="false" [(ngModel)]="n_ImeiTwo" placeholder="n_Imei 2" name="{{i}}">
+                                <ng-option></ng-option>
+                            </ng-select>
+                        </div>
+                    </td>
+                </tr>
+                <tr></tr>
+            </tbody>
+        </table>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-button class="btn btn-default rigth " (click)="fermerDialogue()">Fermer</button>
+        <button mat-button class="btn btn-primary rigth">Valider</button>
+    </div>
+
+</div>
+
+<div class="container" *ngIf="item.N_Serie === 'true'">
+    <h5 class="col-xs-8 text-center" mat-dialog-title>Type : Série</h5>
+
+    <div mat-dialog-actions class="right">
+        <button mat-button class="btn btn-default " (click)="fermerDialogue()">Fermer</button>
+        <button mat-button class="btn btn-primary ">Valider</button>
+    </div>
+</div>

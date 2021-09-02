@@ -51,7 +51,7 @@ export class DevisBLComponent implements OnInit {
         let data : any = []
         data = res
         data.map((ele: any)=>{ 
-          if (ele.etat ==='En cours')
+          if ((ele.etat ==='En cours')&& (ele.type==='Proforma'))
           return devis_en_cours.unshift(ele)
         });  
         // res = res.sort((a:any , b : any )=> b.id_Devis -a.id_Devis);

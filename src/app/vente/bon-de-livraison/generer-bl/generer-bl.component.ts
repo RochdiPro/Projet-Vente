@@ -508,7 +508,7 @@ export class GenererBlComponent implements OnInit {
       this.getProdId = true;
       this.newAttribute = {};
       let idProd = this.id;   
-      this.last_ID = this.id;    
+      this.last_ID = this.id;   
       let index = this.devisArticls.findIndex(((x: any)=>parseInt(x.id_Produit) === parseInt(this.last_ID)));     
       //** Fetch if this product is exist in devisArticls or not  */ 
       if((index === -1) && (idProd != undefined)){
@@ -551,96 +551,59 @@ export class GenererBlComponent implements OnInit {
             }
             this.fodec = this.newAttribute.fodec;
             // get Prix U from stocks 
-            this.devisService.getInfoProductByIdFromStock(idProd).subscribe((res : any) => {
+            this.devisService.getInfoProductByIdFromStock(idProd).subscribe((result : any) => {
               // if not exist in the table stocks 
-              if ((res.body)===null){
-                Swal.fire({
-                  title: "Entrez le prix!",
-                  input: 'text',
-                  showCancelButton: true        
-              }).then((result) => {
-                  if (result.value) {
-                      this.newAttribute.prixU = Number(result.value).toFixed(3);
-                      this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-  
-                      this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-                      this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
-                      this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-                      this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-                      // Montant Tva u = (prix*tva)/100
-                      this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-                      this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-                      // Total ht = prix * qt
-                      this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
-                      this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
-                      //  prix u ttc = prix u  + montant tva u 
-                      this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);
-                     
-                      this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
-                      this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-                      //  total ttc = prix u ttc * qte
-                      this.Totale_TTC = Number((this.newAttribute.prix_U_TTC * this.newAttribute.quantite)).toFixed(3) ;                    
-                      this.newAttribute.totale_TTC =this.Totale_TTC;
-  
-                  }else{
-                    this.devisArticls.pop();
-                  }
-              });
+              if ((result.body)===null){
+                Swal.fire("ce produit est hors stock", '','warning');
+                this.devisArticls.sort = this.sort;
+                this.devisArticls.paginator = this.paginator;
+              }
+              else{ 
+              this.qteStock= result.body.quantite; 
+              // check availability
+              if(this.qteStock<this.newAttribute.quantite){
+                Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+              }else{
+                this.newAttribute.prixU = Number(result.body.prix).toFixed(3); 
+                this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+    
+                this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
+                this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
+                this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+    
+                // Montant Tva u = (prix*tva)/100
+                this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+                // Total ht = prix * qt
+                this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
+                this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
+                //  prix u ttc = prix u  + montant tva u 
+                this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);;
+    
+                this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
+                this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
+                 //  total ttc = prix u ttc * qte
+                this.Totale_TTC = Number(this.newAttribute.prix_U_TTC * this.newAttribute.quantite).toFixed(3) ;                    
+                this.newAttribute.totale_TTC = this.Totale_TTC;
+    
+                this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
+                this.newAttribute.ch_Globale = Number(this.Ch_Globale);
+    
+                this.newAttribute.etatEntree = "Entrée Stock Non Accompli";
+                this.newAttribute.fichierSimple = "";
+                this.newAttribute.fichierSerie = "";
+                this.newAttribute.fichier4G = "";
+                this.newAttribute.produitsSeries = "";
+                this.newAttribute.produits4g = "";
+                this.newAttribute.etat = '' 
+                this.newAttribute.etat = 'Dispo.'
                 this.devisArticls.push(this.newAttribute);
                 this.calculTotal();
                 this.calculAssiettes();
                 this.devisArticls.sort = this.sort;
                 this.devisArticls.paginator = this.paginator;
-                this.typeDevis = 'Estimatif'
-                this.newAttribute.etat= 'Non Dispo.'
-                this.qteStock= 0; 
-              }
-              else{ 
-              this.qteStock= res.body.quantite; 
-              this.newAttribute.prixU = Number(res.body.prix).toFixed(3); 
-              this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-  
-              this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-              this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
-              this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-              this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-  
-              // Montant Tva u = (prix*tva)/100
-              this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-              this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-              // Total ht = prix * qt
-              this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
-              this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
-              //  prix u ttc = prix u  + montant tva u 
-              this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);;
-  
-              this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-               //  total ttc = prix u ttc * qte
-              this.Totale_TTC = Number(this.newAttribute.prix_U_TTC * this.newAttribute.quantite).toFixed(3) ;                    
-              this.newAttribute.totale_TTC = this.Totale_TTC;
-  
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-              this.newAttribute.ch_Globale = Number(this.Ch_Globale);
-  
-              this.newAttribute.etatEntree = "Entrée Stock Non Accompli";
-              this.newAttribute.fichierSimple = "";
-              this.newAttribute.fichierSerie = "";
-              this.newAttribute.fichier4G = "";
-              this.newAttribute.produitsSeries = "";
-              this.newAttribute.produits4g = "";
-              this.newAttribute.etat = '' 
-              // check availability
-              if(this.qteStock<this.newAttribute.quantite){
-                this.newAttribute.etat='Non Dispo.';
-              }else{
-                this.newAttribute.etat = 'Dispo.'
               }  
-              this.devisArticls.push(this.newAttribute);
-              this.calculTotal();
-              this.calculAssiettes();
-              this.devisArticls.sort = this.sort;
-              this.devisArticls.paginator = this.paginator;
             }
               this.last_ID = this.id; 
               this.id = '';      
@@ -650,7 +613,6 @@ export class GenererBlComponent implements OnInit {
           }
         },(err : any)=>{
           console.log(err);
-          
           Swal.fire({
             title: 'Il n\'y a pas de produit avec ce code!',
             icon: 'warning',
@@ -661,38 +623,51 @@ export class GenererBlComponent implements OnInit {
         });
         } // if this product exist 
         else{
-          this.devisArticls[index].quantite = parseInt(this.devisArticls[index].quantite);
-          this.devisArticls[index].quantite +=1;  
-          this.devisArticls[index].prixU=Number(this.devisArticls[index].prixU).toFixed(3);  
-          this.devisArticls[index].finalPrice=  (this.devisArticls[index].prixU - (this.devisArticls[index].prixU * (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)  
+          this.devisService.getInfoProductByIdFromStock(idProd).subscribe((result : any) => {
+            if ((result.body)===null){
+              Swal.fire("ce produit est hors stock", '','warning');
+              this.devisArticls.sort = this.sort;
+              this.devisArticls.paginator = this.paginator;
+            }
+            else{ 
+              this.qteStock= result.body.quantite; 
+              let qte : any ; 
+              qte = parseInt(this.devisArticls[index].quantite);
+              qte +=1; 
+            // Check availibility 
+            if(this.qteStock<qte){
+              Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+              this.getProdId= false;
+            }else{
+              this.devisArticls[index].quantite = parseInt(this.devisArticls[index].quantite)+1
+              this.devisArticls[index].prixU=Number(this.devisArticls[index].prixU).toFixed(3);  
+              this.devisArticls[index].finalPrice=  (this.devisArticls[index].prixU - (this.devisArticls[index].prixU * (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)  
+          
+              this.devisArticls[index].montant_HT = ((Number(this.devisArticls[index].prixU) * Number(this.devisArticls[index].quantite)) * (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3);
+              this.devisArticls[index].qprixU = Number(this.Prix).toFixed(3);
+              this.Montant_Fodec = (this.devisArticls[index].montant_HT * this.devisArticls[index].fodec) / 100;
+              this.devisArticls[index].montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
       
-          this.devisArticls[index].montant_HT = ((Number(this.devisArticls[index].prixU) * Number(this.devisArticls[index].quantite)) * (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3);
-          this.devisArticls[index].qprixU = Number(this.Prix).toFixed(3);
-          this.Montant_Fodec = (this.devisArticls[index].montant_HT * this.devisArticls[index].fodec) / 100;
-          this.devisArticls[index].montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-  
-          this.Montant_TVA = Number(this.devisArticls[index].finalPrice) * Number((this.devisArticls[index].tva)/ 100) ;
-          this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
-  
-          this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
-          this.devisArticls[index].prix_U_TTC = (((Number(this.devisArticls[index].finalPrice) + Number((this.devisArticls[index].montant_Fodec)/this.devisArticls[index].quantite) + Number(this.devisArticls[index].montant_TVA)))).toFixed(3);;
-          this.devisArticls[index].montant_TTC = Number(this.devisArticls[index].prix_U_TTC) * Number(this.devisArticls[index].quantite);
-          this.devisArticls[index].total_TVA = ((Number(this.devisArticls[index].montant_TVA)) / (Number(this.devisArticls[index].quantite))).toFixed(3);
-          this.Totale_TTC = Number((this.devisArticls[index].prix_U_TTC*this.devisArticls[index].quantite)).toFixed(3)
-          this.devisArticls[index].totale_TTC = this.Totale_TTC;
-          this.Total_HT = Number(this.devisArticls[index].finalPrice * this.devisArticls[index].quantite); 
-          this.devisArticls[index].total_HT = Number(this.Total_HT).toFixed(3);        
-          this.devisArticls[index].ch_Globale = Number(this.Ch_Globale);
-  
-          // Check availibility 
-          if(this.qteStock<this.devisArticls[index].quantite){
-            this.devisArticls[index].etat='Non Dispo.';
-          }else{
-            this.devisArticls[index].etat = 'Dispo.';
-           }  
-           this.calculTotal();
-           this.calculAssiettes();
-           this.getProdId= false;
+              this.Montant_TVA = Number(this.devisArticls[index].finalPrice) * Number((this.devisArticls[index].tva)/ 100) ;
+              this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
+      
+              this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
+              this.devisArticls[index].prix_U_TTC = (((Number(this.devisArticls[index].finalPrice) + Number((this.devisArticls[index].montant_Fodec)/this.devisArticls[index].quantite) + Number(this.devisArticls[index].montant_TVA)))).toFixed(3);;
+              this.devisArticls[index].montant_TTC = Number(this.devisArticls[index].prix_U_TTC) * Number(this.devisArticls[index].quantite);
+              this.devisArticls[index].total_TVA = ((Number(this.devisArticls[index].montant_TVA)) / (Number(this.devisArticls[index].quantite))).toFixed(3);
+              this.Totale_TTC = Number((this.devisArticls[index].prix_U_TTC*this.devisArticls[index].quantite)).toFixed(3)
+              this.devisArticls[index].totale_TTC = this.Totale_TTC;
+              this.Total_HT = Number(this.devisArticls[index].finalPrice * this.devisArticls[index].quantite); 
+              this.devisArticls[index].total_HT = Number(this.Total_HT).toFixed(3);        
+              this.devisArticls[index].ch_Globale = Number(this.Ch_Globale);
+              this.devisArticls[index].etat = 'Dispo.';
+              this.calculTotal();
+              this.calculAssiettes();
+              this.getProdId= false;
+             }  
+            }
+          }); 
+
         }
   }
   
@@ -746,94 +721,55 @@ export class GenererBlComponent implements OnInit {
               }
               this.fodec = this.newAttribute.fodec;
               // get Prix U HT
-              this.devisService.getInfoProductByIdFromStock(idProd).subscribe((res : any) => {
-                if ((res.body)===null) {
-                  Swal.fire({
-                    title: "Entrez le prix!",
-                    input: 'text',
-                    showCancelButton: true        
-                }).then((result) => {
-                    if (result.value) {
-                      this.newAttribute.prixU = Number(result.value).toFixed(3);
-                      this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-    
-                      this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-                      this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
-                      this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-                      this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-                      // Montant Tva u = (prix*tva)/100
-                      this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-                      this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-                      // Total ht = prix * qt
-                      this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
-                      this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
-                      //  prix u ttc = prix u  + montant tva u 
-                      this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);;
-  
-                      this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
-                      this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-                      //  total ttc = prix u ttc * qte / remise
-                      this.Totale_TTC = Number(this.newAttribute.prix_U_TTC * this.newAttribute.quantite * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3)
-                      this.newAttribute.totale_TTC = this.Totale_TTC;
-                    }else{
-                      this.devisArticls.pop();
-                    }
-                });
-                  this.devisArticls.push(this.newAttribute);
-                  this.calculTotal();
-                  this.calculAssiettes();
-                  
-                  this.devisArticls.sort = this.sort;
-                  this.devisArticls.paginator = this.paginator;
-                  this.typeDevis = 'Estimatif'
-                  this.newAttribute.etat= 'Non Dispo.'
-                  this.qteStock= 0; 
+              this.devisService.getInfoProductByIdFromStock(idProd).subscribe((result : any) => {
+                if ((result.body)===null) {
+                  Swal.fire("ce produit est hors stock", '','warning');
                 }
                 else {
-                  this.qteStock= res.body.quantite; 
-                  this.newAttribute.prixU = Number(res.body.prix).toFixed(3); 
-                  this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-  
-                  this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-                  this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
-                  this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-                  this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-      
-                  // Montant Tva u = (prix*tva)/100
-                  this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-                  this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-                  // Total ht = prix * qt
-                  this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
-                  this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
-                  //  prix u ttc = prix u  + montant tva u 
-                  this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);;
-      
-                  this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
-                  this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-                  //  total ttc = prix u ttc * qte / remise
-                  this.Totale_TTC = Number(this.newAttribute.prix_U_TTC * this.newAttribute.quantite * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3)
-                  this.newAttribute.totale_TTC = this.Totale_TTC;
-  
-                  this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-                  this.newAttribute.ch_Globale = Number(this.Ch_Globale);
-  
-                this.newAttribute.etatEntree = "Entrée Stock Non Accompli";
-                this.newAttribute.fichierSimple = "";
-                this.newAttribute.fichierSerie = "";
-                this.newAttribute.fichier4G = "";
-                this.newAttribute.produitsSeries = "";
-                this.newAttribute.produits4g = ""; 
+                  this.qteStock= result.body.quantite; 
                 // check availability
                 if(this.qteStock<this.newAttribute.quantite){
-                  this.newAttribute.etat='Non Dispo.';
+                  Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
                 }else{
-                  this.newAttribute.etat = 'Dispo.'
-                }
-              this.devisArticls.push(this.newAttribute);
-              this.calculTotal();
-              this.calculAssiettes();
-              this.devisArticls.sort = this.sort;
-              this.devisArticls.paginator = this.paginator;  
+                    this.newAttribute.prixU = Number(result.body.prix).toFixed(3); 
+                    this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+    
+                    this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
+                    this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
+                    this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                    this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+        
+                    // Montant Tva u = (prix*tva)/100
+                    this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                    this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+                    // Total ht = prix * qt
+                    this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
+                    this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
+                    //  prix u ttc = prix u  + montant tva u 
+                    this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);;
+        
+                    this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
+                    this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
+                    //  total ttc = prix u ttc * qte / remise
+                    this.Totale_TTC = Number(this.newAttribute.prix_U_TTC * this.newAttribute.quantite * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3)
+                    this.newAttribute.totale_TTC = this.Totale_TTC;
+    
+                    this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
+                    this.newAttribute.ch_Globale = Number(this.Ch_Globale);
+    
+                    this.newAttribute.etatEntree = "Entrée Stock Non Accompli";
+                    this.newAttribute.fichierSimple = "";
+                    this.newAttribute.fichierSerie = "";
+                    this.newAttribute.fichier4G = "";
+                    this.newAttribute.produitsSeries = "";
+                    this.newAttribute.produits4g = ""; 
+                    this.newAttribute.etat = 'Dispo.'
+                    this.devisArticls.push(this.newAttribute);
+                    this.calculTotal();
+                    this.calculAssiettes();
+                    this.devisArticls.sort = this.sort;
+                    this.devisArticls.paginator = this.paginator;  
+                 }
               }     
               });   
               this.getProdCode = false;      
@@ -841,40 +777,51 @@ export class GenererBlComponent implements OnInit {
             this.code = ''; 
             // if this product exist
             }else{
-              this.devisArticls[index].quantite = parseInt(this.devisArticls[index].quantite);
-              this.devisArticls[index].quantite +=1;  
-              this.devisArticls[index].prixU =Number(this.devisArticls[index].prixU).toFixed(3);     
-              this.devisArticls[index].finalPrice=  (this.devisArticls[index].prixU - (this.devisArticls[index].prixU * (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)  
-   
-              this.devisArticls[index].montant_HT = ((Number(this.devisArticls[index].prixU) * Number(this.devisArticls[index].quantite)) * (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3);
-              this.devisArticls[index].qprixU = Number(this.Prix).toFixed(3);
-              this.Montant_Fodec = (this.devisArticls[index].montant_HT * this.devisArticls[index].fodec) / 100;
-              this.devisArticls[index].montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-  
-              this.Montant_TVA = Number(this.devisArticls[index].finalPrice) * Number((this.devisArticls[index].tva)/ 100) ;
-              this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
-  
-              this.devisArticls[index].prix_U_TTC = (((Number(this.devisArticls[index].finalPrice) + Number((this.devisArticls[index].montant_Fodec)/this.devisArticls[index].quantite) + Number(this.devisArticls[index].montant_TVA)))).toFixed(3);;
-              this.devisArticls[index].montant_TTC = Number(this.devisArticls[index].prix_U_TTC) * Number(this.devisArticls[index].quantite);
-              this.devisArticls[index].total_TVA = ((Number(this.devisArticls[index].montant_TVA)) / (Number(this.devisArticls[index].quantite))).toFixed(3);
-              this.Totale_TTC = Number((this.devisArticls[index].prix_U_TTC*this.devisArticls[index].quantite)* (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)
-              this.devisArticls[index].totale_TTC = this.Totale_TTC;
-              
-              this.Total_HT = Number(this.devisArticls[index].finalPrice) * this.devisArticls[index].quantite;
-              this.devisArticls[index].total_HT = Number(this.Total_HT).toFixed(3);        
-              this.devisArticls[index].ch_Globale = Number(this.Ch_Globale);
-               // Check availibility 
-              if(this.qteStock<this.devisArticls[index].quantite){
-                this.devisArticls[index].etat='Non Dispo.';
-              }else{
-                this.devisArticls[index].etat = 'Dispo.';
-               }  
-               this.calculTotal();
-               this.calculAssiettes();
-               this.getProdCode= false;
+              this.devisService.getInfoProductByIdFromStock(this.last_ID).subscribe((result : any) => {
+                if ((result.body)===null){
+                  Swal.fire("ce produit est hors stock", '','warning');
+                }else{
+                  this.qteStock= result.body.quantite; 
+                  let qte: any;
+                  qte = parseInt(this.devisArticls[index].quantite);
+                  qte +=1;
+                  // Check availibility 
+                  if(this.qteStock<qte){
+                    Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+                    this.getProdCode = false; 
+                  }else{
+                    this.devisArticls[index].quantite = parseInt(this.devisArticls[index].quantite)+1;
+                    this.devisArticls[index].prixU =Number(this.devisArticls[index].prixU).toFixed(3);     
+                    this.devisArticls[index].finalPrice=  (this.devisArticls[index].prixU - (this.devisArticls[index].prixU * (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)  
+         
+                    this.devisArticls[index].montant_HT = ((Number(this.devisArticls[index].prixU) * Number(this.devisArticls[index].quantite)) * (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3);
+                    this.devisArticls[index].qprixU = Number(this.Prix).toFixed(3);
+                    this.Montant_Fodec = (this.devisArticls[index].montant_HT * this.devisArticls[index].fodec) / 100;
+                    this.devisArticls[index].montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+        
+                    this.Montant_TVA = Number(this.devisArticls[index].finalPrice) * Number((this.devisArticls[index].tva)/ 100) ;
+                    this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
+        
+                    this.devisArticls[index].prix_U_TTC = (((Number(this.devisArticls[index].finalPrice) + Number((this.devisArticls[index].montant_Fodec)/this.devisArticls[index].quantite) + Number(this.devisArticls[index].montant_TVA)))).toFixed(3);;
+                    this.devisArticls[index].montant_TTC = Number(this.devisArticls[index].prix_U_TTC) * Number(this.devisArticls[index].quantite);
+                    this.devisArticls[index].total_TVA = ((Number(this.devisArticls[index].montant_TVA)) / (Number(this.devisArticls[index].quantite))).toFixed(3);
+                    this.Totale_TTC = Number((this.devisArticls[index].prix_U_TTC*this.devisArticls[index].quantite)* (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)
+                    this.devisArticls[index].totale_TTC = this.Totale_TTC;
+                    
+                    this.Total_HT = Number(this.devisArticls[index].finalPrice) * this.devisArticls[index].quantite;
+                    this.devisArticls[index].total_HT = Number(this.Total_HT).toFixed(3);        
+                    this.devisArticls[index].ch_Globale = Number(this.Ch_Globale);
+      
+                      this.devisArticls[index].etat = 'Dispo.';
+                   
+                     this.calculTotal();
+                     this.calculAssiettes();
+                     this.getProdCode= false;
+                  }
+                }
+              });
             }
           }
-  
       }
       },(err : any)=>{
         console.log(err);
@@ -932,44 +879,60 @@ export class GenererBlComponent implements OnInit {
           for(let i= 0 ;i < res.data.length; i++){
             let index = this.devisArticls.findIndex(((x: any)=>parseInt(x.id_Produit) === parseInt(res.data[i].id_Produit))); 
             if(index != -1){
-              this.devisArticls[index].quantite = parseInt(this.devisArticls[index].quantite);
-              this.devisArticls[index].quantite +=1;  
-              this.devisArticls[index].prixU =Number(this.devisArticls[index].prixU).toFixed(3); 
-              this.devisArticls[index].finalPrice=  (this.devisArticls[index].prixU - (this.devisArticls[index].prixU * (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)  
-              this.devisArticls[index].montant_HT = ((Number(this.devisArticls[index].prixU) * Number(this.devisArticls[index].quantite)) * (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3);
-              this.devisArticls[index].qprixU = Number(this.Prix).toFixed(3);
-              this.Montant_Fodec = (this.devisArticls[index].montant_HT * this.devisArticls[index].fodec) / 100;
-              this.devisArticls[index].montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-              this.Montant_TVA = Number(this.devisArticls[index].finalPrice) * Number((this.devisArticls[index].tva)/ 100) ;
-              this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
-              this.Total_HT = Number(this.devisArticls[index].finalPrice) * this.devisArticls[index].quantite;
-              this.devisArticls[index].prix_U_TTC = (((Number(this.devisArticls[index].finalPrice) + Number((this.devisArticls[index].montant_Fodec)/this.devisArticls[index].quantite) + Number(this.devisArticls[index].montant_TVA)))).toFixed(3);;
-              this.devisArticls[index].montant_TTC = Number(this.devisArticls[index].prix_U_TTC) * Number(this.devisArticls[index].quantite);
-              this.devisArticls[index].total_TVA = ((Number(this.devisArticls[index].montant_TVA)) / (Number(this.devisArticls[index].quantite))).toFixed(3);
-              this.Totale_TTC = Number((this.devisArticls[index].prix_U_TTC*this.devisArticls[index].quantite)).toFixed(3)
-              this.devisArticls[index].totale_TTC = this.Totale_TTC;
-              this.devisArticls[index].total_HT = Number(this.Total_HT).toFixed(3);        
-              this.devisArticls[index].ch_Globale = Number(this.Ch_Globale);
-
-              this.calculTotal();
-              this.calculAssiettes();
-               // Check availibility  * (1 - (Number(this.devisArticls[index].remise)) / 100)
-              if(this.qteStock<this.devisArticls[index].quantite){
-                this.devisArticls[index].etat='Non Dispo.';
+              this.devisService.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any) => {
+                this.qteStock= result.body.quantite; 
+                let qte: any ; 
+                qte = parseInt(this.devisArticls[index].quantite);
+                qte +=1; 
+               // Check availibility 
+               if(this.qteStock<qte){
+                Swal.fire('vous ne pouvez pas ajouter ce produit n°'+ res.data[i].id_Produit ,'Qte de stock < Qte demandé ', 'warning');
               }else{
+                this.devisArticls[index].quantite= this.devisArticls[index].quantite+1;
+                this.devisArticls[index].prixU =Number(this.devisArticls[index].prixU).toFixed(3); 
+                this.devisArticls[index].finalPrice=  (this.devisArticls[index].prixU - (this.devisArticls[index].prixU * (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)  
+                this.devisArticls[index].montant_HT = ((Number(this.devisArticls[index].prixU) * Number(this.devisArticls[index].quantite)) * (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3);
+                this.devisArticls[index].qprixU = Number(this.Prix).toFixed(3);
+                this.Montant_Fodec = (this.devisArticls[index].montant_HT * this.devisArticls[index].fodec) / 100;
+                this.devisArticls[index].montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+                this.Montant_TVA = Number(this.devisArticls[index].finalPrice) * Number((this.devisArticls[index].tva)/ 100) ;
+                this.devisArticls[index].montant_TVA = Number(this.Montant_TVA).toFixed(3);
+                this.Total_HT = Number(this.devisArticls[index].finalPrice) * this.devisArticls[index].quantite;
+                this.devisArticls[index].prix_U_TTC = (((Number(this.devisArticls[index].finalPrice) + Number((this.devisArticls[index].montant_Fodec)/this.devisArticls[index].quantite) + Number(this.devisArticls[index].montant_TVA)))).toFixed(3);;
+                this.devisArticls[index].montant_TTC = Number(this.devisArticls[index].prix_U_TTC) * Number(this.devisArticls[index].quantite);
+                this.devisArticls[index].total_TVA = ((Number(this.devisArticls[index].montant_TVA)) / (Number(this.devisArticls[index].quantite))).toFixed(3);
+                this.Totale_TTC = Number((this.devisArticls[index].prix_U_TTC*this.devisArticls[index].quantite)).toFixed(3)
+                this.devisArticls[index].totale_TTC = this.Totale_TTC;
+                this.devisArticls[index].total_HT = Number(this.Total_HT).toFixed(3);        
+                this.devisArticls[index].ch_Globale = Number(this.Ch_Globale);
+  
+                this.calculTotal();
+                this.calculAssiettes();
                 this.devisArticls[index].etat = 'Dispo.';
                }  
+              }) 
+ 
+
+
             }else{
-              this.devisArticls.push(res.data[i]);
-              this.calculTotal();
-              this.calculAssiettes();
+              this.devisService.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any) => {
+                if ((result.body)===null){
+                  Swal.fire("ce produit est hors stock", '','warning');
+                  this.devisArticls.sort = this.sort;
+                  this.devisArticls.paginator = this.paginator;
+                }else{
+                  this.devisArticls.push(res.data[i]);
+                  this.calculTotal();
+                  this.calculAssiettes();
+                }
+              })
+
             }
           }
         }
 
       });
   }
-
   //** Plz choose at least one product in the next step */
   nextStep(stepper : MatStepper){
     let addPrice : any = 0 
@@ -980,7 +943,11 @@ export class GenererBlComponent implements OnInit {
         totalTTc_reg +=Number(this.devisArticls[i].totale_TTC);
       }
       addPrice =   Number(totalTTc_reg - this.totalTTc_reg).toFixed(3);
-      if(addPrice> this.addReglementFormGroup.get('valueTwo').value){
+      if(addPrice<0){
+        this.addReglementFormGroup.controls['valueOne'].setValue(Number(totalTTc_reg).toFixed(3));
+        this.addReglementFormGroup.controls['valueTwo'].setValue(Number(0).toFixed(3))
+      }
+      else if(addPrice> this.addReglementFormGroup.get('valueTwo').value){
         this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
       }else{
         this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
@@ -997,19 +964,19 @@ export class GenererBlComponent implements OnInit {
   }
   //** Ckeck Total TTC in the reglement step */
   checkTotalTTC(stepper : MatStepper){
+    this.isCompleted= false;
+    this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));            
+    if(Number(this.sum).toFixed(3)!=Number(this.totalTTc).toFixed(3)){
       this.isCompleted= false;
-      this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));
-      if(Number(this.sum).toFixed(3)!=Number(this.totalTTc).toFixed(3)){
-        this.isCompleted= false;
-        Swal.fire( 
-        'Attention! vérifiez le totale',
-        'Total TTC!',
-        'error');
-      }else{
-        this.isCompleted= true;
-        this.goForward(stepper)
-      }
+      Swal.fire( 
+      'Attention! vérifiez le totale',
+      'Total TTC!',
+      'error');
+    }else{
+      this.isCompleted= true;
+      this.goForward(stepper)
     }
+  }
   // get price of the Reglement one 
   getvalueModePaiement(ev: any){
     this.price = Number(ev).toFixed(3)
@@ -1097,39 +1064,42 @@ export class GenererBlComponent implements OnInit {
         width: '500px',
         data: { index: index, ligne: item, table: table}
       });
-      dialogRef.afterClosed().subscribe(res => {            
-        item.quantite = res.qte_modifier;
-        item.quantite = parseInt(item.quantite); 
-        item.prixU = res.prixU_modifier;
-        item.remise = res.remise_modifier;
-        item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
-        item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
-        this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
-        item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-
-        this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
-        item.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-        
-        item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
-       
-        item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
-        
-        item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
-        item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
-        item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
-        item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
-        
-        item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
-        this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
-        item.totale_TTC = this.Totale_TTC;
-        
-        if(this.qteStock<item.quantite){
-          item.etat='Non Dispo.';
-        }else{
-          item.etat = 'Dispo.'
-        } 
-        this.calculTotal();
-        this.calculAssiettes();
+      dialogRef.afterClosed().subscribe(res => {  
+                  
+        this.devisService.getInfoProductByIdFromStock(res.Id_Produit).subscribe((result : any) => {
+          this.qteStock = result.body.quantite; 
+          if(this.qteStock<res.qte_modifier){
+            Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+          }else{
+            item.quantite = res.qte_modifier;   
+            item.quantite = parseInt(item.quantite); 
+            item.prixU = res.prixU_modifier;
+            item.remise = res.remise_modifier;
+            item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
+            item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
+            this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
+            item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+    
+            this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
+            item.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+            
+            item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
+           
+            item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
+            
+            item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
+            item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
+            item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
+            item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
+            
+            item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
+            this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
+            item.totale_TTC = this.Totale_TTC;
+            item.etat = 'Dispo.'
+          } 
+          this.calculTotal();
+          this.calculAssiettes();
+        });     
       });
    
     this.calculTotal();

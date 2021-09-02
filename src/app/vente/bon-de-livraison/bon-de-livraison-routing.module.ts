@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+
 import { AjouterBlComponent } from './ajouter-bl/ajouter-bl.component';
 import { BonDeLivraisonComponent } from './bon-de-livraison.component';
 import { ConvertDevisToBlComponent } from './convert-devis-to-bl/convert-devis-to-bl.component';

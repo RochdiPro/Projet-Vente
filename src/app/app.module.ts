@@ -19,7 +19,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgSelectModule } from '@ng-select/ng-select';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AjouterBonCommandeComponent } from './BonCommande/ajouter-bon-commande/ajouter-bon-commande.component';
@@ -44,6 +43,7 @@ import { MenuComponent } from './menu/menu.component';
 import { BonDeLivraisonComponent } from './vente/bon-de-livraison/bon-de-livraison.component';
 import { DevisComponent } from './vente/devis/devis.component';
 import { FactureComponent } from './vente/facture/facture.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,7 +91,6 @@ import { FactureComponent } from './vente/facture/facture.component';
     BrowserAnimationsModule,
     MatSelectModule,
     MatPaginatorModule,
-    NgSelectModule,
     MatDialogModule,
     MatCheckboxModule,
     MatTableModule,

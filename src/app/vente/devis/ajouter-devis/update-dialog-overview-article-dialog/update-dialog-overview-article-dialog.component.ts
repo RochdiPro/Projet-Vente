@@ -42,9 +42,7 @@ export class UpdateDialogOverviewArticleDialogComponent implements OnInit {
         Nom_Produit: [this.ligne.nom_Produit],
         Id_Produit: [this.ligne.id_Produit],
       });
-      dialogRef.disableClose = true;
-      console.log(this.ligne.id_Produit);
-    
+      dialogRef.disableClose = true;    
       this.isInStock(this.ligne.id_Produit);
      }
   
@@ -65,15 +63,12 @@ export class UpdateDialogOverviewArticleDialogComponent implements OnInit {
         this.isExist = existInStoc;
         this.loading = false; 
       });
-      console.log(this.isExist);
       
     }
   fermerDialogue(){
     this.dialogRef.close(this.produitFrom.value);
   }
   editerLigneTable(){
-    console.log('this.upDateArrForm.value',this.upDateArrForm.value);
     this.dialogRef.close(this.upDateArrForm.value);
-
   }
 }

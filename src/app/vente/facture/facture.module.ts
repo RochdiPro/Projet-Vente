@@ -22,11 +22,12 @@ import { FactureDevisComponent } from './facture-devis/facture-devis.component';
 import { FactureRoutingModule } from './facture-routing.module';
 import { ListerFactureComponent } from './lister-facture/lister-facture.component';
 import { UpdateFactureComponent } from './update-facture/update-facture.component';
+import { BlFactureComponent } from './bl-facture/bl-facture.component';
 
 
 
 @NgModule({
-  declarations: [FactureATermeComponent, FactureDevisComponent, AjouterFactureComponent, ListerFactureComponent, UpdateFactureComponent],
+  declarations: [FactureATermeComponent, FactureDevisComponent, AjouterFactureComponent, ListerFactureComponent, UpdateFactureComponent, BlFactureComponent],
   imports: [
     CommonModule,
     FactureRoutingModule,

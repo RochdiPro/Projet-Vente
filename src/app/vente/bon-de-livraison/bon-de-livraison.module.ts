@@ -24,6 +24,8 @@ import { ListerBlComponent } from './lister-bl/lister-bl.component';
 import { InfosDialogComponent } from './nouveau-bl/infos-dialog/infos-dialog.component';
 import { NouveauBLComponent } from './nouveau-bl/nouveau-bl.component';
 import { UpdateBlComponent } from './update-bl/update-bl.component';
+import { InfoSerieDialogComponent } from './nouveau-bl/info-serie-dialog/info-serie-dialog.component';
+import { InfoSimpleDialogComponent } from './nouveau-bl/info-simple-dialog/info-simple-dialog.component';
 
 
 
@@ -31,7 +33,7 @@ import { UpdateBlComponent } from './update-bl/update-bl.component';
 
 
 @NgModule({
-  declarations: [NouveauBLComponent, DevisBLComponent, ConvertDevisToBlComponent, AjouterBlComponent, ListerBlComponent, GenererBlComponent, UpdateBlComponent, InfosDialogComponent],
+  declarations: [NouveauBLComponent, DevisBLComponent, ConvertDevisToBlComponent, AjouterBlComponent, ListerBlComponent, GenererBlComponent, UpdateBlComponent, InfosDialogComponent, InfoSerieDialogComponent, InfoSimpleDialogComponent],
   imports: [
     CommonModule,
     BonDeLivraisonRoutingModule,

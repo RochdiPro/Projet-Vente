@@ -64,10 +64,10 @@ export class BlService {
   }
   //** Filter BL */ 
   filterByChampValeur(champ : string , value : string ) : Observable<any>{
-    return this.http.get(_url+ 'Filtre_Bon_Livraison/', {
+    return this.http.get(_url+ 'Filtre_Bon_Livraison_Par_Client_Date/', {
       params : {
-        Champ: champ, 
-        Valeur: value
+        client: champ, 
+        date: value
       }, observe: 'response'
     })
   }
@@ -108,6 +108,15 @@ export class BlService {
   //** Detail_Produit_4G_En_Json */
   detailProdFourG(id: any){
     return this.http.get(_url+'Detail_Produit_4G_En_Json/',{
+      params:{
+        Id: id, 
+      },observe:'response'
+    });
+  }
+
+  //** Detail_Produit_Nserie_En_Json */
+  getAllInfoSerie(id : any){
+    return this.http.get(_url+'Detail_Produit_Nserie_En_Json/',{
       params:{
         Id: id, 
       },observe:'response'

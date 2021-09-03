@@ -1,0 +1,24 @@
+<div class="container">
+    <h5 class="title col-xs-8 text-center">Type Série</h5>
+    <div>
+        <table>
+            <tbody *ngFor="let qte of nbrQte;let i = index;">
+                <tr><b>Produit n° {{i+1}} </b></tr>
+                <tr>
+                    <td>Numéro Série</td>
+                    <td>
+                        <mat-form-field class="example-full-width" appearance="fill">
+                            <mat-label>Numéro Série :</mat-label>
+                            <input matInput type="text" name="{{i}}" [(ngModel)]="numero_Serie[i]"
+                                placeholder="Numéro Série" />
+                        </mat-form-field>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div mat-dialog-actions class="right">
+        <button mat-button class="btn btn-default " (click)="fermerDialogue()">Fermer</button>
+        <button mat-button class="btn btn-primary ">OK</button>
+    </div>
+</div>

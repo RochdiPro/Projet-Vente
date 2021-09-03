@@ -15,6 +15,9 @@ import { UpdateDialogOverviewArticleDialogComponent } from '../../devis/ajouter-
 import { VoirPlusDialogComponent } from '../../devis/ajouter-devis/voir-plus-dialog/voir-plus-dialog.component';
 import { BlService } from '../../services/bl.service';
 import { DevisService } from '../../services/devis.service';
+import { InfoSerieDialogComponent } from '../nouveau-bl/info-serie-dialog/info-serie-dialog.component';
+import { InfoSimpleDialogComponent } from '../nouveau-bl/info-simple-dialog/info-simple-dialog.component';
+import { InfosDialogComponent } from '../nouveau-bl/infos-dialog/infos-dialog.component';
 
 const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
@@ -196,6 +199,41 @@ export class UpdateBlComponent implements OnInit {
           
         });
   }
+      //** infos   */
+  completezInof(prod: any , i: any  ){
+    console.log(this.blArticls[i]);
+    
+        if(this.blArticls[i].N_Imei == "true"){
+          const dialogRef = this.dialog.open(InfosDialogComponent,{
+            data : {
+              formPage: prod
+            }
+          });
+          dialogRef.afterClosed().subscribe(()=>{
+            console.log('Closed');
+          });
+        }else if(this.blArticls[i].N_Serie == "true"){
+          const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
+            data : {
+              formPage: prod
+            }
+          });
+          dialogRef.afterClosed().subscribe(()=>{
+            console.log('Closed');
+          });
+        }else{
+          const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
+            data : {
+              formPage: prod
+            }
+          });
+          dialogRef.afterClosed().subscribe(()=>{
+            console.log('Closed');
+          });
+        }
+  
+  }
+  
   //** Get All Client */
   async getAllClient(){
     this.devisService.getAllClient().subscribe( res => {
@@ -323,11 +361,11 @@ export class UpdateBlComponent implements OnInit {
       fileReader.onloadend = () =>{
         this.detail = fileReader.result; // data: application/xml in base64
         let data : any; 
-        xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{  
+        xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{            
           if(res.Devis == null )    
           {
-            data =res.BL;
-            this.devise= data["Informations-Generales"][0].Devise[0]
+            data =res.Bon_Livraison;            
+            this.devise= data["Informations-Generales"][0].Devise[0];
             this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
             this.totalMontantFodec= data.Total[0].TotalFodec[0];
             this.totalRemise = data.Total[0].TotalRemise[0];
@@ -367,6 +405,8 @@ export class UpdateBlComponent implements OnInit {
             }
           }else{
             data =res.Devis;
+            console.log(data);
+            
             this.devise= data["Informations-Generales"][0].Devise[0]
             this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
             this.totalMontantFodec= data.Total[0].TotalFodec[0];
@@ -1148,7 +1188,7 @@ async getProuduitByCode(){
 
   //** The XML structure */
   createXMLStructure(url: string , data : any){
-    var doc = document.implementation.createDocument(url, 'BL', null);
+    var doc = document.implementation.createDocument(url, 'Bon_Livraison', null);
     var etatElement = doc.createElement("Etat");
     var infoElement = doc.createElement("Informations-Generales");
     var total = doc.createElement('Total'); 

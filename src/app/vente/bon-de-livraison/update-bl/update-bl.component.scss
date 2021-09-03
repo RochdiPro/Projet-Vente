@@ -65,7 +65,12 @@ th.mat-sort-header-sorted {
   cursor: pointer;
 }
 .title {
-  margin: 10px;
   color: rgba(13, 27, 62, 0.7);
   font-weight: bold;
+}
+.id-item {
+  width: 10%;
+}
+.id-name {
+  width: 40%;
 }

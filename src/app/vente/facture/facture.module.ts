@@ -3,8 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -14,17 +15,27 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorIntlCro } from '../matPaginatorIntlCro';
-import {MatExpansionModule} from '@angular/material/expansion';
-
 import { AjouterFactureComponent } from './ajouter-facture/ajouter-facture.component';
+import { BlFactureComponent } from './bl-facture/bl-facture.component';
 import { FactureATermeComponent } from './facture-aterme/facture-aterme.component';
 import { FactureDevisComponent } from './facture-devis/facture-devis.component';
 import { FactureRoutingModule } from './facture-routing.module';
 import { ListerFactureComponent } from './lister-facture/lister-facture.component';
 import { UpdateFactureComponent } from './update-facture/update-facture.component';
-import { BlFactureComponent } from './bl-facture/bl-facture.component';
 
 
+
+const MY_FORMATS = {
+  parse: {
+    dateInput: 'DD MMMM YYYY',
+  },
+  display: {
+    dateInput: 'DD MMMM YYYY',
+    monthYearLabel: 'MMMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [FactureATermeComponent, FactureDevisComponent, AjouterFactureComponent, ListerFactureComponent, UpdateFactureComponent, BlFactureComponent],
@@ -47,6 +58,6 @@ import { BlFactureComponent } from './bl-facture/bl-facture.component';
     MatCardModule,
     MatExpansionModule
   ],
-  providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro }]
+  providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },]
 })
 export class FactureModule { }

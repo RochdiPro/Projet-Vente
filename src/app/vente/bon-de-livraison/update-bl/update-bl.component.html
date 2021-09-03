@@ -322,6 +322,45 @@
             </div>
         </form>
     </mat-step>
+    <!-- 4th step -->
+    <mat-step>
+        <ng-template matStepLabel>Compléter les infos</ng-template>
+        <!-- lister les articles choisie -->
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id produit</th>
+                        <th>Nom produit</th>
+                        <th>infos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of blArticls ; let i = index;">
+                        <td class="id-item">
+                            <input [ngModel]="item.id_Produit" name="id" class="form-control" type="text"
+                                name="{{item.id_Produit}}" disabled />
+                        </td>
+                        <td class="id-name">
+                            <input [ngModel]="item.nom_Produit" name="name" class="form-control" type="text"
+                                name="{{item.nom_Produit}}" disabled />
+                        </td>
+                        <!--Complétez les infos  E1 | E2 | N°serie -->
+                        <td>
+                            <button mat-button class="btn btn-b" (click)="completezInof(item, i)">Complétez
+                                les
+                                infos</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div>
+            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button class="btn btn-primary" matStepperNext>Suivant</button>
+        </div>
+    </mat-step>
     <!-- Last step -->
     <mat-step label="Enregistrer & imprimer le BL">
         <form>

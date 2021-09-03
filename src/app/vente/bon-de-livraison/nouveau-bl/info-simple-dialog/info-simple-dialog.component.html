@@ -1,0 +1,13 @@
+<div class="container">
+    <h5 class="title col-xs-8 text-center">Type Simple</h5>
+    <div mat-dialog-content>
+        <div>
+            <label>Quantité de ce produit : </label>
+            <input [ngModel]="item.quantite" class="form-control" type="text" name="{{item.nom_Produit}}" disabled />
+        </div>
+    </div>
+    <div mat-dialog-actions class="right">
+        <button mat-button class="btn btn-default " (click)="fermerDialogue()">Fermer</button>
+        <button mat-button class="btn btn-primary ">Valider</button>
+    </div>
+</div>

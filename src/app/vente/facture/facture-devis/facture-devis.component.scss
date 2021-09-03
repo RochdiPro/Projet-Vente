@@ -32,35 +32,6 @@ th.mat-sort-header-sorted {
   font-weight: bold;
   font-size: 0.88rem;
 }
-label {
-  color: black;
-  font-size: large;
-}
-
-.mat-form-field {
-  margin-top: 16px;
-  width: 225px !important;
-}
-
-.mat-form-field-infix {
-  display: block;
-  position: relative;
-  flex: auto;
-  min-width: 0;
-}
-table {
-  width: 100%;
-}
-
-th.mat-sort-header-sorted {
-  color: black;
-}
-
-.total {
-  display: flex;
-  justify-content: space-between;
-}
-
-.btn-voir {
-  color: #3f51b5;
+.input-group-append {
+  margin-left: 10px;
 }

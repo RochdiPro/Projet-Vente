@@ -10,15 +10,16 @@ export class InfosDialogComponent implements OnInit {
 
   item: any =[]; 
   nbrQte: any = [];
-  
-  serie: string = '';
-  n_ImeiOne: string = '';
-  n_ImeiTwo : string= '';
+  numero_Serie :  any= []; 
+  n_ImeiOne: any = [];
+  n_ImeiTwo : any=  [];
 
   constructor(public dialogRef: MatDialogRef<InfosDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private bLservice : BlService )  {
     this.item = data.formPage    
     this.nbrQte.length = this.item.quantite;
-    this.getAllInfoFourG(this.item.id_Produit)
+    this.getAllInfoFourG(this.item.id_Produit);
+    console.log(this.item);
+    
    }
   //fermer dialogue
   fermerDialogue() {

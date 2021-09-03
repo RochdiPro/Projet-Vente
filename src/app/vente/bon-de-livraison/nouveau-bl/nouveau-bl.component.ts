@@ -12,6 +12,8 @@ import { DialogContentAddArticleDialogComponent } from '../../devis/ajouter-devi
 import { UpdateDialogOverviewArticleDialogComponent } from '../../devis/ajouter-devis/update-dialog-overview-article-dialog/update-dialog-overview-article-dialog.component';
 import { VoirPlusDialogComponent } from '../../devis/ajouter-devis/voir-plus-dialog/voir-plus-dialog.component';
 import { BlService } from '../../services/bl.service';
+import { InfoSerieDialogComponent } from './info-serie-dialog/info-serie-dialog.component';
+import { InfoSimpleDialogComponent } from './info-simple-dialog/info-simple-dialog.component';
 import { InfosDialogComponent } from './infos-dialog/infos-dialog.component';
 
 //** import pdf maker */
@@ -170,17 +172,37 @@ numBL : any = 0 ;
       });
   }
 
-    //** voir plus  */
-    completezInof(prod: any ){
-      const dialogRef = this.dialog.open(InfosDialogComponent,{
-        width: '50%', height: 'auto',data : {
-          formPage: prod
-        }
-      });
-      dialogRef.afterClosed().subscribe(()=>{
-        console.log('Closed');
-        
-      });
+    //** infos   */
+    completezInof(prod: any , i: any  ){
+      if(this.blArticls[i].n_Imei == "true"){
+        const dialogRef = this.dialog.open(InfosDialogComponent,{
+          data : {
+            formPage: prod
+          }
+        });
+        dialogRef.afterClosed().subscribe(()=>{
+          console.log('Closed');
+        });
+      }else if(this.blArticls[i].n_Serie == "true"){
+        const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
+          data : {
+            formPage: prod
+          }
+        });
+        dialogRef.afterClosed().subscribe(()=>{
+          console.log('Closed');
+        });
+      }else{
+        const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
+          data : {
+            formPage: prod
+          }
+        });
+        dialogRef.afterClosed().subscribe(()=>{
+          console.log('Closed');
+        });
+      }
+
   }
 
   //** Error Message
@@ -937,7 +959,7 @@ async getProuduitByCode(){
 
   //** The XML structure */
   createXMLStructure(url: string , data : any){
-    var doc = document.implementation.createDocument(url, 'BL', null);
+    var doc = document.implementation.createDocument(url, 'Bon_Livraison', null);
     var etatElement = doc.createElement("Etat");
     var infoElement = doc.createElement("Informations-Generales");
     var total = doc.createElement('Total'); 
@@ -1299,7 +1321,7 @@ async getProuduitByCode(){
               columns: [
                 {   
                   text: 
-                  'Nouveau Bon de Livraison'
+                  'Nouveau Bon de Livraison'+ '\n'
                    +'Nom du responsable :' + '\t' + '' + '\n'
                 ,
                 fontSize: 12,

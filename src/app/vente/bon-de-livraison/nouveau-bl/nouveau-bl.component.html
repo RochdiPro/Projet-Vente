@@ -336,12 +336,18 @@
                         </td>
                         <!--Complétez les infos  E1 | E2 | N°serie -->
                         <td>
-                            <button mat-button class="btn btn-b" (click)="completezInof(item)">Complétez les
+                            <button mat-button class="btn btn-b" (click)="completezInof(item, i)">Complétez
+                                les
                                 infos</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <br>
+        <div>
+            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button class="btn btn-primary" matStepperNext>Suivant</button>
         </div>
     </mat-step>
     <!-- last Step -->

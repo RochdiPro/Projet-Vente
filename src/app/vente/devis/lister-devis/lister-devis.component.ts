@@ -29,7 +29,7 @@ export class ListerDevisComponent implements OnInit {
   clt : any;
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
-  displayedColumns: string[] = ['modifier','id_Devis', 'type', 'date_Creation', 'mode_Paiement', 'total_ttc', 'supprimer', 'exporter_pdf','Voir_pdf'];
+  displayedColumns: string[] = ['modifier','id_Devis', 'type', 'date_Creation',  'total_ttc', 'supprimer', 'exporter_pdf','Voir_pdf'];
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
 
@@ -51,7 +51,7 @@ export class ListerDevisComponent implements OnInit {
          devis_en_cours.unshift(ele)
       });  
       devis_en_cours = devis_en_cours.sort((a:any , b : any )=> b.id_Devis -a.id_Devis);
-    this.dataSourceDevis= new MatTableDataSource(devis_en_cours);   
+    this.dataSourceDevis= new MatTableDataSource(devis_en_cours);       
     this.dataSourceDevis.sort = this.sort; 
     this.dataSourceDevis.paginator = this.paginator;
     this.loading = false; 
@@ -188,6 +188,16 @@ export class ListerDevisComponent implements OnInit {
         });        
         this.xmldata = data;        
         // check type de reglement 
+        let typeRegOne : any; 
+        if(data.Type_Reglement[0].TypeRegOne[0]=='4')
+          typeRegOne ='Espèces';
+        else if (data.Type_Reglement[0].TypeRegOne[0]=='1'){
+          typeRegOne ='Virement';
+        }else if (data.Type_Reglement[0].TypeRegOne[0]=='2'){
+          typeRegOne ='Chèque';
+        }else if (data.Type_Reglement[0].TypeRegOne[0]=='3'){
+                    typeRegOne ='monétique';
+        }
         let typeRegTwo : any ; 
         if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
           typeRegTwo ='Espèces';
@@ -306,7 +316,7 @@ export class ListerDevisComponent implements OnInit {
                     {   
                       text: 
                       'Type Devis :'+ '\t' + devis.type+ '\n' 
-                      + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                      + 'Édité par :' + '\t' + '' + '\n\n'
                       ,
                     fontSize: 12,
                     alignment: 'left',
@@ -343,7 +353,7 @@ export class ListerDevisComponent implements OnInit {
                   columns: [
                     {
                       ul : [
-                        devis.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                        typeRegOne +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
                       ]
                     },{
                       ul : [
@@ -477,7 +487,17 @@ export class ListerDevisComponent implements OnInit {
           data =res.Devis;   
         });
         this.xmldata = data;
-                    // check type de reglement 
+        // check type de reglement 
+        let typeRegOne : any; 
+        if(data.Type_Reglement[0].TypeRegOne[0]=='4')
+          typeRegOne ='Espèces';
+        else if (data.Type_Reglement[0].TypeRegOne[0]=='1'){
+          typeRegOne ='Virement';
+        }else if (data.Type_Reglement[0].TypeRegOne[0]=='2'){
+          typeRegOne ='Chèque';
+        }else if (data.Type_Reglement[0].TypeRegOne[0]=='3'){
+                    typeRegOne ='monétique';
+        }
         let typeRegTwo : any ; 
         if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
           typeRegTwo ='Espèces';
@@ -632,7 +652,7 @@ export class ListerDevisComponent implements OnInit {
                   columns: [
                     {
                       ul : [
-                        devis.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                        typeRegOne +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
                       ]
                     },{
                       ul : [

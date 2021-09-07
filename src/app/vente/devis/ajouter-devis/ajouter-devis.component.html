@@ -23,8 +23,8 @@
         <div class="col-md-4 mb-3">
           <mat-form-field>
             <mat-label>Mode paiement</mat-label>
-            <mat-select formControlName="modePaiement" required>
-              <mat-option *ngFor="let mp of modepaiement" [value]="mp.name">{{mp.name}}</mat-option>
+            <mat-select formControlName="modePaiement" [(ngModel)]="modePaiement" required>
+              <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
             </mat-select>
             <mat-error *ngIf="infoFormGroup.get('modePaiement').invalid">
               {{ErrorMessage('modePaiement') + 'Mode paiement!'}}</mat-error>
@@ -34,7 +34,7 @@
         <div class="col-md-4 mb-3">
           <mat-form-field>
             <mat-label>Devise</mat-label>
-            <mat-select formControlName="devise" required>
+            <mat-select formControlName="devise" [(ngModel)]="devise" required>
               <mat-option [value]="c" *ngFor="let c of currency">{{c}}</mat-option>
             </mat-select>
             <mat-error *ngIf="infoFormGroup.get('devise').invalid">
@@ -258,7 +258,9 @@
       <div class="row">
         <div class="col-md-2">
           <mat-form-field>
-            <input matInput [(ngModel)]="modePaiement" [ngModelOptions]="{standalone: true}" disabled />
+            <mat-select formControlName="typeRegOne" [(ngModel)]="modePaiement" [disabled]=true>
+              <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
         <div class="col-md-2">

@@ -29,7 +29,7 @@ export class AjouterDevisComponent implements OnInit {
   infoFormGroup: FormGroup;
   addArticleFormGroup: FormGroup;
   addReglementFormGroup: FormGroup;
-  modepaiement: any =[{id:1,name:'Virement'},{id:2,name:'Chèque'},{id:3,name:'Carte monétique'},{id:4,name:'Espèces'}]; 
+  modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
   currency:  string []= ['Euro', 'TND', 'Dollar'];
   show : number = 0; 
   visibel : boolean = false; 
@@ -110,8 +110,9 @@ export class AjouterDevisComponent implements OnInit {
   last_ID : any ; 
   verifTotal: boolean = true;
   sum = 0;
-  modePaiement : any ; 
+  modePaiement : any = '4'; 
   typeDevis: string = 'Estimatif';
+  devise: any = 'TND'
   isCompleted: boolean = false;
   getProdId : boolean = false; 
   getProdCode: boolean = false; 
@@ -301,13 +302,14 @@ export class AjouterDevisComponent implements OnInit {
     }
   }
  
-  //** open Dialog  add Articles*/
+  //** open Dialog */
   openDialog(){
     const dialogRef = this.dialog.open(DialogContentAddArticleDialogComponent,{
       width: '100%',data: {
         fromPage : this.devisArticls
       }});
       dialogRef.afterClosed().subscribe(res => { 
+        
         //** Check if the product is in the previous table  */
         if(res != undefined){
           for(let i= 0 ;i < res.data.length; i++){
@@ -334,14 +336,27 @@ export class AjouterDevisComponent implements OnInit {
 
               this.calculTotal();
               this.calculAssiettes();
-               // Check availibility  * (1 - (Number(this.devisArticls[index].remise)) / 100)
-              if(this.qteStock<this.devisArticls[index].quantite){
-                this.devisArticls[index].etat='Non Dispo.';
-                this.typeDevis ='Estimatif'
-              }else{
-                this.devisArticls[index].etat = 'Dispo.';
-               }  
+               // Check availibility  
+               this.devisService.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any)=>{
+                 this.qteStock = result.body.quantite
+                if(this.qteStock<this.devisArticls[index].quantite){
+                  this.devisArticls[index].etat='Non Dispo.';
+                  this.typeDevis ='Estimatif'
+                }else{
+                  this.devisArticls[index].etat = 'Dispo.';
+                 }  
+               });
+       
             }else{
+              this.devisService.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any)=>{
+                this.qteStock = result.body.quantite
+               if(this.qteStock<res.data[i].quantite){
+                 this.devisArticls[i].etat='Non Dispo.';
+                 this.typeDevis ='Estimatif'
+               }else{
+                 this.devisArticls[i].etat = 'Dispo.';
+                }  
+              });
               this.devisArticls.push(res.data[i]);
               this.calculTotal();
               this.calculAssiettes();
@@ -349,11 +364,9 @@ export class AjouterDevisComponent implements OnInit {
             
           }
         }
-
       });
-      this.calculTotal();
-      this.calculAssiettes();
   }
+
   //** Plz choose at least one product in the next step */
   nextStep(stepper : MatStepper){
     this.isNull = false;
@@ -911,49 +924,47 @@ export class AjouterDevisComponent implements OnInit {
   }
   //** Update item from the Table  */
   async ouvreDialogueArticle(index : number, item: any , table : any ){
-      const dialogRef = this.dialog.open(UpdateDialogOverviewArticleDialogComponent, {
-        width: '500px',
-        data: { index: index, ligne: item, table: table}
-      });
-      dialogRef.afterClosed().subscribe(res => {  
-          
-        item.quantite = res.qte_modifier;
-        item.quantite = parseInt(item.quantite); 
-        item.prixU = res.prixU_modifier;
-        item.remise = res.remise_modifier;
-        item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
-        item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
-        this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
-        item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+    const dialogRef = this.dialog.open(UpdateDialogOverviewArticleDialogComponent, {
+      width: '500px',
+      data: { index: index, ligne: item, table: table}
+    });
+    dialogRef.afterClosed().subscribe(res => {  
+      this.isInStock(item.id_Produit);
+      item.quantite = res.qte_modifier;
+      item.quantite = parseInt(item.quantite); 
+      item.prixU = res.prixU_modifier;
+      item.remise = res.remise_modifier;
+      item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
+      item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
+      this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
+      item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
 
-        this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
-        item.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-        
-        item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
-       
-        item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
-        
-        item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
-        item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
-        item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
-        item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
-        
-        item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
-        this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
-        item.totale_TTC = this.Totale_TTC;
-        
-        if(this.qteStock<item.quantite){
-          item.etat='Non Dispo.';
-        }else{
-          item.etat = 'Dispo.'
-        } 
-        this.calculTotal();
-        this.calculAssiettes();
-      });
+      this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
+      item.montant_TVA = Number(this.Montant_TVA).toFixed(3);        
+      item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
+     
+      item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
+      
+      item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
+      item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
+      item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
+      item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
+      
+      item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
+      this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
+      item.totale_TTC = this.Totale_TTC;
 
-    this.calculTotal();
-    this.calculAssiettes();
-  }
+      if(this.qteStock<item.quantite){
+        item.etat='Non Dispo.';
+      }else{
+        item.etat = 'Dispo.'
+      } 
+      this.calculTotal();
+      this.calculAssiettes();
+    });
+  this.calculTotal();
+  this.calculAssiettes();
+}
   
   contenuTable(data: any, columns: any) {
     var body = [];
@@ -1295,8 +1306,18 @@ export class AjouterDevisComponent implements OnInit {
     //** Generate the PDF file  */
   async generatePDF(id :any){
         // check type de reglement 
+        let typeRegOne : any ; 
         let typeRegTwo : any ; 
         let typeRegTree: any ; 
+          if(this.addReglementFormGroup.get('typeRegOne').value=='4')
+          typeRegOne ='Espèces';
+        else if (this.addReglementFormGroup.get('typeRegOne').value=='1'){
+          typeRegOne ='Virement';
+        }else if (this.addReglementFormGroup.get('typeRegOne').value=='2'){
+          typeRegOne ='Chèque';
+        }else if (this.addReglementFormGroup.get('typeRegOne').value=='3'){
+                    typeRegOne ='monétique';
+        }
         if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
           typeRegTwo ='Espèces';
         else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
@@ -1313,7 +1334,7 @@ export class AjouterDevisComponent implements OnInit {
         }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
           typeRegTree ='Chèque';
         }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
-                    typeRegTree ='monétique';
+          typeRegTree ='monétique';
         }
         // check if this "Devis" is Proforma or "simple/estimatif"
         let imgUrl : string ; 
@@ -1351,7 +1372,7 @@ export class AjouterDevisComponent implements OnInit {
                 {   
                   text: 
                   'Type Devis :'+ '\t' + this.infoFormGroup.get('typeDevis').value + '\n' 
-                  + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                  + 'Édité par :' + '\t' + '' + '\n\n'
                 ,
                 fontSize: 12,
                 alignment: 'left',
@@ -1388,7 +1409,7 @@ export class AjouterDevisComponent implements OnInit {
               columns: [
                 {
                   ul : [
-                  this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
+                    typeRegOne +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
                   ]
                 },{
                   ul : [

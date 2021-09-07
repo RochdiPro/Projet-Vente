@@ -894,6 +894,7 @@ export class UpdateDevisComponent implements OnInit {
         fromPage : this.devisArticls
       }});
       dialogRef.afterClosed().subscribe(res => { 
+        
         //** Check if the product is in the previous table  */
         if(res != undefined){
           for(let i= 0 ;i < res.data.length; i++){
@@ -920,14 +921,27 @@ export class UpdateDevisComponent implements OnInit {
 
               this.calculTotal();
               this.calculAssiettes();
-               // Check availibility  * (1 - (Number(this.devisArticls[index].remise)) / 100)
-              if(this.qteStock<this.devisArticls[index].quantite){
-                this.devisArticls[index].etat='Non Dispo.';
-                this.typeDevis ='Estimatif'
-              }else{
-                this.devisArticls[index].etat = 'Dispo.';
-               }  
+               // Check availibility  
+               this.devisService.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any)=>{
+                 this.qteStock = result.body.quantite
+                if(this.qteStock<this.devisArticls[index].quantite){
+                  this.devisArticls[index].etat='Non Dispo.';
+                  this.typeDevis ='Estimatif'
+                }else{
+                  this.devisArticls[index].etat = 'Dispo.';
+                 }  
+               });
+       
             }else{
+              this.devisService.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any)=>{
+                this.qteStock = result.body.quantite
+               if(this.qteStock<res.data[i].quantite){
+                 this.devisArticls[i].etat='Non Dispo.';
+                 this.typeDevis ='Estimatif'
+               }else{
+                 this.devisArticls[i].etat = 'Dispo.';
+                }  
+              });
               this.devisArticls.push(res.data[i]);
               this.calculTotal();
               this.calculAssiettes();
@@ -1058,7 +1072,10 @@ export class UpdateDevisComponent implements OnInit {
       var existInStoc = false;
       if(res.body != null){
           existInStoc = true; 
+          this.qteStock = res.body.quantite;
+          
       }else{
+        this.qteStock = 0;
           existInStoc = false; 
       }
       this.existInStoc = existInStoc;
@@ -1071,6 +1088,7 @@ export class UpdateDevisComponent implements OnInit {
         data: { index: index, ligne: item, table: table}
       });
       dialogRef.afterClosed().subscribe(res => {  
+        this.isInStock(item.id_Produit);
         item.quantite = res.qte_modifier;
         item.quantite = parseInt(item.quantite); 
         item.prixU = res.prixU_modifier;
@@ -1094,7 +1112,7 @@ export class UpdateDevisComponent implements OnInit {
         item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
         this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
         item.totale_TTC = this.Totale_TTC;
-        
+
         if(this.qteStock<item.quantite){
           item.etat='Non Dispo.';
         }else{
@@ -1453,8 +1471,18 @@ export class UpdateDevisComponent implements OnInit {
         }
 
         // check type de reglement 
+        let typeRegOne : any ; 
         let typeRegTwo : any ; 
         let typeRegTree: any ; 
+          if(this.addReglementFormGroup.get('typeRegOne').value=='4')
+          typeRegOne ='Espèces';
+        else if (this.addReglementFormGroup.get('typeRegOne').value=='1'){
+          typeRegOne ='Virement';
+        }else if (this.addReglementFormGroup.get('typeRegOne').value=='2'){
+          typeRegOne ='Chèque';
+        }else if (this.addReglementFormGroup.get('typeRegOne').value=='3'){
+                    typeRegOne ='monétique';
+        }
         if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
           typeRegTwo ='Espèces';
         else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
@@ -1503,7 +1531,7 @@ export class UpdateDevisComponent implements OnInit {
                 {   
                   text: 
                   'Type Devis :'+ '\t' + this.infoFormGroup.get('typeDevis').value + '\n' 
-                  + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                  + 'Édité par :' + '\t' + '' + '\n\n'
                 ,
                 fontSize: 12,
                 alignment: 'left',
@@ -1539,7 +1567,7 @@ export class UpdateDevisComponent implements OnInit {
               columns: [
                 {
                   ul : [
-                  this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
+                    typeRegOne +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
                   ]
                 },{
                   ul : [

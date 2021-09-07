@@ -51,8 +51,8 @@ export class FactureDevisComponent implements OnInit {
     console.log(this.date1, this.date2);
     
   }
-      //** Get All Quote (Deviss) */
-      async getAllDeviss(){
+  //** Get All Quote (Deviss) */
+  async getAllDeviss(){
         this.loading = true; 
         this.devisService.getAllDevis().subscribe((res: any)=>{
           let devis_en_cours : any = []
@@ -67,7 +67,7 @@ export class FactureDevisComponent implements OnInit {
         this.dataSourceDevis.paginator = this.paginator;
         this.loading = false; 
         });
-      }
+  }
   //** Lister les champ Devis */
   getKeyWordQuote(){
     this.bLService.getAllClient().subscribe((res:any)=>{ console.log(res);

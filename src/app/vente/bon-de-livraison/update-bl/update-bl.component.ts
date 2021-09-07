@@ -30,7 +30,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class UpdateBlComponent implements OnInit {
 
-  modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+  modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
   currency:  string []= ['Euro', 'TND', 'Dollar'];
   infoFormGroup : FormGroup; 
   addArticleFormGroup: FormGroup;
@@ -378,7 +378,7 @@ export class UpdateBlComponent implements OnInit {
             this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
             this.valueRegTree = data.Type_Reglement[0].ValueRegTree[0]
             if (this.id_modeP_typeTwo !== undefined){
-              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
               if(this.id_modeP_typeTwo =='4')
                this.typeRegTwo ='Espèces';
                else if (this.id_modeP_typeTwo =='1'){
@@ -386,12 +386,12 @@ export class UpdateBlComponent implements OnInit {
                }else if (this.id_modeP_typeTwo =='2'){
                 this.typeRegTwo ='Chèque';
               }else if (this.id_modeP_typeTwo =='3'){
-                this.typeRegTwo ='monétique';
+                this.typeRegTwo ='Monétique';
               }
               this.ligneOne = true 
             }
             if (this.id_modeP_typeTree !== undefined){
-              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
               if(this.id_modeP_typeTree =='4')
                this.typeRegTree ='Espèces';
                else if (this.id_modeP_typeTree =='1'){
@@ -399,7 +399,7 @@ export class UpdateBlComponent implements OnInit {
                }else if (this.id_modeP_typeTree =='2'){
                 this.typeRegTree ='Chèque';
               }else if (this.id_modeP_typeTree =='3'){
-                this.typeRegTree ='monétique';
+                this.typeRegTree ='Monétique';
               }
               this.ligneTwo = true 
             }
@@ -420,7 +420,7 @@ export class UpdateBlComponent implements OnInit {
             this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
             this.valueRegTree = data.Type_Reglement[0].ValueRegTree[0]
             if (this.id_modeP_typeTwo !== undefined){
-              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
               if(this.id_modeP_typeTwo =='4')
                this.typeRegTwo ='Espèces';
                else if (this.id_modeP_typeTwo =='1'){
@@ -428,12 +428,12 @@ export class UpdateBlComponent implements OnInit {
                }else if (this.id_modeP_typeTwo =='2'){
                 this.typeRegTwo ='Chèque';
               }else if (this.id_modeP_typeTwo =='3'){
-                this.typeRegTwo ='monétique';
+                this.typeRegTwo ='Monétique';
               }
               this.ligneOne = true 
             }
             if (this.id_modeP_typeTree !== undefined){
-              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
               if(this.id_modeP_typeTree =='4')
                this.typeRegTree ='Espèces';
                else if (this.id_modeP_typeTree =='1'){
@@ -441,7 +441,7 @@ export class UpdateBlComponent implements OnInit {
                }else if (this.id_modeP_typeTree =='2'){
                 this.typeRegTree ='Chèque';
               }else if (this.id_modeP_typeTree =='3'){
-                this.typeRegTree ='monétique';
+                this.typeRegTree ='Monétique';
               }
               this.ligneTwo = true 
             }
@@ -952,6 +952,7 @@ async getProuduitByCode(){
     stepper.next();
   }
 
+  //** open Dialog */
   openDialog(){
     const dialogRef = this.dialog.open(DialogContentAddArticleDialogComponent,{
       width: '100%',data: {
@@ -1017,7 +1018,6 @@ async getProuduitByCode(){
 
       });
   }
-
   //** Plz choose at least one product in the next step */
   nextStep(stepper : MatStepper){
     let addPrice : any = 0 
@@ -1145,43 +1145,49 @@ async getProuduitByCode(){
   }
   //** Update item from the Table  */
   async ouvreDialogueArticle(index : number, item: any , table : any ){
+  
     const dialogRef = this.dialog.open(UpdateDialogOverviewArticleDialogComponent, {
       width: '500px',
       data: { index: index, ligne: item, table: table}
     });
     dialogRef.afterClosed().subscribe(res => {  
-      item.quantite = res.qte_modifier;
-      item.quantite = parseInt(item.quantite); 
-      item.prixU = res.prixU_modifier;
-      item.remise = res.remise_modifier;
-      item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
-      item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
-      this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
-      item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-
-      this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
-      item.montant_TVA = Number(this.Montant_TVA).toFixed(3);        
-      item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
-     
-      item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
-      
-      item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
-      item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
-      item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
-      item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
-      
-      item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
-      this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
-      item.totale_TTC = this.Totale_TTC;
-      
-      if(this.qteStock<item.quantite){
-        item.etat='Non Dispo.';
-      }else{
-        item.etat = 'Dispo.'
-      } 
-      this.calculTotal();
-      this.calculAssiettes();
+                
+      this.bLservice.getInfoProductByIdFromStock(res.Id_Produit).subscribe((result : any) => {
+        this.qteStock = result.body.quantite; 
+        if(this.qteStock<res.qte_modifier){
+          Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+        }else{
+          item.quantite = res.qte_modifier;   
+          item.quantite = parseInt(item.quantite); 
+          item.prixU = res.prixU_modifier;
+          item.remise = res.remise_modifier;
+          item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
+          item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
+          this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
+          item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+  
+          this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
+          item.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+          
+          item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
+         
+          item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
+          
+          item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
+          item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
+          item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
+          item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
+          
+          item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
+          this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
+          item.totale_TTC = this.Totale_TTC;
+          item.etat = 'Dispo.'
+        } 
+        this.calculTotal();
+        this.calculAssiettes();
+      });     
     });
+ 
   this.calculTotal();
   this.calculAssiettes();
 }
@@ -1195,6 +1201,7 @@ async getProuduitByCode(){
     var typeElement = doc.createElement("Type");
     var idFrElement = doc.createElement("Id_Fr");
     var idCLTElement = doc.createElement("Id_Clt");
+    var typeDevise = doc.createElement('Devise')
     var adress = doc.createElement("Local"); 
     var modepaiement = doc.createElement("Mode_Paiement");
     var totalHTBrut = doc.createElement("TotalHTBrut");
@@ -1234,35 +1241,36 @@ async getProuduitByCode(){
     Montant_TVA.appendChild(Montant_TVA19);
     Montant_TVA.appendChild(Montant_TVA7);
     Montant_TVA.appendChild(Montant_TVA13);
-    
-    //** Type de reglement  */
-    var Type_Reglement = doc.createElement("Type_Reglement");
 
-    var typeRegOne = doc.createElement("TypeRegOne"); typeRegOne.innerHTML = this.infoFormGroup.get('modePaiement').value; 
-    var typeRegTwo = doc.createElement("TypeRegTwo"); typeRegTwo.innerHTML= this.addReglementFormGroup.get('typeRegTwo').value;
-    var typeRegTree = doc.createElement("TypeRegTree");typeRegTree.innerHTML= this.addReglementFormGroup.get('typeRegTree').value;
+   //** Type de reglement  */
+   var Type_Reglement = doc.createElement("Type_Reglement");
 
-    var valueRegOne = doc.createElement("ValueRegOne"); valueRegOne.innerHTML =  this.price; 
-    var valueRegTwo = doc.createElement("ValueRegTwo"); valueRegTwo.innerHTML= this.addReglementFormGroup.get('valueTwo').value;
-    var valueRegTree = doc.createElement("ValueRegTree");valueRegTree.innerHTML= this.addReglementFormGroup.get('valueTree').value; 
-    
-    Type_Reglement.appendChild(typeRegOne);
-    Type_Reglement.appendChild(typeRegTwo);
-    Type_Reglement.appendChild(typeRegTree);
-    Type_Reglement.appendChild(valueRegOne);
-    Type_Reglement.appendChild(valueRegTwo);
-    Type_Reglement.appendChild(valueRegTree);
+   var typeRegOne = doc.createElement("TypeRegOne"); typeRegOne.innerHTML = this.infoFormGroup.get('modePaiement').value; 
+   var typeRegTwo = doc.createElement("TypeRegTwo"); typeRegTwo.innerHTML= this.addReglementFormGroup.get('typeRegTwo').value;
+   var typeRegTree = doc.createElement("TypeRegTree");typeRegTree.innerHTML= this.addReglementFormGroup.get('typeRegTree').value;
 
-    //******* */
+   var valueRegOne = doc.createElement("ValueRegOne"); valueRegOne.innerHTML =  this.price; 
+   var valueRegTwo = doc.createElement("ValueRegTwo"); valueRegTwo.innerHTML= this.addReglementFormGroup.get('valueTwo').value;
+   var valueRegTree = doc.createElement("ValueRegTree");valueRegTree.innerHTML= this.addReglementFormGroup.get('valueTree').value; 
+   
+   Type_Reglement.appendChild(typeRegOne);
+   Type_Reglement.appendChild(typeRegTwo);
+   Type_Reglement.appendChild(typeRegTree);
+   Type_Reglement.appendChild(valueRegOne);
+   Type_Reglement.appendChild(valueRegTwo);
+   Type_Reglement.appendChild(valueRegTree);
+
+   //******* */
     Produits.setAttribute('Fournisseur','InfoNet');
     Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
     
     var nameEtat ="En cours";
     var typeName = "Devis";
+    var devise = this.infoFormGroup.get('devise').value;
     var signaler_Prob = doc.createTextNode("True");
     var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
     var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
-    var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value);
+    var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value.id_Clt);
     var id_Fr = doc.createTextNode('1');
 
 
@@ -1272,13 +1280,13 @@ async getProuduitByCode(){
     var totalFodecName =doc.createTextNode(this.totalMontantFodec);
     var totalTVAName =doc.createTextNode(this.totalMontantTVA);
     var totalTTCName =doc.createTextNode(this.totalTTc);
-
     //******* */
     signaler_Probleme.appendChild(signaler_Prob)
     etatElement.innerHTML = nameEtat;
     idCLTElement.appendChild(id_Clt);
     idFrElement.appendChild(id_Fr);
     typeElement.innerHTML = typeName;
+    typeDevise.innerHTML=devise
     adress.appendChild(adressName);
     modepaiement.appendChild(modepaiementName);
 
@@ -1294,6 +1302,7 @@ async getProuduitByCode(){
     infoElement.appendChild(typeElement);
     infoElement.appendChild(adress);
     infoElement.appendChild(modepaiement);
+    infoElement.appendChild(typeDevise);
 
     total.appendChild(totalHTBrut);
     total.appendChild(totalRemise);
@@ -1309,6 +1318,7 @@ async getProuduitByCode(){
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.blArticls[i].produits_simple;
@@ -1324,6 +1334,7 @@ async getProuduitByCode(){
         var vProduit_4Gs = doc.createElement('Produit_4Gs');
         var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
         var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
+
         
         if(this.blArticls[i].tableaux_produits_emie != undefined){
           for (let j = 0; j < this.blArticls[i].tableaux_produits_emie.length; j++) {
@@ -1350,6 +1361,7 @@ async getProuduitByCode(){
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat)
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1372,7 +1384,8 @@ async getProuduitByCode(){
         this.blArticls[i].signaler_probleme= true; 
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
-        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit;        
+        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit; 
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;       
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
         var produits_simple = doc.createElement('produits_simple');  produits_simple.innerHTML = this.blArticls[i].produits_simple;
@@ -1389,6 +1402,7 @@ async getProuduitByCode(){
         var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
         var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
 
+
         if(this.blArticls[i].tableaux_produits_serie != undefined){
           for (let j = 0; j < this.blArticls[i].tableaux_produits_serie.length; j++) {
             var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = this.blArticls[i].tableaux_produits_serie[j]
@@ -1402,6 +1416,7 @@ async getProuduitByCode(){
 
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1425,6 +1440,7 @@ async getProuduitByCode(){
         var Produit = doc.createElement('Produit')
         var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
         var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit;
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
         var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise;
         var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
         var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
@@ -1436,13 +1452,15 @@ async getProuduitByCode(){
         var fodec = doc.createElement('fodec'); fodec.innerHTML = this.blArticls[i].fodec
         var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.blArticls[i].prixU
         var Charge = doc.createElement('charge'); Charge.innerHTML = this.blArticls[i].ch
-        var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.blArticls[i].totale_TTC    
+        var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.blArticls[i].totale_TTC   
         var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
         var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
 
 
+
         Produit.appendChild(id);
         Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
         Produit.appendChild(Prix_U_TTC);
         Produit.appendChild(Total_HT);
         Produit.appendChild(Remise);
@@ -1464,6 +1482,8 @@ async getProuduitByCode(){
     Produits.appendChild(Produits_Simples);
     Produits.appendChild(Produits_Series);
     Produits.appendChild(Produits_4Gs);
+
+
     //******* */
     doc.documentElement.appendChild(etatElement);
     doc.documentElement.appendChild(infoElement);
@@ -1475,6 +1495,7 @@ async getProuduitByCode(){
     doc.documentElement.appendChild(Type_Reglement);
     return doc
   }
+
   
   convertFileXml(theBlob: Blob, fileName: string): File {
     var b: any = theBlob;
@@ -1512,9 +1533,19 @@ async getProuduitByCode(){
     this.bLservice.getBlByID(id).subscribe((res: any)=>{        
       this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
    }); 
-    // check type de reglement 
+    // check type de reglement
+    let typeRegOne : any  
     let typeRegTwo : any ; 
     let typeRegTree: any ; 
+      if(this.addReglementFormGroup.get('typeRegOne').value=='4')
+      typeRegOne ='Espèces';
+    else if (this.addReglementFormGroup.get('typeRegOne').value=='1'){
+      typeRegOne ='Virement';
+    }else if (this.addReglementFormGroup.get('typeRegOne').value=='2'){
+      typeRegOne ='Chèque';
+    }else if (this.addReglementFormGroup.get('typeRegOne').value=='3'){
+                typeRegOne ='Monétique';
+    }
     if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
        typeRegTwo ='Espèces';
     else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
@@ -1522,7 +1553,7 @@ async getProuduitByCode(){
     }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
        typeRegTwo ='Chèque';
     }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
-                     typeRegTwo ='monétique';
+                     typeRegTwo ='Monétique';
     }
       if(this.addReglementFormGroup.get('typeRegTree').value=='4')
          typeRegTree ='Espèces';
@@ -1531,7 +1562,7 @@ async getProuduitByCode(){
       }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
          typeRegTree ='Chèque';
       }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
-        typeRegTree ='monétique';
+        typeRegTree ='Monétique';
       } 
        setTimeout(async ()=>{
         //** Generate the pdf file */ 
@@ -1560,7 +1591,7 @@ async getProuduitByCode(){
                 {   
                   text: 
                  'Type : Devis ' +this.blData.type + ' n° '+ this.blData.id_Devis+ '- BL' + '\n' 
-                 + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                 + 'Édité par :' + '\t' + '' + '\n\n'
                  ,
                 fontSize: 12,
                 alignment: 'left',
@@ -1568,8 +1599,8 @@ async getProuduitByCode(){
               }:
               {   
                 text: 
-                'Nouveau Bon de Livraison'
-                + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                'Nouveau Bon de Livraison' + '\n' 
+                + 'Édité par :' + '\t' + '' + '\n\n'
                ,
               fontSize: 12,
               alignment: 'left',
@@ -1605,7 +1636,7 @@ async getProuduitByCode(){
               columns: [
                 {
                   ul : [
-                  this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
+                    typeRegOne +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
                   ]
                 },{
                   ul : [

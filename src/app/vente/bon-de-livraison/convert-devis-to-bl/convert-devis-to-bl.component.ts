@@ -23,7 +23,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class ConvertDevisToBlComponent implements OnInit {
 
-  modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+  modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
   currency:  string []= ['Euro', 'DT', 'Dollar'];
   infoFormGroup : FormGroup; 
   addArticleFormGroup: FormGroup;
@@ -239,7 +239,7 @@ export class ConvertDevisToBlComponent implements OnInit {
             this.valueRegTree = data.Type_Reglement[0].ValueRegTree[0]
             
             if (this.id_modeP_typeTwo !== undefined){
-              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
               if(this.id_modeP_typeTwo =='4')
                this.typeRegTwo ='Espèces';
                else if (this.id_modeP_typeTwo =='1'){
@@ -247,12 +247,12 @@ export class ConvertDevisToBlComponent implements OnInit {
                }else if (this.id_modeP_typeTwo =='2'){
                 this.typeRegTwo ='Chèque';
               }else if (this.id_modeP_typeTwo =='3'){
-                this.typeRegTwo ='monétique';
+                this.typeRegTwo ='Monétique';
               }
               this.ligneOne = true 
             }
             if (this.id_modeP_typeTree !== undefined){
-              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+              // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
               if(this.id_modeP_typeTree =='4')
                this.typeRegTree ='Espèces';
                else if (this.id_modeP_typeTree =='1'){
@@ -260,7 +260,7 @@ export class ConvertDevisToBlComponent implements OnInit {
                }else if (this.id_modeP_typeTree =='2'){
                 this.typeRegTree ='Chèque';
               }else if (this.id_modeP_typeTree =='3'){
-                this.typeRegTree ='monétique';
+                this.typeRegTree ='Monétique';
               }
               this.ligneTwo = true 
             }
@@ -872,7 +872,7 @@ export class ConvertDevisToBlComponent implements OnInit {
               {   
                 text: 
                 'Type:' + '\t Devis' +this.infoFormGroup.get('typeDevis').value +' n° '+id_devis+'- BL'+' n°'+id_bl + '\n' 
-                + 'Nom du responsable :' + '\t' + '' + '\n'
+                + 'Édité par :' + '\t' + '' + '\n'
               ,
               fontSize: 12,
               alignment: 'left',

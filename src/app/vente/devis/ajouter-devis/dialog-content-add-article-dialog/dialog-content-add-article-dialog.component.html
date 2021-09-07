@@ -2,6 +2,20 @@
 <br>
 <div class="container" mat-dialog-content>
   <div class="container">
+    <div class="row title">Rechercher: </div>
+    <div class="row ">
+      <div class="input-group col-md-4">
+        <input class="form-control py-2" type="search" value="Rechercher ..." id="example-search-input">
+        <span class="input-group-append">
+          <button class="btn btn-outline-secondary" type="submit" (click)="filterByChamp($event)">
+            <i class="fa fa-search"></i>
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row title">Filtrer par</div>
     <div class="row ">
       <div class="col-md-4">
         <select class="form-control" [ngModel]="champ" (change)="onChange($event)" required>
@@ -13,9 +27,9 @@
         <input class="form-control py-2" type="search" value="Rechercher ..." id="example-search-input"
           [ngModel]="value" (keyup)="$event.keyCode == 13 && filterByChamp($event)">
         <span class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" (click)="filterByChamp($event)">
-            <i class="fa fa-search"></i>
-          </button>
+          <!-- <button class="btn btn-outline-secondary" type="submit" (click)="clickButtonfilterByChamp($event)"> -->
+          <i class="fa fa-search search-fa"></i>
+          <!-- </button> -->
         </span>
       </div>
     </div>

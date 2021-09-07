@@ -283,7 +283,7 @@
         </div>
       </div>
       <!-- second reg -->
-      <div class="row" *ngIf="ligneOne">
+      <div class="row" *ngIf="id_modeP_typeTwo">
         <div class="col-md-2">
           <mat-form-field>
             <mat-label>Type de Règlement</mat-label>
@@ -303,11 +303,11 @@
         </div>
       </div>
       <!-- therd reg -->
-      <div class="row" *ngIf="ligneTwo">
+      <div class="row" *ngIf="id_modeP_typeTree">
         <div class="col-md-2">
           <mat-form-field>
             <mat-label>Type de Règlement</mat-label>
-            <mat-select formControlName="typeRegTree">
+            <mat-select formControlName="typeRegTree" [(ngModel)]="id_modeP_typeTree">
               <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
             </mat-select>
           </mat-form-field>

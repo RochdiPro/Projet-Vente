@@ -28,7 +28,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export class GenererBlComponent implements OnInit {
 
 
-  modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+  modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
   currency:  string []= ['Euro', 'TND', 'Dollar'];
   infoFormGroup : FormGroup; 
   addArticleFormGroup: FormGroup;
@@ -344,7 +344,7 @@ export class GenererBlComponent implements OnInit {
           this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
           this.valueRegTree = data.Type_Reglement[0].ValueRegTree[0]
           if (this.id_modeP_typeTwo !== undefined){
-            // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+            // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
             if(this.id_modeP_typeTwo =='4')
              this.typeRegTwo ='Espèces';
              else if (this.id_modeP_typeTwo =='1'){
@@ -352,12 +352,12 @@ export class GenererBlComponent implements OnInit {
              }else if (this.id_modeP_typeTwo =='2'){
               this.typeRegTwo ='Chèque';
             }else if (this.id_modeP_typeTwo =='3'){
-              this.typeRegTwo ='monétique';
+              this.typeRegTwo ='Monétique';
             }
             this.ligneOne = true 
           }
           if (this.id_modeP_typeTree !== undefined){
-            // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte monétique'},{id:'4',name:'Espèces'}]; 
+            // [{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
             if(this.id_modeP_typeTree =='4')
              this.typeRegTree ='Espèces';
              else if (this.id_modeP_typeTree =='1'){
@@ -365,7 +365,7 @@ export class GenererBlComponent implements OnInit {
              }else if (this.id_modeP_typeTree =='2'){
               this.typeRegTree ='Chèque';
             }else if (this.id_modeP_typeTree =='3'){
-              this.typeRegTree ='monétique';
+              this.typeRegTree ='Monétique';
             }
             this.ligneTwo = true 
           }
@@ -1455,7 +1455,7 @@ export class GenererBlComponent implements OnInit {
            }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
               typeRegTwo ='Chèque';
            }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
-                            typeRegTwo ='monétique';
+                            typeRegTwo ='Monétique';
            }
              if(this.addReglementFormGroup.get('typeRegTree').value=='4')
                 typeRegTree ='Espèces';
@@ -1464,7 +1464,7 @@ export class GenererBlComponent implements OnInit {
              }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
                 typeRegTree ='Chèque';
              }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
-               typeRegTree ='monétique';
+               typeRegTree ='Monétique';
              } 
        setTimeout(async ()=>{
         //** Generate the pdf file */ 
@@ -1492,7 +1492,7 @@ export class GenererBlComponent implements OnInit {
                 {   
                   text: 
                   'Devis ' +this.typeDevis + ' n° '+this.devis_ID + '- BL n° '+ id + '\n' 
-                  + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                  + 'Édité par :' + '\t' + '' + '\n\n'
                 ,
                 fontSize: 12,
                 alignment: 'left',

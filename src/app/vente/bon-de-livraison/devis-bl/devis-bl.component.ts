@@ -189,7 +189,7 @@ export class DevisBLComponent implements OnInit {
              }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
                typeRegTwo ='Chèque';
            }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
-               typeRegTwo ='monétique';
+               typeRegTwo ='Monétique';
            }
            let typeRegTree : any ; 
            if (data.Type_Reglement[0].TypeRegTree[0]=='4')
@@ -199,7 +199,7 @@ export class DevisBLComponent implements OnInit {
              }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
                typeRegTree ='Chèque';
            }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
-               typeRegTree ='monétique';
+               typeRegTree ='Monétique';
            }
         // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
           if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
@@ -298,7 +298,7 @@ export class DevisBLComponent implements OnInit {
                     {   
                       text: 
                       'Type Devis :'+ '\t' + devis.type+ '\n' 
-                      + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                      + 'Édité par :' + '\t' + '' + '\n\n'
                       ,
                     fontSize: 12,
                     alignment: 'left',

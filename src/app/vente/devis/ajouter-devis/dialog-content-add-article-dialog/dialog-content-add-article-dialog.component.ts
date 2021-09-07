@@ -146,11 +146,17 @@ export class DialogContentAddArticleDialogComponent implements OnInit {
  getValue(ev: any){
       this.value = ev.target.value
  }
+ clickButtonfilterByChamp(ev: any){
+   console.log(ev);
+   
+ }
 //** filter produit By Champ */
 filterByChamp(event : any ){
   this.loading = true;  
   this.prouduits = [];
   this.value = event.target.value
+  console.log(event);
+  
   if((this.prouduits.length =0) || (this.champ ==='') || (this.champ == undefined)){
     Swal.fire("Produit non trouvé!");
     this.loading = false;

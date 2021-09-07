@@ -32,7 +32,7 @@ addArticleFormGroup : FormGroup;
 addReglementFormGroup : FormGroup;
 
 columns :any = ['id_Produit', 'nom_Produit', 'prixU', 'remise', 'quantite', 'tva', 'total_HT'];
-modepaiement: any =[{id:1,name:'Virement'},{id:2,name:'Chèque'},{id:3,name:'Carte monétique'},{id:4,name:'Espèces'}]; 
+modepaiement: any =[{id:'1',name:'Virement'},{id:'2',name:'Chèque'},{id:'3',name:'Carte Monétique'},{id:'4',name:'Espèces'}]; 
 currency:  string []= ['Euro', 'TND', 'Dollar'];
 
 currentDate = new Date();
@@ -52,7 +52,8 @@ blArticls : any = [];
 newAttribute : any = {}
 dataArticle : any ; 
 last_ID : any ;
-modePaiement : any ; 
+modePaiement : any = '4'; 
+devise : any = 'TND';
 latest_date: any;
 subscription: Subscription;
 price: any;
@@ -173,7 +174,7 @@ numBL : any = 0 ;
   }
 
     //** infos   */
-    completezInof(prod: any , i: any  ){
+ completezInof(prod: any , i: any  ){
       if(this.blArticls[i].n_Imei == "true"){
         const dialogRef = this.dialog.open(InfosDialogComponent,{
           data : {
@@ -1271,26 +1272,36 @@ async getProuduitByCode(){
     //** Generate the PDF file  */
   async generatePDF(id :any){    
         // check type de reglement 
-   let typeRegTwo : any ; 
-   let typeRegTree: any ; 
-   if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
-      typeRegTwo ='Espèces';
-   else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
-      typeRegTwo ='Virement';
-   }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
-      typeRegTwo ='Chèque';
-   }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
-                    typeRegTwo ='monétique';
-   }
-     if(this.addReglementFormGroup.get('typeRegTree').value=='4')
-        typeRegTree ='Espèces';
-     else if (this.addReglementFormGroup.get('typeRegTree').value=='1'){
-        typeRegTree ='Virement';
-     }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
-        typeRegTree ='Chèque';
-     }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
-       typeRegTree ='monétique';
-     } 
+        let typeRegOne : any ; 
+        let typeRegTwo : any ; 
+        let typeRegTree: any ; 
+          if(this.addReglementFormGroup.get('typeRegOne').value=='4')
+          typeRegOne ='Espèces';
+        else if (this.addReglementFormGroup.get('typeRegOne').value=='1'){
+          typeRegOne ='Virement';
+        }else if (this.addReglementFormGroup.get('typeRegOne').value=='2'){
+          typeRegOne ='Chèque';
+        }else if (this.addReglementFormGroup.get('typeRegOne').value=='3'){
+                    typeRegOne ='Monétique';
+        }
+        if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
+          typeRegTwo ='Espèces';
+        else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
+          typeRegTwo ='Virement';
+        }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
+          typeRegTwo ='Chèque';
+        }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
+                    typeRegTwo ='Monétique';
+        }
+        if(this.addReglementFormGroup.get('typeRegTree').value=='4')
+          typeRegTree ='Espèces';
+        else if (this.addReglementFormGroup.get('typeRegTree').value=='1'){
+          typeRegTree ='Virement';
+        }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
+          typeRegTree ='Chèque';
+        }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
+          typeRegTree ='Monétique';
+        }
      
      
     this.bLservice.getBlByID(id).subscribe((res: any)=>{  
@@ -1322,7 +1333,7 @@ async getProuduitByCode(){
                 {   
                   text: 
                   'Nouveau Bon de Livraison'+ '\n'
-                   +'Nom du responsable :' + '\t' + '' + '\n'
+                   +'Édité par :' + '\t' + '' + '\n'
                 ,
                 fontSize: 12,
                 alignment: 'left',
@@ -1359,7 +1370,7 @@ async getProuduitByCode(){
               columns: [
                 {
                   ul : [
-                  this.infoFormGroup.get('modePaiement').value +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
+                    typeRegOne +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
                   ]
                 },{
                   ul : [

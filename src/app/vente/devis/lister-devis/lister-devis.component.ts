@@ -186,38 +186,44 @@ export class ListerDevisComponent implements OnInit {
         xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
           data =res.Devis;   
         });        
-        this.xmldata = data;        
-        // check type de reglement 
+        this.xmldata = data;         
+         
+        // check type de reglement         
         let typeRegOne : any; 
-        if(data.Type_Reglement[0].TypeRegOne[0]=='4')
+        if(data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='4')
           typeRegOne ='Espèces';
-        else if (data.Type_Reglement[0].TypeRegOne[0]=='1'){
+        else if (data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='1'){
           typeRegOne ='Virement';
-        }else if (data.Type_Reglement[0].TypeRegOne[0]=='2'){
+        }else if (data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='2'){
           typeRegOne ='Chèque';
-        }else if (data.Type_Reglement[0].TypeRegOne[0]=='3'){
-                    typeRegOne ='monétique';
+        }else if (data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='3'){
+                    typeRegOne ='Monétique';
         }
         let typeRegTwo : any ; 
-        if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
+        if (data.Reglements[0].Reglement[1] !== ""){
+          if (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='4')
           typeRegTwo ='Espèces';
-          else if  (data.Type_Reglement[0].TypeRegTwo[0]=='1'){
+          else if  (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='1'){
             typeRegTwo ='Virement';
-          }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
+          }else if  (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='2'){
             typeRegTwo ='Chèque';
-        }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
-            typeRegTwo ='monétique';
+        }else if  (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='3'){
+            typeRegTwo ='Monétique';
+        }
         }
         let typeRegTree : any ; 
-        if (data.Type_Reglement[0].TypeRegTree[0]=='4')
+        if (data.Reglements[0].Reglement[2] !== ""){
+          if (data.Reglements[0].Reglement[0].code_Type_Reglement_Trois[0]=='4')
           typeRegTree ='Espèces';
-          else if  (data.Type_Reglement[0].TypeRegTree[0]=='1'){
+          else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='1'){
             typeRegTree ='Virement';
-          }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
+          }else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='2'){
             typeRegTree ='Chèque';
-        }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
-            typeRegTree ='monétique';
+        }else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='3'){
+            typeRegTree ='Monétique';
         }
+        }
+
         
         // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
           if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
@@ -353,18 +359,18 @@ export class ListerDevisComponent implements OnInit {
                   columns: [
                     {
                       ul : [
-                        typeRegOne +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                        typeRegOne +' : '+ data.Reglements[0].Reglement[0].Value_Reglement_Un[0]  +'\n'
                       ]
                     },{
                       ul : [
                         (typeRegTwo !== undefined)?
-                        typeRegTwo +' : '+Number(data.Type_Reglement[0].ValueRegTwo[0]).toFixed(3)+'\n' : 
+                        typeRegTwo +' : '+Number(data.Reglements[0].Reglement[1].Value_Reglement_Deux[0]).toFixed(3)+'\n' : 
                         ''
                         ]
                     },{
                       ul:[
                         (typeRegTree !==  undefined)?
-                        typeRegTree +' : '+ Number(data.Type_Reglement[0].ValueRegTree[0]).toFixed(3) +'\n' : 
+                        typeRegTree +' : '+ Number(data.Reglements[0].Reglement[2].Value_Reglement_Trois[0]).toFixed(3) +'\n' : 
                         ''
                       ]
                     }
@@ -394,8 +400,8 @@ export class ListerDevisComponent implements OnInit {
                         alignment: 'right',
                         body: [
                           [{ text: 'T.V.A %', alignment: 'left' }, '7%', '13%', '19%'],
-                          [{ text: 'Assiette', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7, data.Taxes[0].TVA[0].TVA13, data.Taxes[0].TVA[0].TVA19],
-                          [{ text: 'Montant', alignment: 'left' }, data.Montant_TVA[0].Montant_TVA7, data.Montant_TVA[0].Montant_TVA13, data.Montant_TVA[0].Montant_TVA19],
+                          [{ text: 'Assiette', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7[0].Assiette, data.Taxes[0].TVA[0].TVA13[0].Assiette, data.Taxes[0].TVA[0].TVA19[0].Assiette],
+                          [{ text: 'Montant', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7[0].Montant, data.Taxes[0].TVA[0].TVA13[0].Montant, data.Taxes[0].TVA[0].TVA19[0].Montant],
                         ]
                       },
                       layout: 'lightHorizontalLines',
@@ -487,37 +493,43 @@ export class ListerDevisComponent implements OnInit {
           data =res.Devis;   
         });
         this.xmldata = data;
-        // check type de reglement 
+        // check type de reglement               
         let typeRegOne : any; 
-        if(data.Type_Reglement[0].TypeRegOne[0]=='4')
+        if(data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='4')
           typeRegOne ='Espèces';
-        else if (data.Type_Reglement[0].TypeRegOne[0]=='1'){
+        else if (data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='1'){
           typeRegOne ='Virement';
-        }else if (data.Type_Reglement[0].TypeRegOne[0]=='2'){
+        }else if (data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='2'){
           typeRegOne ='Chèque';
-        }else if (data.Type_Reglement[0].TypeRegOne[0]=='3'){
-                    typeRegOne ='monétique';
+        }else if (data.Reglements[0].Reglement[0].code_Type_Reglement_Un[0]=='3'){
+                    typeRegOne ='Monétique';
         }
         let typeRegTwo : any ; 
-        if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
+        if (data.Reglements[0].Reglement[1] !== ""){
+          if (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='4')
           typeRegTwo ='Espèces';
-        else if  (data.Type_Reglement[0].TypeRegTwo[0]=='1'){
-          typeRegTwo ='Virement';
-        }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
-          typeRegTwo ='Chèque';
-        }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
-          typeRegTwo ='monétique';
+          else if  (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='1'){
+            typeRegTwo ='Virement';
+          }else if  (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='2'){
+            typeRegTwo ='Chèque';
+        }else if  (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='3'){
+            typeRegTwo ='Monétique';
+        }
         }
         let typeRegTree : any ; 
-        if (data.Type_Reglement[0].TypeRegTree[0]=='4')
+        if (data.Reglements[0].Reglement[2] !== ""){
+          if (data.Reglements[0].Reglement[0].code_Type_Reglement_Trois[0]=='4')
           typeRegTree ='Espèces';
-          else if  (data.Type_Reglement[0].TypeRegTree[0]=='1'){
+          else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='1'){
             typeRegTree ='Virement';
-          }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
+          }else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='2'){
             typeRegTree ='Chèque';
-        }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
-            typeRegTree ='monétique';
+        }else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='3'){
+            typeRegTree ='Monétique';
         }
+        }
+
+        
         // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
           if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
           for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
@@ -615,7 +627,7 @@ export class ListerDevisComponent implements OnInit {
                     {   
                       text: 
                       'Type Devis :'+ '\t' + devis.type+ '\n' 
-                      + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                      + 'Édité par :' + '\t' + '' + '\n\n'
                       ,
                     fontSize: 12,
                     alignment: 'left',
@@ -652,18 +664,18 @@ export class ListerDevisComponent implements OnInit {
                   columns: [
                     {
                       ul : [
-                        typeRegOne +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                        typeRegOne +' : '+ data.Reglements[0].Reglement[0].Value_Reglement_Un[0]  +'\n'
                       ]
                     },{
                       ul : [
                         (typeRegTwo !== undefined)?
-                        typeRegTwo +' : '+Number(data.Type_Reglement[0].ValueRegTwo[0]).toFixed(3)+'\n' : 
+                        typeRegTwo +' : '+Number(data.Reglements[0].Reglement[1].Value_Reglement_Deux[0]).toFixed(3)+'\n' : 
                         ''
                         ]
                     },{
                       ul:[
                         (typeRegTree !==  undefined)?
-                        typeRegTree +' : '+ Number(data.Type_Reglement[0].ValueRegTree[0]).toFixed(3) +'\n' : 
+                        typeRegTree +' : '+ Number(data.Reglements[0].Reglement[2].Value_Reglement_Trois[0]).toFixed(3) +'\n' : 
                         ''
                       ]
                     }
@@ -684,7 +696,7 @@ export class ListerDevisComponent implements OnInit {
                 },
                 this.generateTable(devisArr, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+data["Informations-Generales"][0].Devise+')',  'Remise', 'Quantite', 'TVA', 'Total_HT']),
                 {
-                  text: '\n\n\n'
+                  text: '\n\n'
                 },
                 , {
                   columns: [
@@ -693,8 +705,8 @@ export class ListerDevisComponent implements OnInit {
                         alignment: 'right',
                         body: [
                           [{ text: 'T.V.A %', alignment: 'left' }, '7%', '13%', '19%'],
-                          [{ text: 'Assiette', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7, data.Taxes[0].TVA[0].TVA13, data.Taxes[0].TVA[0].TVA19],
-                          [{ text: 'Montant', alignment: 'left' }, data.Montant_TVA[0].Montant_TVA7, data.Montant_TVA[0].Montant_TVA13, data.Montant_TVA[0].Montant_TVA19],
+                          [{ text: 'Assiette', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7[0].Assiette, data.Taxes[0].TVA[0].TVA13[0].Assiette, data.Taxes[0].TVA[0].TVA19[0].Assiette],
+                          [{ text: 'Montant', alignment: 'left' }, data.Taxes[0].TVA[0].TVA7[0].Montant, data.Taxes[0].TVA[0].TVA13[0].Montant, data.Taxes[0].TVA[0].TVA19[0].Montant],
                         ]
                       },
                       layout: 'lightHorizontalLines',

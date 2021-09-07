@@ -28,7 +28,7 @@ export class ListerBlComponent implements OnInit {
   clt : any;
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
-  displayedColumns: string[] = ['modifier','id_Bl', 'etat', 'date_Creation', 'mode_Paiement', 'total_ttc', 'supprimer', 'exporter_pdf','Voir_pdf'];
+  displayedColumns: string[] = ['modifier','id_Bl', 'etat', 'date_Creation', 'total_ttc', 'supprimer', 'exporter_pdf','Voir_pdf'];
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
 
@@ -158,7 +158,6 @@ export class ListerBlComponent implements OnInit {
   }
   //** View PDF */
   viewPDF(bl: any){
-    console.log(bl);
   // check if this "Devis" is Proforma or "simple/estimatif"
     this.getClientId(bl.id_Clt);
     this.date =  this.datepipe.transform(bl.date_Creation, 'dd/MM/YYYY');
@@ -171,11 +170,26 @@ export class ListerBlComponent implements OnInit {
         this.detail = fileReader.result; // data: application/xml in base64
         let data : any; 
         xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
-          data =res.Devis;  
-           
-        });
+          if(res.Devis == null ) {
+            data =res.Bon_Livraison;  
+          } else{
+            data =res.Devis; 
+          }
+        });        
         this.xmldata = data;
-        // check type de reglement 
+        console.log( data );
+
+        // check type de reglement         
+        let typeRegOne : any ; 
+        if (bl.mode_Paiement=='4')
+            typeRegOne ='Espèces';
+          else if  (bl.mode_Paiement=='1'){
+            typeRegOne ='Virement';
+          }else if  (bl.mode_Paiement=='2'){
+            typeRegOne ='Chèque';
+        }else if  (bl.mode_Paiement=='3'){
+          typeRegOne ='Monétique';
+        }
         let typeRegTwo : any ; 
         if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
           typeRegTwo ='Espèces';
@@ -184,7 +198,7 @@ export class ListerBlComponent implements OnInit {
           }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
             typeRegTwo ='Chèque';
         }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
-            typeRegTwo ='monétique';
+            typeRegTwo ='Monétique';
         }
         let typeRegTree : any ; 
         if (data.Type_Reglement[0].TypeRegTree[0]=='4')
@@ -194,7 +208,7 @@ export class ListerBlComponent implements OnInit {
           }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
             typeRegTree ='Chèque';
         }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
-            typeRegTree ='monétique';
+            typeRegTree ='Monétique';
         }
         // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
           if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
@@ -294,7 +308,7 @@ export class ListerBlComponent implements OnInit {
                     {   
                       text: 
                      'Type : Devis ' +bl.type + ' n° '+ bl.id_Devis+ '- BL' + '\n' 
-                     + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                     + 'Édité par :' + '\t' + '' + '\n\n'
                      ,
                     fontSize: 12,
                     alignment: 'left',
@@ -302,8 +316,8 @@ export class ListerBlComponent implements OnInit {
                   }:
                   {   
                     text: 
-                    'Nouveau Bon de Livraison'
-                    + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                    'Nouveau Bon de Livraison' +'\n' 
+                    + 'Édité par :' + '\t' + '' + '\n\n'
                    ,
                   fontSize: 12,
                   alignment: 'left',
@@ -340,7 +354,7 @@ export class ListerBlComponent implements OnInit {
                   columns: [
                     {
                       ul : [
-                        bl.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                        typeRegOne +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
                       ]
                     },{
                       ul : [
@@ -464,11 +478,24 @@ export class ListerBlComponent implements OnInit {
         this.detail = fileReader.result; // data: application/xml in base64
         let data : any; 
         xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
-          data =res.Devis;   
-          console.log('data',data);  
+          if(res.Devis == null ) {
+            data =res.Bon_Livraison;  
+          } else{
+            data =res.Devis; 
+          }
         });
         this.xmldata = data;
        // check type de reglement 
+       let typeRegOne : any ; 
+       if (data.Type_Reglement[0].TypeRegOne[0]=='4')
+           typeRegOne ='Espèces';
+         else if  (data.Type_Reglement[0].TypeRegOne[0]=='1'){
+           typeRegOne ='Virement';
+         }else if  (data.Type_Reglement[0].TypeRegOne[0]=='2'){
+           typeRegOne ='Chèque';
+       }else if  (data.Type_Reglement[0].TypeRegOne[0]=='3'){
+         typeRegOne ='Monétique';
+       }
        let typeRegTwo : any ; 
        if (data.Type_Reglement[0].TypeRegTwo[0]=='4')
          typeRegTwo ='Espèces';
@@ -477,7 +504,7 @@ export class ListerBlComponent implements OnInit {
          }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='2'){
            typeRegTwo ='Chèque';
        }else if  (data.Type_Reglement[0].TypeRegTwo[0]=='3'){
-           typeRegTwo ='monétique';
+           typeRegTwo ='Monétique';
        }
        let typeRegTree : any ; 
        if (data.Type_Reglement[0].TypeRegTree[0]=='4')
@@ -487,7 +514,7 @@ export class ListerBlComponent implements OnInit {
          }else if  (data.Type_Reglement[0].TypeRegTree[0]=='2'){
            typeRegTree ='Chèque';
        }else if  (data.Type_Reglement[0].TypeRegTree[0]=='3'){
-           typeRegTree ='monétique';
+           typeRegTree ='Monétique';
        }
         // 'Id_Produit', 'Nom_Produit', 'Prix', 'Remise', 'Quantite', 'TVA', 'Total_HT'
           if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
@@ -587,7 +614,7 @@ export class ListerBlComponent implements OnInit {
                     {   
                       text: 
                       'Type : Devis ' +bl.type + ' n° '+ bl.id_Devis+ '- BL' + '\n' 
-                      + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                      + 'Édité par :' + '\t' + '' + '\n\n'
                      ,
                     fontSize: 12,
                     alignment: 'left',
@@ -596,7 +623,7 @@ export class ListerBlComponent implements OnInit {
                   {   
                     text: 
                     'Nouveau Bon de Livraison'
-                    + 'Nom du responsable :' + '\t' + '' + '\n\n'
+                    + 'Édité par :' + '\t' + '' + '\n\n'
                    ,
                   fontSize: 12,
                   alignment: 'left',
@@ -633,7 +660,7 @@ export class ListerBlComponent implements OnInit {
                   columns: [
                     {
                       ul : [
-                        bl.mode_Paiement +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
+                        typeRegOne +' : '+ data.Type_Reglement[0].ValueRegOne[0]  +'\n'
                       ]
                     },{
                       ul : [

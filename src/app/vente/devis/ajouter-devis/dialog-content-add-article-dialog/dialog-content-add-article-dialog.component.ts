@@ -35,9 +35,13 @@ export class DialogContentAddArticleDialogComponent implements OnInit {
   dataArticle : any ; 
   loading : boolean = true; 
   prodInStock : any = []; 
-  champ : string;
+  champ : string = "Sélectionnez votre option";
   value: string; 
-
+  searchFilter: any = '';
+  query : string; 
+  id: string; 
+  nom : string; 
+  prix : string ; 
 
   @Output() prodEvent = new EventEmitter();
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
@@ -52,7 +56,14 @@ export class DialogContentAddArticleDialogComponent implements OnInit {
     this.addProuduit();
     this.getKeyWord();
   }
-
+// applyFilter
+applyFilter(value : any ){
+  value = value.target.value
+  value = value.trim(); // Remove whitespace
+  value = value.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+  console.log(value);
+  
+}
 //** Product is in stock  */
   async isInStock(prod : any){
     this.loading = true;

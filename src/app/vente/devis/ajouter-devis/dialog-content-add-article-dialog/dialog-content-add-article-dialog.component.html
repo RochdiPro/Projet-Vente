@@ -5,9 +5,10 @@
     <div class="row title">Rechercher: </div>
     <div class="row ">
       <div class="input-group col-md-4">
-        <input class="form-control py-2" type="search" value="Rechercher ..." id="example-search-input">
+        <input class="form-control py-2" type="search" placeholder="Rechercher ..." id="example-search-input"
+          [(ngModel)]="query" />
         <span class="input-group-append">
-          <button class="btn btn-outline-secondary" type="submit" (click)="filterByChamp($event)">
+          <button class="btn btn-outline-secondary" type="submit" disabled>
             <i class="fa fa-search"></i>
           </button>
         </span>
@@ -19,17 +20,19 @@
     <div class="row ">
       <div class="col-md-4">
         <select class="form-control" [ngModel]="champ" (change)="onChange($event)" required>
-          <option value="Sélectionnez votre option" disabled selected>Sélectionnez votre option</option>
+          <option value="Sélectionnez votre option" disabled selected="selected">Sélectionnez votre option</option>
           <option *ngFor="let type of keyWord" [value]="type">{{type | uppercase}}</option>
         </select>
       </div>
       <div class="input-group col-md-4">
-        <input class="form-control py-2" type="search" value="Rechercher ..." id="example-search-input"
-          [ngModel]="value" (keyup)="$event.keyCode == 13 && filterByChamp($event)">
+        <input class="form-control py-2" type="search" placeholder="Code/ date/ noma produit..."
+          id="example-search-input" [ngModel]="value" (keyup)="$event.keyCode == 13 && filterByChamp($event)">
         <span class="input-group-append">
-          <!-- <button class="btn btn-outline-secondary" type="submit" (click)="clickButtonfilterByChamp($event)"> -->
-          <i class="fa fa-search search-fa"></i>
-          <!-- </button> -->
+          <span class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit" disabled>
+              <i class="fa fa-search"></i>
+            </button>
+          </span>
         </span>
       </div>
     </div>
@@ -42,9 +45,15 @@
       <thead>
         <tr>
           <th></th>
-          <th>Id produit</th>
-          <th>Nom produit</th>
-          <th>Prix U HT</th>
+          <th>Id produit
+            <input type="search" class="search-bar" [(ngModel)]="id" placeholder="Filtrer par ID" />
+          </th>
+          <th>Nom produit
+            <input type="search" class="search-bar" [(ngModel)]="nom" placeholder="Filtrer par Nom" />
+          </th>
+          <th>Prix U HT
+            <input type="search" class="search-bar" [(ngModel)]="prix" placeholder="Filtrer par Prix" />
+          </th>
           <th>TVA(%)</th>
           <th>Fodec(%)</th>
           <th>Qte. stock</th>
@@ -52,7 +61,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of prouduits ; let i = index;">
+        <tr
+          *ngFor="let item of prouduits | searchFilter: query | searchFilter: id| searchFilter: nom| searchFilter: prix ; let i = index;">
           <td><input type="checkbox" name="item" (change)="checkCheckBoxvalue($event,item)" /></td>
           <td>
             <input [ngModel]="item.id_Produit" class="form-control" type="text" name="{{item.id_Produit}}" disabled />

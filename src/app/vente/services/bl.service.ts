@@ -122,4 +122,13 @@ export class BlService {
       },observe:'response'
     });
   }
+  
+  //** Detail_Bon_Livraison */
+  getDetailBLByProd(id: any ){
+    return this.http.get(_url+'Detail_Bon_Livraison/',{
+      params: {
+        Id_BL: id ,
+      }, observe: 'response'
+    });
+  }
 }

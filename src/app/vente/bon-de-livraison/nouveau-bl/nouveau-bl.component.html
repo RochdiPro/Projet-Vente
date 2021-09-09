@@ -30,6 +30,21 @@
                             {{ErrorMessage('devise') + 'le devise!'}}</mat-error>
                     </mat-form-field>
                 </div>
+                <!-- Locale -->
+                <div class="col-md-4 mb-3">
+                    <mat-form-field>
+                        <mat-label>Locale</mat-label>
+                        <mat-select formControlName="locale">
+                            <mat-option>Sfax</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="infoFormGroup.get('custemerName').invalid">
+                            {{ErrorMessage('custemerName') + 'le nom de le clinet(e)!'}}</mat-error>
+                    </mat-form-field>
+                </div>
+
+            </div>
+            <!-- Get Client & Adresse -->
+            <div class="row">
                 <!-- select Custemer  -->
                 <div class="col-md-4 mb-3">
                     <mat-form-field>
@@ -41,9 +56,6 @@
                             {{ErrorMessage('custemerName') + 'le nom de le clinet(e)!'}}</mat-error>
                     </mat-form-field>
                 </div>
-            </div>
-            <!-- Get Client & Adresse -->
-            <div class="row">
                 <!-- Main/Invoicing address -->
                 <div class="col-md-4 mb-3" *ngIf="editable">
                     <mat-form-field>

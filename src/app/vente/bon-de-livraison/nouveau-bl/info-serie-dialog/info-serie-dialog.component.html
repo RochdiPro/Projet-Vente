@@ -7,11 +7,12 @@
                 <tr>
                     <td>Numéro Série</td>
                     <td>
-                        <mat-form-field class="example-full-width" appearance="fill">
-                            <mat-label>Numéro Série :</mat-label>
-                            <input matInput type="text" name="{{i}}" [(ngModel)]="numero_Serie[i]"
-                                placeholder="Numéro Série" />
-                        </mat-form-field>
+                        <ng-select placeholder="Numéro Série" [searchable]="true" [clearable]="false" id="{{i}}"
+                            [(ngModel)]="numSerie[i]" (change)="verifN_serieProduit($event)">
+                            <ng-option [value]="item.name" *ngFor="let item of numero_Serie" [disabled]="item.selected">
+                                {{item.name}}
+                            </ng-option>
+                        </ng-select>
                     </td>
                 </tr>
             </tbody>
@@ -19,6 +20,6 @@
     </div>
     <div mat-dialog-actions class="right">
         <button mat-button class="btn btn-default " (click)="fermerDialogue()">Fermer</button>
-        <button mat-button class="btn btn-primary ">OK</button>
+        <button mat-button class="btn btn-primary " (click)="VerifVide()">Valider</button>
     </div>
 </div>

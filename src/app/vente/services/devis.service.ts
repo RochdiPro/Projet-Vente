@@ -127,4 +127,16 @@ export class DevisService {
         }, observe: 'response'
       });
   }
+  //** Get Locals */
+  getLocals(): Observable<any>{
+    return this.http.get(_url+'Locals/'); 
+  }
+  //** Quantite_Produit_Par_Stock_En_Local */
+  quentiteProdLocal( id : any,local : any ){
+    return this.http.get(_url+'Quantite_Produit_Par_Stock_En_Local/',{params:{
+      Id: id,
+      Local: local
+    },observe: 'response'
+  });
+  }
 }

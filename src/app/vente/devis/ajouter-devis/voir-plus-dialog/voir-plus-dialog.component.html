@@ -74,17 +74,17 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Qte dans le stock</th>
+                <th>Quantite dans le stock</th>
                 <th>Type</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>
-                    <input name="qte" class="form-control" type="text" disabled />
+                    <input name="qte" class="form-control" type="text" [(ngModel)]="num" disabled />
                 </td>
                 <td>
-                    <input class="form-control" type="text" name="type" disabled />
+                    <input class="form-control" type="text" name="type" [(ngModel)]="type" disabled />
                 </td>
             </tr>
         </tbody>

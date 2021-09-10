@@ -42,6 +42,7 @@ export class DialogContentAddArticleDialogComponent implements OnInit {
   id: string; 
   nom : string; 
   prix : string ; 
+  local : any ; 
 
   @Output() prodEvent = new EventEmitter();
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
@@ -50,6 +51,7 @@ export class DialogContentAddArticleDialogComponent implements OnInit {
   constructor(private devisService : DevisService,public dialogRef: MatDialogRef<DialogContentAddArticleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) { 
       this.fromPage = data;
+      this.local = data.local;
     }
 
   ngOnInit(): void {
@@ -72,6 +74,10 @@ applyFilter(value : any ){
         if(result.body != null){
           this.devisService.getArticleById(prod[i].id_Produit.toString()).subscribe((res) => { 
             this.dataArticle = res.body; 
+            if(prod[i].qte_Local == null){
+              this.newAttribute.qteStock = 0; 
+            }      
+            this.newAttribute.qteStock = prod[i].qte_Local
             this.newAttribute.id_Produit = prod[i].id_Produit;
             this.newAttribute.nom_Produit = this.dataArticle.nom_Produit;
             this.newAttribute.n_Imei = this.dataArticle.n_Imei;
@@ -123,7 +129,6 @@ applyFilter(value : any ){
               this.newAttribute.fichier4G = "";
               this.newAttribute.produitsSeries = "";
               this.newAttribute.produits4g = "";
-              this.newAttribute.etat = '' 
               this.newAttribute.etat = 'Dispo.'
               this.prouduits.push(this.newAttribute);
               this.newAttribute ={};
@@ -133,20 +138,21 @@ applyFilter(value : any ){
         }
       });
     }   
+    console.log(this.prouduits);
+    
     this.loading = false;  
   }
 
 //** Get and Add Article */  
   addProuduit(){
     this.loading = true; 
-    this.devisService.getArticls().subscribe((res : any) => {
-      // get all id from Fich produit table stock in prod
-      let prod : any= []; 
-      res.map((ele: any)=>{
-        prod.push(ele); 
+    let prod : any = []; 
+    this.devisService.listProdEnLocal(this.local).subscribe((res: any )=>{
+      res.body.forEach((element: any ) => {
+        prod.push(element);
       });
-      this.isInStock(prod)
-  });
+    this.isInStock(prod)  
+    })
 }
 
 //** on Change select */

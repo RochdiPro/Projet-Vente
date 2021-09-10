@@ -12,11 +12,14 @@ export class VoirPlusDialogComponent implements OnInit {
   local : any; 
   type: string; 
   num : any ;
+  loading : boolean = true
   
   constructor(public dialogRef: MatDialogRef<VoirPlusDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private devisService : DevisService) {
     this.item = data.formPage    
-    this.local= data.loca
-    this.devisService.quentiteProdLocal(this.item.id_Produit, this.local).subscribe((res:any)=> this.num = res.body)
+    this.local= data.local
+    this.devisService.quentiteProdLocal(this.item.id_Produit, this.local).subscribe((res:any)=> {this.num = res.body
+    this.loading = false; 
+    })
     if (this.item.n_Imei == "true"){
       this.type ="Produit 4G"
     }else if(this.item.n_Serie =="true"){
@@ -25,6 +28,8 @@ export class VoirPlusDialogComponent implements OnInit {
     else{
       this.type ="Produit Simple"
     }
+    console.log(this.num);
+    
    }
 
   ngOnInit(): void {

@@ -1,5 +1,6 @@
 <div class="row mat-elevation-z8">
     <!-- Lignes d'article  -->
+    <mat-progress-bar mode="indeterminate" *ngIf='loading'></mat-progress-bar>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -71,10 +72,11 @@
     </table>
 </div>
 <div class="row mat-elevation-z2">
+    <mat-progress-bar mode="indeterminate" *ngIf='loading'></mat-progress-bar>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Quantite dans le stock</th>
+                <th>Quantite en stock {{local | uppercase}} </th>
                 <th>Type</th>
             </tr>
         </thead>

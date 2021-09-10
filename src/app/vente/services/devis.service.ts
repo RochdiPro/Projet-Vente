@@ -139,4 +139,20 @@ export class DevisService {
     },observe: 'response'
   });
   }
+  //** Liste_Produits_En_Local */
+  listProdEnLocal (local : any ): Observable<any>{
+      return this.http.get(_url+'Liste_Produits_En_Local/',{
+        params: {
+          Local: local,
+        },observe:'response'
+      });
+    }
+  //** Get Local by ID  */
+  getLocalById(id: any ): Observable<any>{
+    return this.http.get(_url+"Local/",{
+      params:{
+        Id_Local: id,
+      }, observe: 'response'
+    });
+  }
 }

@@ -148,7 +148,7 @@ export class AjouterDevisComponent implements OnInit {
     this.infoFormGroup = this._formBuilder.group({
       numDevis:[''],
       dateDevis:[''],
-      local: [''], 
+      local: ['', Validators.required], 
       modePaiement: ['',Validators.required],
       typeDevis:['',Validators.required],
       custemerName: ['', Validators.required],
@@ -184,8 +184,6 @@ export class AjouterDevisComponent implements OnInit {
   // Get Locals 
   getLocals(){
     this.devisService.getLocals().subscribe((res: any)=>{
-      console.log(res);
-      
       this.locals = res
     })
   }
@@ -193,7 +191,7 @@ export class AjouterDevisComponent implements OnInit {
   viewPlus(prod: any ){
     const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
       width: '100%', data : {
-        formPage: prod , local : this.infoFormGroup.get('local').value
+        formPage: prod , local : this.infoFormGroup.get('local').value.nom_Local
       }
     });
     dialogRef.afterClosed().subscribe(()=>{
@@ -316,7 +314,8 @@ export class AjouterDevisComponent implements OnInit {
   openDialog(){
     const dialogRef = this.dialog.open(DialogContentAddArticleDialogComponent,{
       width: '100%',data: {
-        fromPage : this.devisArticls
+        fromPage : this.devisArticls,
+        local : this.infoFormGroup.get('local').value.nom_Local
       }});
       dialogRef.afterClosed().subscribe(res => { 
         
@@ -324,6 +323,7 @@ export class AjouterDevisComponent implements OnInit {
         if(res != undefined){
           for(let i= 0 ;i < res.data.length; i++){
             let index = this.devisArticls.findIndex(((x: any)=>parseInt(x.id_Produit) === parseInt(res.data[i].id_Produit))); 
+
             if(index != -1){
               this.devisArticls[index].quantite = parseInt(this.devisArticls[index].quantite);
               this.devisArticls[index].quantite +=1;  
@@ -360,11 +360,12 @@ export class AjouterDevisComponent implements OnInit {
             }else{
               this.devisService.quentiteProdLocal(res.data[i].id_Produit,this.infoFormGroup.get('local').value.nom_Local).subscribe((result : any)=>{
                 this.qteStock = result.body
+                
                if(this.qteStock<res.data[i].quantite){
-                 this.devisArticls[i].etat='Non Dispo.';
+                 res.data[i].etat='Non Dispo.';
                  this.typeDevis ='Estimatif'
                }else{
-                 this.devisArticls[i].etat = 'Dispo.';
+                 res.data[i].etat = 'Dispo.';
                 }  
               });
               this.devisArticls.push(res.data[i]);
@@ -611,12 +612,8 @@ export class AjouterDevisComponent implements OnInit {
               this.qteStock= 0; 
             }
             else{ 
-              console.log(idProd,this.infoFormGroup.get('local').value);
-              
             this.devisService.quentiteProdLocal(idProd,this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
-              this.qteStock= ress.body; 
-              console.log(this.qteStock);
-              
+              this.qteStock= ress.body;               
               this.newAttribute.prixU = Number(res.body.prix).toFixed(3); 
               this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
   
@@ -649,7 +646,6 @@ export class AjouterDevisComponent implements OnInit {
               this.newAttribute.fichier4G = "";
               this.newAttribute.produitsSeries = "";
               this.newAttribute.produits4g = "";
-              this.newAttribute.etat = '' 
               // check availability
   
               if(this.qteStock<this.newAttribute.quantite){
@@ -684,6 +680,8 @@ export class AjouterDevisComponent implements OnInit {
       });
       } // if this product exist 
       else{
+        this.devisService.quentiteProdLocal(idProd,this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
+          this.qteStock= ress.body;     
         this.devisArticls[index].quantite = parseInt(this.devisArticls[index].quantite);
         this.devisArticls[index].quantite +=1;  
         this.devisArticls[index].prixU=Number(this.devisArticls[index].prixU).toFixed(3);  
@@ -717,7 +715,9 @@ export class AjouterDevisComponent implements OnInit {
          this.calculTotal();
          this.calculAssiettes();
          this.getProdId= false;
-      }
+      }); 
+    }
+    
 }
 
   //** Get Article By Code A Bare */
@@ -1053,6 +1053,7 @@ export class AjouterDevisComponent implements OnInit {
     var idCLTElement = doc.createElement("Id_Clt");
     var typeDevise = doc.createElement('Devise')
     var adress = doc.createElement("Local"); 
+    var depot = doc.createElement("Depot");
     var modepaiement = doc.createElement("Mode_Paiement");
     var totalHTBrut = doc.createElement("TotalHTBrut");
     var totalRemise = doc.createElement("TotalRemise");
@@ -1065,7 +1066,6 @@ export class AjouterDevisComponent implements OnInit {
     var Produits_4Gs = doc.createElement('Produits_4Gs')
     var Produits_Simples  = doc.createElement('Produits_Simples')
     var signaler_Probleme = doc.createElement("Signaler_Probleme");
-    var reglements = doc.createElement("Reglements");
 
     //** TVA* */
     var Taxes = doc.createElement("Taxes");
@@ -1146,6 +1146,7 @@ export class AjouterDevisComponent implements OnInit {
     var nameEtat ="En cours";
     var typeName = "Devis";
     var devise = this.infoFormGroup.get('devise').value;
+    var locale_depot = this.infoFormGroup.get('local').value.id_Local;
     var signaler_Prob = doc.createTextNode("True");
     var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
     var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
@@ -1168,6 +1169,7 @@ export class AjouterDevisComponent implements OnInit {
     typeDevise.innerHTML=devise
     adress.appendChild(adressName);
     modepaiement.appendChild(modepaiementName);
+    depot.innerHTML =locale_depot; 
 
     totalHTBrut.appendChild(totalHTBrutName);
     totalRemise.appendChild(totalRemisetName);
@@ -1182,6 +1184,7 @@ export class AjouterDevisComponent implements OnInit {
     infoElement.appendChild(adress);
     infoElement.appendChild(modepaiement);
     infoElement.appendChild(typeDevise);
+    infoElement.appendChild(depot);
 
     total.appendChild(totalHTBrut);
     total.appendChild(totalRemise);

@@ -44,9 +44,9 @@ export class InfoSerieDialogComponent implements OnInit {
       });
     });
   }
-  verifN_serieProduit(event: any) {
-    if(this.prevSerie){
-      let index = this.numero_Serie.findIndex((element : any )=> element.name ==this.prevSerie);
+  verifN_serieProduit(event: any , i : any ) {
+    if(this.prevSerie[i]){
+      let index = this.numero_Serie.findIndex((element : any )=> element.name ==this.prevSerie[i]);
         if (index >= 0){
         this.numero_Serie[index].selected = false;
 
@@ -61,7 +61,7 @@ export class InfoSerieDialogComponent implements OnInit {
             element.selected = true;
         }}); 
     }
-    this.prevSerie = event;
+    this.prevSerie[i] = event;
       
   }
 

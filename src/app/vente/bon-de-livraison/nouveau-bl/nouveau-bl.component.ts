@@ -108,6 +108,7 @@ Ch_Globale: any = 0;
 Prix: any = 0;
 Totale_TTC: any = 0;
 numBL : any = 0 ; 
+locals: any = [];
 
 @ViewChild(MatPaginator) paginator: any = MatPaginator;
 @ViewChild(MatSort) sort: any = MatSort;
@@ -124,9 +125,11 @@ numBL : any = 0 ;
   ngOnInit(): void {
     //** init*/  
     this.getAllClient();
+    this.getLocals();
     
     this.infoFormGroup = this._formBuilder.group({
       numBl:[''],
+      local: ['', Validators.required],
       dateBl:[''],
       modePaiement: ['',Validators.required],
       custemerName: ['', Validators.required],
@@ -161,17 +164,23 @@ numBL : any = 0 ;
     });
   }
 
-  //** voir plus  */
+  // Get Locals 
+  getLocals(){
+    this.bLservice.getLocals().subscribe((res: any)=>{
+      this.locals = res
+    })
+  }
+  // viewPlus 
   viewPlus(prod: any ){
-      const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
-        width: '100%', data : {
-          formPage: prod
-        }
-      });
-      dialogRef.afterClosed().subscribe(()=>{
-        console.log('Closed');
-        
-      });
+    const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
+      width: '100%', data : {
+        formPage: prod , local : this.infoFormGroup.get('local').value.nom_Local
+      }
+    });
+    dialogRef.afterClosed().subscribe(()=>{
+      console.log('Closed');
+      
+    })
   }
 
     //** infos   */
@@ -345,7 +354,8 @@ numBL : any = 0 ;
   openDialog(){
     const dialogRef = this.dialog.open(DialogContentAddArticleDialogComponent,{
       width: '100%',data: {
-        fromPage : this.blArticls
+        fromPage : this.blArticls,
+        local: this.infoFormGroup.get('local').value.nom_Local
       }});
       dialogRef.afterClosed().subscribe(res => { 
         //** Check if the product is in the previous table  */
@@ -353,8 +363,8 @@ numBL : any = 0 ;
           for(let i= 0 ;i < res.data.length; i++){
             let index = this.blArticls.findIndex(((x: any)=>parseInt(x.id_Produit) === parseInt(res.data[i].id_Produit))); 
             if(index != -1){
-              this.bLservice.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any) => {
-                this.qteStock= result.body.quantite; 
+              this.bLservice.quentiteProdLocal(res.data[i].id_Produit, this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
+                this.qteStock= ress.body
                 let qte: any ; 
                 qte = parseInt(this.blArticls[index].quantite);
                 qte +=1; 
@@ -384,12 +394,10 @@ numBL : any = 0 ;
                 this.calculAssiettes();
                 this.blArticls[index].etat = 'Dispo.';
                }  
-              }) 
- 
 
-
+              });
             }else{
-              this.bLservice.getInfoProductByIdFromStock(res.data[i].id_Produit).subscribe((result : any) => {
+              this.bLservice.quentiteProdLocal(res.data[i].id_Produit, this.infoFormGroup.get('local').value.nom_Local).subscribe((result : any) => {
                 if ((result.body)===null){
                   Swal.fire("ce produit est hors stock", '','warning');
                   this.blArticls.sort = this.sort;
@@ -463,51 +471,54 @@ numBL : any = 0 ;
               this.blArticls.paginator = this.paginator;
             }
             else{ 
-            this.qteStock= result.body.quantite; 
-            // check availability
-            if(this.qteStock<this.newAttribute.quantite){
-              Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
-            }else{
-              this.newAttribute.prixU = Number(result.body.prix).toFixed(3); 
-              this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-  
-              this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-              this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
-              this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-              this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-  
-              // Montant Tva u = (prix*tva)/100
-              this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-              this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-              // Total ht = prix * qt
-              this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
-              this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
-              //  prix u ttc = prix u  + montant tva u 
-              this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);;
-  
-              this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-               //  total ttc = prix u ttc * qte
-              this.Totale_TTC = Number(this.newAttribute.prix_U_TTC * this.newAttribute.quantite).toFixed(3) ;                    
-              this.newAttribute.totale_TTC = this.Totale_TTC;
-  
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-              this.newAttribute.ch_Globale = Number(this.Ch_Globale);
-  
-              this.newAttribute.etatEntree = "Entrée Stock Non Accompli";
-              this.newAttribute.fichierSimple = "";
-              this.newAttribute.fichierSerie = "";
-              this.newAttribute.fichier4G = "";
-              this.newAttribute.produitsSeries = "";
-              this.newAttribute.produits4g = "";
-              this.newAttribute.etat = '' 
-              this.newAttribute.etat = 'Dispo.'
-              this.blArticls.push(this.newAttribute);
-              this.calculTotal();
-              this.calculAssiettes();
-              this.blArticls.sort = this.sort;
-              this.blArticls.paginator = this.paginator;
-            }  
+              this.bLservice.quentiteProdLocal(idProd, this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
+                this.qteStock= ress.body
+                // check availability
+                if(this.qteStock<this.newAttribute.quantite){
+                  Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+                }else{
+                  this.newAttribute.prixU = Number(result.body.prix).toFixed(3); 
+                  this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+      
+                  this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
+                  this.newAttribute.qprixU = Number(this.Prix).toFixed(3);
+                  this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                  this.newAttribute.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+      
+                  // Montant Tva u = (prix*tva)/100
+                  this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                  this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+                  // Total ht = prix * qt
+                  this.Total_HT = Number(this.newAttribute.finalPrice * this.newAttribute.quantite); 
+                  this.newAttribute.total_HT = Number(this.Total_HT).toFixed(3);
+                  //  prix u ttc = prix u  + montant tva u 
+                  this.newAttribute.prix_U_TTC = (((Number(this.newAttribute.finalPrice) + Number((this.newAttribute.montant_Fodec)/this.newAttribute.quantite) + Number(this.newAttribute.montant_TVA)))).toFixed(3);;
+      
+                  this.newAttribute.montant_TTC = Number(this.newAttribute.prix_U_TTC) * Number(this.newAttribute.quantite);
+                  this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
+                   //  total ttc = prix u ttc * qte
+                  this.Totale_TTC = Number(this.newAttribute.prix_U_TTC * this.newAttribute.quantite).toFixed(3) ;                    
+                  this.newAttribute.totale_TTC = this.Totale_TTC;
+      
+                  this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
+                  this.newAttribute.ch_Globale = Number(this.Ch_Globale);
+      
+                  this.newAttribute.etatEntree = "Entrée Stock Non Accompli";
+                  this.newAttribute.fichierSimple = "";
+                  this.newAttribute.fichierSerie = "";
+                  this.newAttribute.fichier4G = "";
+                  this.newAttribute.produitsSeries = "";
+                  this.newAttribute.produits4g = "";
+                  this.newAttribute.etat = '' 
+                  this.newAttribute.etat = 'Dispo.'
+                  this.blArticls.push(this.newAttribute);
+                  this.calculTotal();
+                  this.calculAssiettes();
+                  this.blArticls.sort = this.sort;
+                  this.blArticls.paginator = this.paginator;
+                }
+              }); 
+              
           }
             this.last_ID = this.id; 
             this.id = '';      
@@ -534,8 +545,9 @@ numBL : any = 0 ;
             this.blArticls.paginator = this.paginator;
           }
           else{ 
-            this.qteStock= result.body.quantite; 
-            let qte : any ; 
+            this.bLservice.quentiteProdLocal(idProd, this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
+              this.qteStock= ress.body;
+              let qte : any ; 
             qte = parseInt(this.blArticls[index].quantite);
             qte +=1; 
           // Check availibility 
@@ -568,7 +580,8 @@ numBL : any = 0 ;
             this.calculTotal();
             this.calculAssiettes();
             this.getProdId= false;
-           }  
+           } 
+            }); 
           }
         }); 
 
@@ -630,11 +643,12 @@ async getProuduitByCode(){
                 Swal.fire("ce produit est hors stock", '','warning');
               }
               else {
-                this.qteStock= result.body.quantite; 
-              // check availability
-              if(this.qteStock<this.newAttribute.quantite){
-                Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
-              }else{
+                this.bLservice.quentiteProdLocal(idProd, this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
+                  this.qteStock= ress.body;
+                  // check availability
+                  if(this.qteStock<this.newAttribute.quantite){
+                    Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+                  }else{
                   this.newAttribute.prixU = Number(result.body.prix).toFixed(3); 
                   this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
   
@@ -674,6 +688,7 @@ async getProuduitByCode(){
                   this.blArticls.sort = this.sort;
                   this.blArticls.paginator = this.paginator;  
                }
+                });
             }     
             });   
             this.getProdCode = false;      
@@ -685,8 +700,9 @@ async getProuduitByCode(){
               if ((result.body)===null){
                 Swal.fire("ce produit est hors stock", '','warning');
               }else{
-                this.qteStock= result.body.quantite; 
-                let qte: any;
+                this.bLservice.quentiteProdLocal(this.last_ID, this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
+                  this.qteStock= ress.body;
+                  let qte: any;
                 qte = parseInt(this.blArticls[index].quantite);
                 qte +=1;
                 // Check availibility 
@@ -722,6 +738,7 @@ async getProuduitByCode(){
                    this.calculAssiettes();
                    this.getProdCode= false;
                 }
+                });  
               }
             });
           }
@@ -775,38 +792,40 @@ async getProuduitByCode(){
     dialogRef.afterClosed().subscribe(res => {  
                 
       this.bLservice.getInfoProductByIdFromStock(res.Id_Produit).subscribe((result : any) => {
-        this.qteStock = result.body.quantite; 
-        if(this.qteStock<res.qte_modifier){
-          Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
-        }else{
-          item.quantite = res.qte_modifier;   
-          item.quantite = parseInt(item.quantite); 
-          item.prixU = res.prixU_modifier;
-          item.remise = res.remise_modifier;
-          item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
-          item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
-          this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
-          item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
-  
-          this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
-          item.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-          
-          item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
-         
-          item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
-          
-          item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
-          item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
-          item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
-          item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
-          
-          item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
-          this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
-          item.totale_TTC = this.Totale_TTC;
-          item.etat = 'Dispo.'
-        } 
-        this.calculTotal();
-        this.calculAssiettes();
+        this.bLservice.quentiteProdLocal(res.Id_Produit, this.infoFormGroup.get('local').value.nom_Local).subscribe((ress: any)=>{
+          this.qteStock = ress.body; 
+          if(this.qteStock<res.qte_modifier){
+            Swal.fire('vous ne pouvez pas ajouter ce produit','Qte de stock < Qte demandé ', 'warning'); 
+          }else{
+            item.quantite = res.qte_modifier;   
+            item.quantite = parseInt(item.quantite); 
+            item.prixU = res.prixU_modifier;
+            item.remise = res.remise_modifier;
+            item.finalPrice=  (item.prixU - (item.prixU * (Number(item.remise)) / 100)).toFixed(3)  
+            item.montant_HT = ((Number(item.prixU) * Number(item.quantite)) * (1 - (Number(item.remise)) / 100)).toFixed(3);
+            this.Montant_Fodec = (item.montant_HT * item.fodec) / 100;      
+            item.montant_Fodec = Number(this.Montant_Fodec).toFixed(3);
+    
+            this.Montant_TVA = Number(item.finalPrice) * Number((item.tva)/ 100) ;
+            item.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+            
+            item.prix_U_TTC = (((Number(item.finalPrice) + Number((item.montant_Fodec)/item.quantite) + Number(item.montant_TVA)))).toFixed(3);;
+           
+            item.total_TVA = ((Number(item.montant_TVA)) / (Number(item.quantite))).toFixed(3);
+            
+            item.montant_TTC = Number(item.prix_U_TTC) * Number(item.quantite);
+            item.ch = ((((Number(item.PrixU)) / Number(item.totalFacture)) * 100) * Number(item.quantite)).toFixed(3);
+            item.ch_Piece = (((((Number(item.chargeTr) + Number(item.autreCharge)) * Number(item.ch)) / 100)) / (Number(item.quantite))).toFixed(3);
+            item.prixRevientU = (Number(item.prixU) + Number(item.ch_Piece)).toFixed(3);
+            
+            item.total_HT = Number(item.finalPrice * item.quantite).toFixed(3);
+            this.Totale_TTC = Number(((Number(item.prix_U_TTC) * item.quantite))).toFixed(3)
+            item.totale_TTC = this.Totale_TTC;
+            item.etat = 'Dispo.'
+          } 
+          this.calculTotal();
+          this.calculAssiettes();
+        });
       });     
     });
  
@@ -964,7 +983,7 @@ async getProuduitByCode(){
       }, layout: 'headerLineOnly',
     };
   }
-  //** The XML structure */
+  //*************************************************** The XML structure **************************************/
   createXMLStructure(url: string , data : any){
     let typeRegUn : any ; 
     let typeRegDeux : any ; 
@@ -1005,6 +1024,7 @@ var idFrElement = doc.createElement("Id_Fr");
 var idCLTElement = doc.createElement("Id_Clt");
 var typeDevise = doc.createElement('Devise')
 var adress = doc.createElement("Local"); 
+var depot = doc.createElement("Depot");
 var modepaiement = doc.createElement("Mode_Paiement");
 var totalHTBrut = doc.createElement("TotalHTBrut");
 var totalRemise = doc.createElement("TotalRemise");
@@ -1097,6 +1117,7 @@ Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
 
 var nameEtat ="En cours";
 var typeName = "Devis";
+var locale_depot = this.infoFormGroup.get('local').value.id_Local;
 var devise = this.infoFormGroup.get('devise').value;
 var signaler_Prob = doc.createTextNode("True");
 var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
@@ -1118,6 +1139,7 @@ idCLTElement.appendChild(id_Clt);
 idFrElement.appendChild(id_Fr);
 typeElement.innerHTML = typeName;
 typeDevise.innerHTML=devise
+depot.innerHTML =locale_depot; 
 adress.appendChild(adressName);
 modepaiement.appendChild(modepaiementName);
 
@@ -1134,6 +1156,7 @@ infoElement.appendChild(typeElement);
 infoElement.appendChild(adress);
 infoElement.appendChild(modepaiement);
 infoElement.appendChild(typeDevise);
+infoElement.appendChild(depot);
 
 total.appendChild(totalHTBrut);
 total.appendChild(totalRemise);

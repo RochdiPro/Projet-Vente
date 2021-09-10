@@ -12,27 +12,17 @@
                 <tr>
                     <td>
                         <ng-select placeholder="Numéro Série" [searchable]="true" [clearable]="false" id="{{i}}"
-                            [(ngModel)]="numSerie[i]" (change)="verifN_serieProduit($event)">
+                            [(ngModel)]="numSerie[i]" (change)="verifN_serieProduit($event, i )">
                             <ng-option [value]="item.name" *ngFor="let item of numero_Serie" [disabled]="item.selected">
                                 {{item.name}}
                             </ng-option>
                         </ng-select>
                     </td>
                     <td>
-                        <ng-select placeholder="Numéro Imei 1" [searchable]="true" [clearable]="false"
-                            [(ngModel)]="num_ImeiOne[i]" (change)="verifN_eUnProduit($event)">
-                            <ng-option [value]="e1.name" *ngFor="let e1 of n_ImeiOne" [disabled]="e1.selected">
-                                {{e1.name}}
-                            </ng-option>
-                        </ng-select>
+                        <input type="text" class="form-control" [(ngModel)]="num_ImeiOne[i]" disabled>
                     </td>
                     <td>
-                        <ng-select placeholder="Numéro Imei 2" [searchable]="true" [clearable]="false"
-                            [(ngModel)]="num_ImeiTwo[i]" (change)="verifN_eDeuxProduit($event)">
-                            <ng-option [value]="e2.name" *ngFor="let e2 of n_ImeiTwo" [disabled]="e2.selected">
-                                {{e2.name}}
-                            </ng-option>
-                        </ng-select>
+                        <input type="text" class="form-control" [(ngModel)]="num_ImeiTwo[i]" disabled>
                     </td>
                 </tr>
             </tbody>

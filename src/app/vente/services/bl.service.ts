@@ -131,4 +131,41 @@ export class BlService {
       }, observe: 'response'
     });
   }
+    //** Get Locals */
+    getLocals(): Observable<any>{
+      return this.http.get(_url+'Locals/'); 
+    }
+    //** Quantite_Produit_Par_Stock_En_Local */
+    quentiteProdLocal( id : any,local : any ){
+      return this.http.get(_url+'Quantite_Produit_Par_Stock_En_Local/',{params:{
+        Id: id,
+        Local: local
+      },observe: 'response'
+    });
+    }
+    //** Liste_Produits_En_Local */
+    listProdEnLocal (local : any ): Observable<any>{
+        return this.http.get(_url+'Liste_Produits_En_Local/',{
+          params: {
+            Local: local,
+          },observe:'response'
+        });
+      }
+    //** Get Local by ID  */
+    getLocalById(id: any ): Observable<any>{
+      return this.http.get(_url+"Local/",{
+        params:{
+          Id_Local: id,
+        }, observe: 'response'
+      });
+    }
+  //** Detail_Produit_par_Numero_Serie */
+  getDetailProdByNserie(n_serie: any, id : any):Observable<any>{
+    return this.http.get(_url+'Detail_Produit_par_Numero_Serie/',{
+      params:{
+        Id: id,
+        N_Serie: n_serie,
+      },observe: 'response'
+    });
+  }
 }

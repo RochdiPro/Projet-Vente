@@ -29,7 +29,7 @@
                     <mat-form-field>
                         <mat-label>Mode paiement</mat-label>
                         <mat-select formControlName="modePaiement" [(ngModel)]="modePaiement" required>
-                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.name">{{mp.name}}</mat-option>
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
                         </mat-select>
                         <mat-error *ngIf="infoFormGroup.get('modePaiement').invalid">
                             {{ErrorMessage('modePaiement') + 'Mode paiement!'}}</mat-error>
@@ -49,6 +49,17 @@
             </div>
             <!-- +++++++++++++++++++++++++++++++++ -->
             <div class="row">
+                <!-- Local  -->
+                <div class="col-md-4 mb-3">
+                    <mat-form-field>
+                        <mat-label>Local</mat-label>
+                        <mat-select formControlName="local" [(ngModel)]="local.id_Local" required>
+                            <mat-option *ngFor="let l of locals" [value]="l.id_Local">{{l.nom_Local}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="infoFormGroup.get('local').invalid">
+                            {{ErrorMessage('local') + 'le local!'}}</mat-error>
+                    </mat-form-field>
+                </div>
                 <!-- select Custemer  -->
                 <div class="col-md-4 mb-3" *ngIf="loading">
                     <mat-form-field>
@@ -268,7 +279,9 @@
             <div class="row">
                 <div class="col-md-2">
                     <mat-form-field>
-                        <input matInput [(ngModel)]="modePaiement" [ngModelOptions]="{standalone: true}" disabled />
+                        <mat-select formControlName="typeRegOne" [(ngModel)]="modePaiement" [disabled]=true>
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
                     </mat-form-field>
                 </div>
                 <div class="col-md-2">
@@ -282,7 +295,7 @@
                 </div>
             </div>
             <!-- second reg -->
-            <div class="row" *ngIf="ligneOne">
+            <div class="row" *ngIf="id_modeP_typeTwo">
                 <div class="col-md-2">
                     <mat-form-field>
                         <mat-label>Type de Règlement</mat-label>
@@ -302,11 +315,11 @@
                 </div>
             </div>
             <!-- therd reg -->
-            <div class="row" *ngIf="ligneTwo">
+            <div class="row" *ngIf="id_modeP_typeTree">
                 <div class="col-md-2">
                     <mat-form-field>
                         <mat-label>Type de Règlement</mat-label>
-                        <mat-select formControlName="typeRegTree">
+                        <mat-select formControlName="typeRegTree" [(ngModel)]="id_modeP_typeTree">
                             <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -332,6 +345,45 @@
                 <button mat-button class="btn btn-primary" (click)="checkTotalTTC(stepperUpdateBl)">Suivant</button>
             </div>
         </form>
+    </mat-step>
+    <!-- 4th step -->
+    <mat-step>
+        <ng-template matStepLabel>Compléter les infos</ng-template>
+        <!-- lister les articles choisie -->
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id produit</th>
+                        <th>Nom produit</th>
+                        <th>infos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of devisArticls ; let i = index;">
+                        <td class="id-item">
+                            <input [ngModel]="item.id_Produit" name="id" class="form-control" type="text"
+                                name="{{item.id_Produit}}" disabled />
+                        </td>
+                        <td class="id-name">
+                            <input [ngModel]="item.nom_Produit" name="name" class="form-control" type="text"
+                                name="{{item.nom_Produit}}" disabled />
+                        </td>
+                        <!--Complétez les infos  E1 | E2 | N°serie -->
+                        <td>
+                            <button mat-button class="btn btn-b" (click)="completezInof(item, i)">Complétez
+                                les
+                                infos</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div>
+            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button class="btn btn-primary" matStepperNext>Suivant</button>
+        </div>
     </mat-step>
     <!-- Last step -->
     <mat-step label="Générer le devis">

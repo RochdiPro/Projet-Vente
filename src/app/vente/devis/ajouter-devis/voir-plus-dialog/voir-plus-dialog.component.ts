@@ -27,9 +27,7 @@ export class VoirPlusDialogComponent implements OnInit {
     }
     else{
       this.type ="Produit Simple"
-    }
-    console.log(this.num);
-    
+    }    
    }
 
   ngOnInit(): void {

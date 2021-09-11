@@ -37,12 +37,12 @@
                 <!-- Locale -->
                 <div class="col-md-4 mb-3">
                     <mat-form-field>
-                        <mat-label>Locale</mat-label>
-                        <mat-select formControlName="locale">
-                            <mat-option>Sfax</mat-option>
+                        <mat-label>Local</mat-label>
+                        <mat-select formControlName="local" [(ngModel)]="local.id_Local" required>
+                            <mat-option *ngFor="let l of locals" [value]="l.id_Local">{{l.nom_Local}}</mat-option>
                         </mat-select>
-                        <mat-error *ngIf="infoFormGroup.get('custemerName').invalid">
-                            {{ErrorMessage('custemerName') + 'le nom de le clinet(e)!'}}</mat-error>
+                        <mat-error *ngIf="infoFormGroup.get('local').invalid">
+                            {{ErrorMessage('local') + 'le local!'}}</mat-error>
                     </mat-form-field>
                 </div>
 

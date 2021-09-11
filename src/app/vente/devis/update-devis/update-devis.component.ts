@@ -339,8 +339,6 @@ export class UpdateDevisComponent implements OnInit {
         let data : any; 
         xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{      
           data =res.Devis;
-          console.log(data);
-          
           this.devise= data["Informations-Generales"][0].Devise[0];
           this.local_id= data["Informations-Generales"][0].Depot[0];
           this.getLocalById(this.local_id)

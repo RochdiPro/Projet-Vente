@@ -1017,6 +1017,12 @@ export class UpdateDevisComponent implements OnInit {
       Swal.fire( 
         'Veuillez choisir au moins un produit');
     }
+    if(Number(this.addReglementFormGroup.get('valueTwo').value)>0){
+      this.id_modeP_typeTwo='4'
+    }
+    if(Number(this.addReglementFormGroup.get('valueTree').value)>0){
+      this.id_modeP_typeTwo='4'
+    }
   }
   //** addReglement */
 

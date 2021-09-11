@@ -934,7 +934,7 @@ async getProuduitByCode(){
                if(this.qteStock<qte){
                 Swal.fire('vous ne pouvez pas ajouter ce produit n°'+ res.data[i].id_Produit ,'Qte de stock < Qte demandé ', 'warning');
               }else{
-                this.devisArticls[index].quantite= this.devisArticls[index].quantite+1;
+                this.devisArticls[index].quantite=parseInt(this.devisArticls[index].quantite)+1;
                 this.devisArticls[index].prixU =Number(this.devisArticls[index].prixU).toFixed(3); 
                 this.devisArticls[index].finalPrice=  (this.devisArticls[index].prixU - (this.devisArticls[index].prixU * (Number(this.devisArticls[index].remise)) / 100)).toFixed(3)  
                 this.devisArticls[index].montant_HT = ((Number(this.devisArticls[index].prixU) * Number(this.devisArticls[index].quantite)) * (1 - (Number(this.devisArticls[index].remise)) / 100)).toFixed(3);
@@ -1005,6 +1005,12 @@ async getProuduitByCode(){
       this.isNull = false;
       Swal.fire( 
         'Veuillez choisir au moins un produit');
+    }
+    if(Number(this.addReglementFormGroup.get('valueTwo').value)>0){
+      this.id_modeP_typeTwo='4'
+    }
+    if(Number(this.addReglementFormGroup.get('valueTree').value)>0){
+      this.id_modeP_typeTwo='4'
     }
   }
   //** Ckeck Total TTC in the reglement step */

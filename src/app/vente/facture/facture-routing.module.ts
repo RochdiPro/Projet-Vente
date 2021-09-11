@@ -5,6 +5,7 @@ import { AjouterFactureComponent } from './ajouter-facture/ajouter-facture.compo
 import { BlFactureComponent } from './bl-facture/bl-facture.component';
 import { FactureATermeComponent } from './facture-aterme/facture-aterme.component';
 import { FactureDevisComponent } from './facture-devis/facture-devis.component';
+import { GenerateDevisFactureComponent } from './generate-devis-facture/generate-devis-facture.component';
 import { ListerFactureComponent } from './lister-facture/lister-facture.component';
 
 const routes: Routes = [
@@ -13,7 +14,8 @@ const routes: Routes = [
     {path: 'Lister-Facture',component: ListerFactureComponent},
     {path: 'Ajouter-Facture/Facture-terme' , component: FactureATermeComponent},
     {path: 'Ajouter-Facture/BL-Facture', component : BlFactureComponent},
-    {path: 'Ajouter-Facture/Devis-Facture',component: FactureDevisComponent}
+    {path: 'Ajouter-Facture/Devis-Facture',component: FactureDevisComponent},
+    {path: 'Ajouter-Facture/Devis-Facture/:id',component: GenerateDevisFactureComponent},
 
   ]}
 ];

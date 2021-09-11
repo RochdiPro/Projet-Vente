@@ -1,5 +1,5 @@
 <div>
-    <h1 class="col-xs-8 text-center">Facture à terme</h1>
+    <h1 class="col-xs-8 text-center">Devis - Facture</h1>
     <div class="row">
         <h5 class="title">Convertir un devis en facture : </h5>
     </div>
@@ -66,10 +66,6 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date </th>
                 <td mat-cell *matCellDef="let element">{{element.date_Creation | date: 'dd/MM/YYYY' }} </td>
             </ng-container>
-            <ng-container matColumnDef="mode_Paiement">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Mode Paiement</th>
-                <td mat-cell *matCellDef="let element"> {{element.mode_Paiement}}</td>
-            </ng-container>
             <ng-container matColumnDef="total_ttc">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Total TTC</th>
                 <td mat-cell *matCellDef="let element"> {{element.total_TTC}}</td>
@@ -86,7 +82,7 @@
         <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
     </div>
     <div class="row right">
-        <button mat-raised-button class="next" [disabled]="dsiable" routerLink="../Devis-BL/100">Suivant >
+        <button mat-raised-button class="next" [disabled]="dsiable" routerLink="../Devis-Facture/{{id_Devis}}">Suivant >
         </button>
     </div>
 </div>

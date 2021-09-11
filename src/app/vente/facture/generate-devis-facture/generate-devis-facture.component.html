@@ -1,0 +1,231 @@
+<h1 class="col-xs-8 text-center">Générer le devis N° {{devis_ID}} vers Facture </h1>
+<br>
+<div class="col-xs-8 text-center">
+    <div class="spinner-border" role="status" *ngIf="!loading">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<br>
+<div class="container">
+    <div>
+        <h5>1- Informations Générales</h5>
+        <br>
+        <form [formGroup]="infoFormGroup">
+            <div class="row">
+                <!-- Type devis  -->
+                <div class="col-md-4 mb-3">
+                    <mat-label><b> Type Devis : </b></mat-label>
+                    <mat-label>{{typeDevis}}</mat-label>
+                </div>
+                <!-- Mode paiement -->
+                <div class="col-md-4 mb-3">
+                    <mat-label><b> Mode paiement : </b></mat-label>
+                    <mat-label>{{typeRegOne}}</mat-label>
+                </div>
+                <!-- select Currency  -->
+                <div class="col-md-4 mb-3">
+                    <mat-label><b> Devise : </b></mat-label>
+                    <mat-label>{{devise}}</mat-label>
+                </div>
+            </div>
+            <!-- +++++++++++++++++++++++++++++++++ -->
+            <div class="row">
+                <!-- select Custemer  -->
+                <div class="col-md-4 mb-3" *ngIf="loading">
+                    <mat-label><b> Client(e) : </b></mat-label>
+                    <mat-label>{{custemerName.nom_Client}}</mat-label>
+                </div>
+            </div>
+            <br>
+        </form>
+    </div>
+    <div>
+        <h5>2- Les Article(s)</h5>
+        <form>
+            <!-- List Article -->
+            <div class="row mat-elevation-z8">
+                <!-- Lignes d'article  -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Id produit</th>
+                            <th>Nom produit</th>
+                            <th>Qte</th>
+                            <th>Prix U HT</th>
+                            <th>TVA(%)</th>
+                            <th>Remise(%)</th>
+                            <th>Fodec(%)</th>
+                            <th>Total TTC</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of devisArticls ; let i = index;">
+                            <td>
+                                <input [ngModel]="item.id_Produit" [ngModelOptions]="{standalone: true}"
+                                    class="form-control" type="text" name="{{item.id_Produit}}" disabled />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.nom_Produit" [ngModelOptions]="{standalone: true}"
+                                    class="form-control" type="text" name="{{item.nom_Produit}}" disabled />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.quantite" [ngModelOptions]="{standalone: true}"
+                                    class="form-control" type="text" name="{{item.quantite}}" disabled />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.prixU" [ngModelOptions]="{standalone: true}" class="form-control"
+                                    type="text" name="{{item.prixU}}" disabled />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.tva" [ngModelOptions]="{standalone: true}" class="form-control"
+                                    type="text" name="{{item.tva}}" size="1" disabled />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.remise" [ngModelOptions]="{standalone: true}"
+                                    class="form-control" type="text" name="{{item.remise}}" disabled />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.fodec" [ngModelOptions]="{standalone: true}" class="form-control"
+                                    type="text" name="{{item.fodec}}" disabled size="1" />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}"
+                                    class="form-control" type="text" name="{{item.totale_TTC}}" disabled />
+                            </td>
+                            <td>
+                                <button mat-raised-button class="add-article ">
+                                    Complétez les informations * </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <hr>
+            <div>
+                <div class="row total">
+                    <div *ngIf="totalHT">
+                        <table class="total-devis">
+                            <tr>
+                                <th>Total H.T Brut :</th>
+                                <td> {{totalHTBrut}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total Remise :</th>
+                                <td> {{remiseDiff}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total H.T Net :</th>
+                                <td> {{totalHT}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total Fodec :</th>
+                                <td> {{totalMontantFodec}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total TVA :</th>
+                                <td>{{totalMontantTVA}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total T.T.C : </th>
+                                <td style="color: brown;">{{totalTTc}} </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <table class="total-tva">
+                            <tr>
+                                <th>T.V.A(%)</th>
+                            </tr>
+                            <tr *ngIf="assiettetva19">
+                                <th>Assiette 19% : &nbsp;</th>
+                                <td>{{assiette19}} </td>
+                            </tr>
+                            <tr *ngIf="montanttva19">
+                                <th>Montant 19% : &nbsp;</th>
+                                <td>{{montant19}}</td>
+                            </tr>
+                            <tr *ngIf="assiettetva13">
+                                <th>Assiette 13% : &nbsp;</th>
+                                <td>{{assiette13}} </td>
+                            </tr>
+                            <tr *ngIf="montanttva13">
+                                <th>Montant 13% :&nbsp; </th>
+                                <td>{{montant13}}</td>
+                            </tr>
+                            <tr *ngIf="assiettetva7">
+                                <th>Assiette 7% : &nbsp;</th>
+                                <td>{{assiette7}} </td>
+                            </tr>
+                            <tr *ngIf="montanttva7">
+                                <th>Montant 7% :&nbsp; </th>
+                                <td>{{montant7}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        </form>
+    </div>
+    <div>
+        <h5>3- Modalité du paiement</h5>
+        <form [formGroup]="addReglementFormGroup">
+            <br>
+            <div class="row">
+                <div class="col-md-2">
+                    <label> <b>Total TTC :</b> <span> {{totalTTc_}}</span> </label>
+                </div>
+            </div>
+            <!-- first reg -->
+            <div class="row">
+                <div class="col-md-2">
+                    <mat-label>{{typeRegOne}}</mat-label>
+                </div>
+                <div class="col-md-2">
+                    <mat-label>{{totalTTc_reg}}</mat-label>
+                </div>
+            </div>
+            <!-- second reg -->
+            <div class="row" *ngIf="id_modeP_typeTwo">
+                <div class="col-md-2">
+                    <mat-label>{{typeRegTwo}}</mat-label>
+                </div>
+                <div class="col-md-2">
+                    <mat-label>{{valueRegTwo}}</mat-label>
+                </div>
+            </div>
+            <!-- therd reg -->
+            <div class="row" *ngIf="id_modeP_typeTree">
+                <div class="col-md-2">
+                    <mat-label>{{typeRegTree}}</mat-label>
+                </div>
+                <div class="col-md-2">
+                    <mat-label>{{valueRegTree}}</mat-label>
+                </div>
+            </div>
+            <br>
+            <mat-form-field class="full-width">
+                <mat-label>Note</mat-label>
+                <textarea matInput placeholder="Note" type="text" class="form-control" formControlName="note"
+                    [(ngModel)]=note></textarea>
+            </mat-form-field>
+            <br>
+        </form>
+    </div>
+    <div>
+        <form>
+            <br>
+            <br>
+            <div class="row">
+                <p>Il faut compléter les informations pour chaque produit pour gérer ce devis vers facture (*)</p>
+            </div>
+            <div class="row ">
+
+                <button mat-raised-button class="add-article ">
+                    Générer le Devis </button>
+            </div>
+            <br>
+        </form>
+    </div>
+</div>

@@ -22,6 +22,7 @@ import { FactureDevisComponent } from './facture-devis/facture-devis.component';
 import { FactureRoutingModule } from './facture-routing.module';
 import { ListerFactureComponent } from './lister-facture/lister-facture.component';
 import { UpdateFactureComponent } from './update-facture/update-facture.component';
+import { GenerateDevisFactureComponent } from './generate-devis-facture/generate-devis-facture.component';
 
 
 
@@ -38,7 +39,7 @@ const MY_FORMATS = {
 };
 
 @NgModule({
-  declarations: [FactureATermeComponent, FactureDevisComponent, AjouterFactureComponent, ListerFactureComponent, UpdateFactureComponent, BlFactureComponent],
+  declarations: [FactureATermeComponent, FactureDevisComponent, AjouterFactureComponent, ListerFactureComponent, UpdateFactureComponent, BlFactureComponent, GenerateDevisFactureComponent],
   imports: [
     CommonModule,
     FactureRoutingModule,

@@ -364,15 +364,15 @@ export class UpdateDevisComponent implements OnInit {
           { 
             this.newAttribute = {};
             this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-            this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
+            this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge[0]); 
             this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
             this.newAttribute.etat = (data.Produits[0].Produits_Simples[0].Produit[i].Etat[0]);
-            this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
+            this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme[0]); 
             this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
             this.newAttribute.montant_TVA=(data.Produits[0].Produits_Simples[0].Produit[i].Montant_Tva[0]);
             this.newAttribute.fodec=(data.Produits[0].Produits_Simples[0].Produit[i].fodec[0]);
-            this.newAttribute.N_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
-            this.newAttribute.N_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
+            this.newAttribute.n_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei[0]); 
+            this.newAttribute.n_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie[0]); 
             this.newAttribute.produits_simple = (data.Produits[0].Produits_Simples[0].Produit[i].produits_simple);           
             this.newAttribute.remise= (data.Produits[0].Produits_Simples[0].Produit[i].Remise[0]);
             this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Simples[0].Produit[i].PrixUTTC[0]);
@@ -402,10 +402,11 @@ export class UpdateDevisComponent implements OnInit {
               this.newAttribute.montant_TVA=(data.Produits[0].Produits_4Gs[0].Produit[i].Montant_Tva[0]);
 
               this.newAttribute.fodec=(data.Produits[0].Produits_4Gs[0].Produit[i].fodec[0]);
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei[0]); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie[0]); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_4Gs[0].Produit[i].produits_simple); 
-              this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];          
+              this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];   
+                     
               let tableaux_produits_emie = []
               for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G.length; i++) {
                 let elem_4g : any = {};
@@ -424,6 +425,8 @@ export class UpdateDevisComponent implements OnInit {
               this.newAttribute.total_HT= (data.Produits[0].Produits_4Gs[0].Produit[i].Total_HT[0]);
               this.newAttribute.totale_TTC = (data.Produits[0].Produits_4Gs[0].Produit[i].TotalFacture[0]);
               this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3); 
+              console.log(this.newAttribute);
+              
               this.devisArticls.push(this.newAttribute);
               this.calculTotal();
               this.calculAssiettes();
@@ -444,8 +447,8 @@ export class UpdateDevisComponent implements OnInit {
    
 
               this.newAttribute.fodec=(data.Produits[0].Produits_Series[0].Produit[i].fodec);              
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei[0]); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie[0]); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_Series[0].Produit[i].produits_simple);           
               this.newAttribute.tva = data.Produits[0].Produits_Series[0].Produit[i].Tva[0]; 
               let tableaux_produits_serie = []

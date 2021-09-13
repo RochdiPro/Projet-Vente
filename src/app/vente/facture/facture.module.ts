@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatNativeDateModule, MAT_DATE_FORMATS } from '@angular/material/core';
+import { MatNativeDateModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,22 +20,22 @@ import { BlFactureComponent } from './bl-facture/bl-facture.component';
 import { FactureATermeComponent } from './facture-aterme/facture-aterme.component';
 import { FactureDevisComponent } from './facture-devis/facture-devis.component';
 import { FactureRoutingModule } from './facture-routing.module';
+import { GenerateDevisFactureComponent } from './generate-devis-facture/generate-devis-facture.component';
 import { ListerFactureComponent } from './lister-facture/lister-facture.component';
 import { UpdateFactureComponent } from './update-facture/update-facture.component';
-import { GenerateDevisFactureComponent } from './generate-devis-facture/generate-devis-facture.component';
 
 
 
 const MY_FORMATS = {
   parse: {
-    dateInput: 'DD MMMM YYYY',
+    dateInput: 'D/MM/YYYY'
   },
   display: {
-    dateInput: 'DD MMMM YYYY',
-    monthYearLabel: 'MMMM YYYY',
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMMM Y',
     dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
+    monthYearA11yLabel: 'MMMM Y'
+  }
 };
 
 @NgModule({
@@ -59,6 +59,7 @@ const MY_FORMATS = {
     MatCardModule,
     MatExpansionModule
   ],
-  providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },]
+  providers: [{ provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },{ provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+]
 })
 export class FactureModule { }

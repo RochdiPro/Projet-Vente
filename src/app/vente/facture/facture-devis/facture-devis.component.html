@@ -9,8 +9,8 @@
             <div class="col-md-4">
                 <mat-form-field appearance="fill">
                     <mat-label>Sélectionnez un Client</mat-label>
-                    <mat-select [ngModel]="champ" (change)="onChange($event)">
-                        <mat-option *ngFor="let key of keyValues" value="{{key.id_Clt}}">{{key.nom_Client }}
+                    <mat-select [(ngModel)]="champ" (change)="onChange($event)">
+                        <mat-option *ngFor="let key of keyValues" [value]="key.id_Clt">{{key.nom_Client }}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -20,9 +20,9 @@
                     <mat-label>Saisissez une plage de dates</mat-label>
                     <mat-date-range-input [rangePicker]="rangePicker">
                         <input matStartDate placeholder="Date de début" [(ngModel)]="dateRangeStart"
-                            (dateChange)="dateRangeChange($event)" />
+                            (dateChange)="dateRangeChangeDateOne($event)" />
                         <input matEndDate placeholder="Date de fin" [(ngModel)]="dateRangeEnd"
-                            (dateChange)="dateRangeChange($event)" />
+                            (dateChange)="dateRangeChangeDateTwo($event)" />
                     </mat-date-range-input>
                     <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
                     <mat-date-range-picker #rangePicker>
@@ -34,13 +34,6 @@
                         </mat-date-range-picker-actions>
                     </mat-date-range-picker>
                 </mat-form-field>
-                <!-- <input class="form-control py-2" type="date" id="example-search-input" [ngModel]="value"
-                    (keyup)="getValue($event); filterByChamp()" (click)="getValue($event)"> -->
-                <!-- <span class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" (click)="filterByChamp()">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </span> -->
             </div>
         </div>
     </div>

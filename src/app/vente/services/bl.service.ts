@@ -168,4 +168,14 @@ export class BlService {
       },observe: 'response'
     });
   }
+  //** Filtre_Devis_Par_Client_Date1_Date2 */
+  filterDevisByRangeDate(client : any , date1: any , date2: any ):Observable<any>{
+    return this.http.get(_url+"Filtre_Devis_Par_Client_Date1_Date2/",{
+      params:{
+        client: client,
+        date1: date1,
+        date2: date2
+      },observe: 'response'
+    });
+  }
 }

@@ -19,7 +19,8 @@ export class InfosDialogComponent implements OnInit {
   num_ImeiTwo : any = [];
   verifStock: boolean = false;
   prevSerie: any = [] ;
- 
+  isAccompli: boolean = true; 
+
   newAttribute : any = {};
   tableaux_produits_emie : any = [];
 
@@ -29,16 +30,19 @@ export class InfosDialogComponent implements OnInit {
     this.getAllInfoFourG(this.item.id_Produit);
     
     if(this.item.tableaux_produits_emie != undefined){
-      for(let i = 0 ; i<this.item.tableaux_produits_emie.length ; i++){
-        this.numSerie[i] = this.item.tableaux_produits_emie[i].n_serie[0];
-        this.num_ImeiOne[i]= this.item.tableaux_produits_emie[i].e1[0]
-        this.num_ImeiTwo[i]= this.item.tableaux_produits_emie[i].e2[0]
+      for(let j = 0 ; j< this.nbrQte.length; j++)
+      if(this.item.tableaux_produits_emie[j] != undefined)
+        { console.log(this.item.tableaux_produits_emie[j]);
+          this.numSerie[j] = this.item.tableaux_produits_emie[j].n_serie;
+          this.num_ImeiOne[j]= this.item.tableaux_produits_emie[j].e1
+          this.num_ImeiTwo[j]= this.item.tableaux_produits_emie[j].e2
+          
+          // disabled 
+          this.numero_Serie.find((element: any ) =>{ 
+            if (element.name == this.numSerie[j]) {
+                element.selected = true;
+            }}); 
         
-        // disabled 
-        this.numero_Serie.find((element: any ) =>{ 
-          if (element.name == this.numSerie[i]) {
-              element.selected = true;
-          }}); 
       }
     }
    }
@@ -72,6 +76,8 @@ export class InfosDialogComponent implements OnInit {
   }
 
   verifN_serieProduit(event: any , i : any ) {
+    if(event ==0 || event =='' || event == undefined){
+    }
     this.getDetailProdByNserie(event,this.item.id_Produit, i);
     if(this.prevSerie[i]){
       let index = this.numero_Serie.findIndex((element : any )=> element.name ==this.prevSerie[i]);
@@ -95,7 +101,7 @@ export class InfosDialogComponent implements OnInit {
   VerifVide() {
     for (let i = 0; i < this.nbrQte.length; i++) {
       if ((this.numSerie[i] == '' || this.numSerie[i] == undefined) &&(this.num_ImeiOne[i] == '' || this.num_ImeiOne[i] == undefined) && (this.num_ImeiTwo[i] == '' || this.num_ImeiTwo[i] == undefined)) {
-        Swal.fire("inofs Non Accompli");
+        Swal.fire('S\'il vous plaît remplir les champs','inofs Non Accompli','info')
       }
       else {
         this.newAttribute= {}; 
@@ -104,13 +110,15 @@ export class InfosDialogComponent implements OnInit {
         this.newAttribute.e2= this.num_ImeiTwo[i];
 
         this.tableaux_produits_emie.push(this.newAttribute)
-
-        Swal.fire("info Vérifié");   
+        this.isAccompli = false; 
+        Swal.fire("info Vérifié", '', 'success');   
       }
-        this.dialogRef.close({event: 'close', data : this.tableaux_produits_emie});
+        this.dialogRef.close({event: 'close', data : this.tableaux_produits_emie, isAccompli: this.isAccompli});
     }
     
   }
+
+
   ngOnInit(): void {
   }
 }

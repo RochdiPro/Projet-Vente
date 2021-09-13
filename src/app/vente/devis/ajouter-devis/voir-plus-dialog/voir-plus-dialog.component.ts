@@ -20,6 +20,8 @@ export class VoirPlusDialogComponent implements OnInit {
     this.devisService.quentiteProdLocal(this.item.id_Produit, this.local).subscribe((res:any)=> {this.num = res.body
     this.loading = false; 
     })
+    console.log(this.item);
+    
     if (this.item.n_Imei == "true"){
       this.type ="Produit 4G"
     }else if(this.item.n_Serie =="true"){

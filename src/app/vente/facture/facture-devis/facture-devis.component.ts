@@ -3,6 +3,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import Swal from 'sweetalert2';
 import * as xml2js from 'xml2js';
 import { BlService } from '../../services/bl.service';
 import { DevisService } from '../../services/devis.service';
@@ -52,12 +53,12 @@ export class FactureDevisComponent implements OnInit {
      this.keyValues = res});
   }
   // dateRangeChange
-  dateRangeChange(d1 : any){
-    this.date1 = this.datepipe.transform(d1.value, 'YYYY/MM/dd');
-    this.date2 = this.datepipe.transform(d1.value, 'YYYY/MM/dd');
-    console.log(this.date1, this.date2);
-    
+  dateRangeChangeDateOne(d : any){
+    this.date1= this.datepipe.transform(d.value, 'YYYY/MM/dd');    
   }
+    dateRangeChangeDateTwo(d : any){
+      this.date2= this.datepipe.transform(d.value, 'YYYY/MM/dd')
+    }
   //** Get All Quote (Proforma) */
   async getAllDeviss(){
         this.loading = true; 
@@ -77,27 +78,28 @@ export class FactureDevisComponent implements OnInit {
   }
   //** Get Value */
   onChange(ev : any){
+    console.log(ev.target.value);
+    
     this.champ = ev.target.value;
   }
-  getValue(ev: any){
-    this.value = ev.target.value;
-    // YYYY/MM/JJ
-    this.date =this.datepipe.transform(this.value, 'dd/MM/YYYY');
-    console.log(this.date);
-    
+  getValue(ev: any){    
   } 
+
   //** Filter By Champ */
   filterByChamp(){
     this.loading = true ; 
     this.dataSourceDevis =[]
-    this.bLService.filterByChampValeur(this.champ, this.date).subscribe((data : any)=>{
-      console.log(data.body);
-      data.body.total_TTC= Number(data.body.total_TTC).toFixed(3)
-      this.dataSourceDevis= new MatTableDataSource(data.body);    
-      this.dataSourceDevis.sort = this.sort; 
-      this.dataSourceDevis.paginator = this.paginator;
-      this.loading = false ; 
-    });
+    if(this.champ == ''){
+      Swal.fire('S\'il vous plaît sélectionner un client','','info')
+    }else{
+      this.bLService.filterDevisByRangeDate(this.champ, this.date1, this.date2).subscribe((data : any)=>{
+        this.dataSourceDevis= new MatTableDataSource(data.body);    
+        this.dataSourceDevis.sort = this.sort; 
+        this.dataSourceDevis.paginator = this.paginator;
+        this.loading = false ; 
+      });
+    }
+
   }
   //** Get Data (Devis) */
   checkCheckBoxvalue(event : any , devis : any){
@@ -114,6 +116,7 @@ export class FactureDevisComponent implements OnInit {
     }); 
   }
 
+//*************************************************** PDF ********************************************* */
   contenuTable(data: any, columns: any) {
     var body = []; 
     body.push(columns);

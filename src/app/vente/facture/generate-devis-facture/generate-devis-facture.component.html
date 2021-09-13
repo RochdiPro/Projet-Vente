@@ -6,7 +6,7 @@
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container" *ngIf="loading">
     <div>
         <h5>1- Informations Générales</h5>
         <br>
@@ -93,7 +93,7 @@
                                     class="form-control" type="text" name="{{item.totale_TTC}}" disabled />
                             </td>
                             <td>
-                                <button mat-raised-button class="add-article ">
+                                <button mat-raised-button class="add-article " (click)="completezInof(item, i)">
                                     Complétez les informations * </button>
                             </td>
                         </tr>
@@ -171,6 +171,15 @@
     <div>
         <h5>3- Modalité du paiement</h5>
         <form [formGroup]="addReglementFormGroup">
+            <br><br>
+            <div class="row">
+                <div class="col-md-4">
+                    <mat-label style="color: brown;"> <b>Total Retenues: (+ 0,600 TND)</b> </mat-label>
+                </div>
+                <div class="col-md-4">
+                    <mat-label style="color: brown;"><b> {{total_Retenues}} </b></mat-label>
+                </div>
+            </div>
             <br>
             <div class="row">
                 <div class="col-md-2">
@@ -204,6 +213,7 @@
                     <mat-label>{{valueRegTree}}</mat-label>
                 </div>
             </div>
+
             <br>
             <mat-form-field class="full-width">
                 <mat-label>Note</mat-label>
@@ -222,7 +232,7 @@
             </div>
             <div class="row ">
 
-                <button mat-raised-button class="add-article ">
+                <button mat-raised-button class="add-article " (click)="convertDevisFacture()" [disabled]="disable">
                     Générer le Devis </button>
             </div>
             <br>

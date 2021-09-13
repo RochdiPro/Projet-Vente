@@ -6,9 +6,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
-import Swal from 'sweetalert2';
 // XML to JavaScript object converter.
 import * as xml2js from 'xml2js';
+import { InfoSerieDialogComponent } from '../../bon-de-livraison/nouveau-bl/info-serie-dialog/info-serie-dialog.component';
+import { InfoSimpleDialogComponent } from '../../bon-de-livraison/nouveau-bl/info-simple-dialog/info-simple-dialog.component';
+import { InfosDialogComponent } from '../../bon-de-livraison/nouveau-bl/infos-dialog/infos-dialog.component';
 import { BlService } from '../../services/bl.service';
 import { DevisService } from '../../services/devis.service';
 
@@ -128,7 +130,8 @@ export class GenerateDevisFactureComponent implements OnInit {
   valueRegTree : any ; 
   id_modeP_typeTree: any ;
   typeRegOne: any; 
-  
+  disable : boolean = true; 
+  total_Retenues : any = 0 ; 
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
   
@@ -183,7 +186,48 @@ export class GenerateDevisFactureComponent implements OnInit {
       note: ['',]
     });
   }
+    //** infos   */
+    completezInof(prod: any , i: any  ){
+      //** if prod is 4G */ 
+        if(this.devisArticls[i].N_Imei == "true"){
+          const dialogRef = this.dialog.open(InfosDialogComponent,{
+            width:'100%',data : {
+              formPage: prod
+            }
+          });
+          dialogRef.afterClosed().subscribe((res: any)=>{
+            if(res !=undefined){
+              this.devisArticls[i].tableaux_produits_emie = res.data; 
+              this.disable = res.isAccompli
+            }
+          });
+          console.log(this.disable);
+          
+        }
+      //** if prod serie */
+        else if(this.devisArticls[i].N_Serie == "true"){
+          const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
+            width:'100%',data : {
+              formPage: prod
+            }
+          });
+          dialogRef.afterClosed().subscribe((res : any )=>{
+            this.devisArticls[i].tableaux_produits_serie = res.data; 
+            this.disable = res.isAccompli
 
+          });
+        }else{
+          const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
+            data : {
+              formPage: prod
+            }
+          });
+          dialogRef.afterClosed().subscribe(()=>{
+            console.log('Closed');
+          });
+        }
+  
+    }
   //** Get All Client */
   async getAllClient(){
     this.devisService.getAllClient().subscribe( res => {
@@ -422,6 +466,7 @@ export class GenerateDevisFactureComponent implements OnInit {
         total5 += Number(this.devisArticls[i].totale_TTC )-((this.devisArticls[i].prixU * (Number(this.devisArticls[i].remise)) / 100)*this.devisArticls[i].quantite )
         this.totalRemise = Number(total5).toFixed(3);
         this.totalTTc_= this.totalTTc;
+        this.total_Retenues= (Number(this.totalTTc_) + 0.600).toFixed(3)
         // ***
         total9 += (Number(this.devisArticls[i].fodec) * (Number(this.devisArticls[i].quantite)));
         this.totalPorcentageFodec = Number(total9).toFixed(3);
@@ -1074,5 +1119,8 @@ return doc
 
 }
 //Devis => Facture
+convertDevisFacture(){
+
+}
 
 }

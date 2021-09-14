@@ -20,12 +20,14 @@ export class InfosDialogComponent implements OnInit {
   verifStock: boolean = false;
   prevSerie: any = [] ;
   isAccompli: boolean = true; 
-
+  ln : any ; 
+  count : any=0 ; 
   newAttribute : any = {};
   tableaux_produits_emie : any = [];
 
   constructor(public dialogRef: MatDialogRef<InfosDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private bLservice : BlService )  {
     this.item = data.formPage    
+    this.ln = data.lnProd;
     this.nbrQte.length = this.item.quantite;
     this.getAllInfoFourG(this.item.id_Produit);
     
@@ -53,7 +55,6 @@ export class InfosDialogComponent implements OnInit {
 
   //** get Detail Prod By Nserie */
   getDetailProdByNserie(n_serie :any, id : any, i : any ){
-    console.log(i);
     if (this.numSerie[i]== n_serie) {
       this.bLservice.getDetailProdByNserie(n_serie, id).subscribe((res:any)=>{
         this.num_ImeiOne[i] = res.body.e1;
@@ -76,8 +77,6 @@ export class InfosDialogComponent implements OnInit {
   }
 
   verifN_serieProduit(event: any , i : any ) {
-    if(event ==0 || event =='' || event == undefined){
-    }
     this.getDetailProdByNserie(event,this.item.id_Produit, i);
     if(this.prevSerie[i]){
       let index = this.numero_Serie.findIndex((element : any )=> element.name ==this.prevSerie[i]);
@@ -109,13 +108,13 @@ export class InfosDialogComponent implements OnInit {
         this.newAttribute.e1= this.num_ImeiOne[i];
         this.newAttribute.e2= this.num_ImeiTwo[i];
 
-        this.tableaux_produits_emie.push(this.newAttribute)
-        this.isAccompli = false; 
+        this.tableaux_produits_emie.push(this.newAttribute);
+        this.isAccompli= false;
+
         Swal.fire("info Vérifié", '', 'success');   
       }
         this.dialogRef.close({event: 'close', data : this.tableaux_produits_emie, isAccompli: this.isAccompli});
     }
-    
   }
 
 

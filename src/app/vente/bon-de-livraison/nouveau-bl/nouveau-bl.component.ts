@@ -21,6 +21,7 @@ const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
+
 @Component({
   selector: 'app-nouveau-bl',
   templateUrl: './nouveau-bl.component.html',

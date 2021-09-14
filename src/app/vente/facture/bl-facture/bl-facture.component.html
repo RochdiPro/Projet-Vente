@@ -1,105 +1,135 @@
-<mat-horizontal-stepper linear #stepper>
-    <!-- List of BL  -->
+<!-- Créer une nouvelle Facture -->
+<h1 class="col-xs-8 text-center">Créer une nouvelle Facture</h1>
+<br>
+<br>
+<mat-horizontal-stepper linear #stepperFcture>
+    <!-- first step Facture -->
     <mat-step [stepControl]="infoFormGroup">
-        <!-- list of BL -->
-        <ng-template matStepLabel>Choisir BL(s)</ng-template>
-        <div class="row">
-            <h5 class="title">Convertir BL(s) en facture : </h5>
-        </div>
-        <div>
-            <div class="container">
-                <div class="row ">
-                    <div class="col-md-4">
-                        <select class="form-control" [ngModel]="champ" (change)="onChange($event)" required>
-                            <option value="Sélectionnez votre option" disabled selected>Sélectionnez votre option
-                            </option>
-                            <option *ngFor="let key of keyValues" value="{{key}}">{{key | uppercase}}</option>
-                        </select>
-                    </div>
-                    <div class="input-group col-md-4">
-                        <input class="form-control py-2" type="search" value="Rechercher ..." id="example-search-input"
-                            [ngModel]="value" (keyup)="getValue($event); filterByChamp()">
-                        <span class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" (click)="filterByChamp()">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </span>
-                    </div>
+        <form [formGroup]="infoFormGroup">
+            <ng-template matStepLabel>Informations Générales</ng-template>
+            <div class="row">
+                <!-- Mode paiement -->
+                <div class="col-md-4 mb-3">
+                    <mat-form-field>
+                        <mat-label>Mode paiement</mat-label>
+                        <mat-select formControlName="modePaiement" [(ngModel)]="modePaiement" required>
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="infoFormGroup.get('modePaiement').invalid">
+                            {{ErrorMessage('modePaiement') + 'Mode paiement!'}}</mat-error>
+                    </mat-form-field>
+                </div>
+                <!-- select Currency  -->
+                <div class="col-md-4 mb-3">
+                    <mat-form-field>
+                        <mat-label>Devise</mat-label>
+                        <mat-select formControlName="devise" [(ngModel)]="devise" required>
+                            <mat-option [value]="c" *ngFor="let c of currency">{{c}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="infoFormGroup.get('devise').invalid">
+                            {{ErrorMessage('devise') + 'le devise!'}}</mat-error>
+                    </mat-form-field>
+                </div>
+                <!-- Local  -->
+                <div class="col-md-4 mb-3">
+                    <mat-form-field>
+                        <mat-label>Local</mat-label>
+                        <mat-select formControlName="local" required>
+                            <mat-option *ngFor="let l of locals" [value]="l">{{l.nom_Local}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="infoFormGroup.get('local').invalid">
+                            {{ErrorMessage('local') + 'le local!'}}</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <!-- Get Client & Adresse -->
+            <div class="row">
+                <!-- select Custemer  -->
+                <div class="col-md-4 mb-3">
+                    <mat-form-field>
+                        <mat-label>Client(e)</mat-label>
+                        <mat-select formControlName="custemerName" required (ngModelChange)="getClientId($event)">
+                            <mat-option *ngFor="let c of clients" [value]="c">{{c.nom_Client}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="infoFormGroup.get('custemerName').invalid">
+                            {{ErrorMessage('custemerName') + 'le nom de le clinet(e)!'}}</mat-error>
+                    </mat-form-field>
+                </div>
+                <!-- Main/Invoicing address -->
+                <div class="col-md-4 mb-3" *ngIf="editable">
+                    <mat-form-field>
+                        <mat-label>Adresse principale/de facturation</mat-label>
+                        <input matInput formControlName="adresse" [(ngModel)]="clt.adresse" required [disabled]="true">
+                        <mat-error *ngIf="infoFormGroup.get('adresse').invalid">
+                            {{ErrorMessage('adresse') + 'de l\'adresse!'}}</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <br><br>
+            <div>
+                <button mat-button matStepperNext class="btn btn-primary">Suivant</button>
+            </div>
+        </form>
+    </mat-step>
+
+    <!-- second step -->
+    <mat-step [stepControl]="addArticleFormGroup" [completed]="isNull">
+        <ng-template matStepLabel>Ajouter Produit(s)</ng-template>
+        <form>
+            <br>
+            <div class="row right">
+                <div><button mat-raised-button class="add-article" (click)="openDialog()"><i class="fas fa-plus"></i>
+                        Ajouter Article</button></div>
+            </div>
+            <br>
+            <div class="row">
+                <br>
+                <div class="col-md-4">
+                    <mat-form-field>
+                        <mat-label>Ajouter un code à bare</mat-label>
+                        <input matInput placeholder="Saisir le code à bare de l'article" [(ngModel)]="code"
+                            [ngModelOptions]="{standalone: true}" />
+                    </mat-form-field>
+                    <button mat-raised-button class="search" (click)="getProuduitByCode()" [disabled]="getProdCode"><i
+                            class="fas fa-barcode"></i></button>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field>
+                        <mat-label>Code Article</mat-label>
+                        <input matInput placeholder="Saisir l' ID de l'article" id="id" name="id" [(ngModel)]="id"
+                            [ngModelOptions]="{standalone: true}" />
+                    </mat-form-field>
+                    <button mat-raised-button class="search" (click)="getProuduitById()" [disabled]="getProdId"><i
+                            class="fas fa-search"></i></button>
                 </div>
             </div>
             <br>
-
-            <mat-progress-bar mode="indeterminate" *ngIf='loading'></mat-progress-bar>
-            <div class="mat-elevation-z8">
-                <table class="mb-0 table" mat-table matSort [dataSource]="dataSourceBl">
-                    <ng-container matColumnDef="checkbox">
-                        <th mat-header-cell *matHeaderCellDef> </th>
-                        <td mat-cell *matCellDef="let element"><input type="checkbox" value="element" name="element."
-                                (change)="checkCheckBoxvalue($event,element)" /></td>
-                    </ng-container>
-                    <ng-container matColumnDef="id_Bl">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° BL </th>
-                        <td mat-cell *matCellDef="let element">{{element.id_Bl}} </td>
-                    </ng-container>
-                    <ng-container matColumnDef="type">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Type </th>
-                        <td mat-cell *matCellDef="let element">{{element.type}} </td>
-                    </ng-container>
-                    <ng-container matColumnDef="date_Creation">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date </th>
-                        <td mat-cell *matCellDef="let element">{{element.date_Creation | date: 'dd/MM/YYYY' }} </td>
-                    </ng-container>
-                    <ng-container matColumnDef="id_Responsable">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Id FR</th>
-                        <td mat-cell *matCellDef="let element"> {{element.id_Responsable}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="mode_Paiement">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Mode Paiement</th>
-                        <td mat-cell *matCellDef="let element"> {{element.mode_Paiement}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="total_ttc">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Total TTC</th>
-                        <td mat-cell *matCellDef="let element"> {{element.total_TTC}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="Voir_pdf">
-                        <th mat-header-cell *matHeaderCellDef> </th>
-                        <td mat-cell *matCellDef="let element;let i=index;"> <i class="pe-7s-look btn-b"
-                                title="Voir PDF" (click)="viewPDF(element)"></i>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                </table>
-                <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-            </div>
-            <br>
-            <button mat-raised-button class="next" [disabled]="dsiable" (click)="detailBlFacture(stepper)">Suivant
-            </button>
-
-        </div>
-    </mat-step>
-    <mat-step>
-        <!-- General -->
-        <div class="row">
-            <h5 class="title">En général : </h5>
-        </div>
-        <div>
-            <mat-progress-bar mode="indeterminate" *ngIf='loadingGeneral'></mat-progress-bar>
+            <!-- List Article -->
             <div class="row mat-elevation-z8">
                 <!-- Lignes d'article  -->
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Id produit</th>
                             <th>Nom produit</th>
                             <th>Qte</th>
-                            <th>TVA %</th>
-                            <th>Fodec</th>
+                            <th>Prix U HT</th>
+                            <th>TVA(%)</th>
+                            <th>Remise(%)</th>
+                            <th>Fodec(%)</th>
                             <th>Total TTC</th>
+                            <th>Disponibilité</th>
+                            <th>Voir plus</th>
+                            <th>Supprimer</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let item of blArticlsGeneral ; let i = index;">
+                        <tr *ngFor="let item of factureArticls ; let i = index;">
+                            <td>
+                                <i class="pe-7s-pen pe-7s-trash" (click)="ouvreDialogueArticle(i,item,factureArticls)"
+                                    title="Modifier article"></i>
+                            </td>
                             <td>
                                 <input [ngModel]="item.id_Produit" [ngModelOptions]="{standalone: true}"
                                     class="form-control" type="text" name="{{item.id_Produit}}" disabled />
@@ -113,16 +143,32 @@
                                     class="form-control" type="text" name="{{item.quantite}}" disabled />
                             </td>
                             <td>
+                                <input [ngModel]="item.prixU" [ngModelOptions]="{standalone: true}" class="form-control"
+                                    type="text" name="{{item.prixU}}" disabled />
+                            </td>
+                            <td>
                                 <input [ngModel]="item.tva" [ngModelOptions]="{standalone: true}" class="form-control"
-                                    type="text" name="{{item.quantite}}" disabled />
+                                    type="text" name="{{item.tva}}" size="1" disabled />
+                            </td>
+                            <td>
+                                <input [ngModel]="item.remise" [ngModelOptions]="{standalone: true}"
+                                    class="form-control" type="text" name="{{item.remise}}" disabled />
                             </td>
                             <td>
                                 <input [ngModel]="item.fodec" [ngModelOptions]="{standalone: true}" class="form-control"
-                                    type="text" name="{{item.quantite}}" disabled />
+                                    type="text" name="{{item.fodec}}" disabled size="1" />
                             </td>
                             <td>
                                 <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}"
                                     class="form-control" type="text" name="{{item.totale_TTC}}" disabled />
+                            </td>
+                            <td>
+                                <i title="Etat">{{item.etat}}</i>
+                            </td>
+                            <td> <i class="pe-7s-look btn-b" title="Voir plus" (click)="viewPlus(item)"></i>
+                            </td>
+                            <td>
+                                <i class="pe-7s-trash" (click)="deleteItemValue(i)" title="Supprimer article"></i>
                             </td>
                         </tr>
                     </tbody>
@@ -130,261 +176,222 @@
             </div>
             <br>
             <hr>
-            <!-- <div>
-            <div class="row total">
-                <div *ngIf="totalHT">
-                    <table class="total-devis">
-                        <tr>
-                            <th>Total H.T Brut :</th>
-                            <td> {{totalHTBrut}} </td>
-                        </tr>
-                        <tr>
-                            <th>Total Remise :</th>
-                            <td> {{remiseDiff}} </td>
-                        </tr>
-                        <tr>
-                            <th>Total H.T Net :</th>
-                            <td> {{totalHT}} </td>
-                        </tr>
-                        <tr>
-                            <th>Total Fodec :</th>
-                            <td> {{totalMontantFodec}} </td>
-                        </tr>
-                        <tr>
-                            <th>Total TVA :</th>
-                            <td>{{totalMontantTVA}} </td>
-                        </tr>
-                        <tr>
-                            <th>Total T.T.C : </th>
-                            <td style="color: brown;">{{totalTTc}} </td>
-                        </tr>
-                    </table>
-                </div>
-                <div>
-                    <table class="total-tva">
-                        <tr>
-                            <th>T.V.A(%)</th>
-                        </tr>
-                        <tr *ngIf="assiettetva19">
-                            <th>Assiette 19% : &nbsp;</th>
-                            <td>{{assiette19}} </td>
-                        </tr>
-                        <tr *ngIf="montanttva19">
-                            <th>Montant 19% : &nbsp;</th>
-                            <td>{{montant19}}</td>
-                        </tr>
-                        <tr *ngIf="assiettetva13">
-                            <th>Assiette 13% : &nbsp;</th>
-                            <td>{{assiette13}} </td>
-                        </tr>
-                        <tr *ngIf="montanttva13">
-                            <th>Montant 13% :&nbsp; </th>
-                            <td>{{montant13}}</td>
-                        </tr>
-                        <tr *ngIf="assiettetva7">
-                            <th>Assiette 7% : &nbsp;</th>
-                            <td>{{assiette7}} </td>
-                        </tr>
-                        <tr *ngIf="montanttva7">
-                            <th>Montant 7% :&nbsp; </th>
-                            <td>{{montant7}}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div> -->
-        </div>
-        <!-- Detail -->
-        <ng-template matStepLabel>Voir les détails</ng-template>
-        <div class="row">
-            <h5 class="title">Details : </h5>
-        </div>
-        <mat-accordion *ngFor="let element of listBlCheched">
-            <mat-expansion-panel (opened)="panelOpenState" (closed)="panelOpenState = false" [expanded]="true">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        <h5>BL n° {{element.id_Bl }}</h5>
-                    </mat-panel-title>
-                    <hr>
-                    <mat-panel-description>
-                        {{element.description }}
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                <div class=" d-flex justify-content-between">
-                    <div>
-                        <label><b>Type : </b>{{ element.type}}</label>
-                    </div>
-                    <div>
-                        <label><b>Date : </b> {{ element.date_Creation | date: 'dd/MM/YYYY'}}</label>
-                    </div>
-                </div>
-                <label><b>Mode de Paiement : </b>{{ element.mode_Paiement}}</label><br>
-                <label><b>Code Client : </b>{{element.id_Clt}}</label>
-                <br>
-                <div class="row">
-                    <button mat-button class="btn btn-voir right" (click)="getDetail(element.id_Bl)"
-                        *ngIf="voirPlus">Voir plus
-                    </button>
-                </div>
-                <!-- List Article -->
-                <div *ngIf="id===element.id_Bl && voirmoins">
-                    <mat-progress-bar mode="indeterminate" *ngIf='loading'></mat-progress-bar>
-                    <div class="row mat-elevation-z8">
-                        <!-- Lignes d'article  -->
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Id produit</th>
-                                    <th>Nom produit</th>
-                                    <th>Qte</th>
-                                    <th>Prix U HT</th>
-                                    <th>TVA(%)</th>
-                                    <th>Remise(%)</th>
-                                    <th>Fodec(%)</th>
-                                    <th>M_TVA_U</th>
-                                    <th>Prix U TTC</th>
-                                    <th>Total HT</th>
-                                    <th>Total TTC</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let item of blArticls ; let i = index;">
-                                    <td>
-                                        <input [ngModel]="item.id_Produit" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.id_Produit}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.nom_Produit" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.nom_Produit}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.quantite" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.quantite}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.prixU" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.prixU}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.tva" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.tva}}" size="1" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.remise" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.remise}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.fodec" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.fodec}}" disabled size="1" />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.montant_TVA" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.montant_TVA}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.prix_U_TTC" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.prix_U_TTC}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.total_HT" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.total_HT}}" disabled />
-                                    </td>
-                                    <td>
-                                        <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}"
-                                            class="form-control" type="text" name="{{item.totale_TTC}}" disabled />
-                                    </td>
-                                </tr>
-                            </tbody>
+            <div>
+                <div class="row total">
+                    <div *ngIf="totalHT">
+                        <table class="total-bl">
+                            <tr>
+                                <th>Total H.T Brut :</th>
+                                <td> {{totalHTBrut}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total Remise :</th>
+                                <td> {{remiseDiff}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total H.T Net :</th>
+                                <td> {{totalHT}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total Fodec :</th>
+                                <td> {{totalMontantFodec}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total TVA :</th>
+                                <td>{{totalMontantTVA}} </td>
+                            </tr>
+                            <tr>
+                                <th>Total T.T.C : </th>
+                                <td style="color: brown;">{{totalTTc}} </td>
+                            </tr>
                         </table>
                     </div>
-                    <br>
-                    <hr>
                     <div>
-                        <div class="row total">
-                            <div *ngIf="totalHT">
-                                <table class="total-devis">
-                                    <tr>
-                                        <th>Total H.T Brut :</th>
-                                        <td> {{totalHTBrut}} </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total Remise :</th>
-                                        <td> {{remiseDiff}} </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total H.T Net :</th>
-                                        <td> {{totalHT}} </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total Fodec :</th>
-                                        <td> {{totalMontantFodec}} </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total TVA :</th>
-                                        <td>{{totalMontantTVA}} </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total T.T.C : </th>
-                                        <td style="color: brown;">{{totalTTc}} </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div>
-                                <table class="total-tva">
-                                    <tr>
-                                        <th>T.V.A(%)</th>
-                                    </tr>
-                                    <tr *ngIf="assiettetva19">
-                                        <th>Assiette 19% : &nbsp;</th>
-                                        <td>{{assiette19}} </td>
-                                    </tr>
-                                    <tr *ngIf="montanttva19">
-                                        <th>Montant 19% : &nbsp;</th>
-                                        <td>{{montant19}}</td>
-                                    </tr>
-                                    <tr *ngIf="assiettetva13">
-                                        <th>Assiette 13% : &nbsp;</th>
-                                        <td>{{assiette13}} </td>
-                                    </tr>
-                                    <tr *ngIf="montanttva13">
-                                        <th>Montant 13% :&nbsp; </th>
-                                        <td>{{montant13}}</td>
-                                    </tr>
-                                    <tr *ngIf="assiettetva7">
-                                        <th>Assiette 7% : &nbsp;</th>
-                                        <td>{{assiette7}} </td>
-                                    </tr>
-                                    <tr *ngIf="montanttva7">
-                                        <th>Montant 7% :&nbsp; </th>
-                                        <td>{{montant7}}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
+                        <table class="total-tva">
+                            <tr>
+                                <th>T.V.A(%)</th>
+                            </tr>
+                            <tr *ngIf="assiettetva19">
+                                <th>Assiette 19% : &nbsp;</th>
+                                <td>{{assiette19}} </td>
+                            </tr>
+                            <tr *ngIf="montanttva19">
+                                <th>Montant 19% : &nbsp;</th>
+                                <td>{{montant19}}</td>
+                            </tr>
+                            <tr *ngIf="assiettetva13">
+                                <th>Assiette 13% : &nbsp;</th>
+                                <td>{{assiette13}} </td>
+                            </tr>
+                            <tr *ngIf="montanttva13">
+                                <th>Montant 13% :&nbsp; </th>
+                                <td>{{montant13}}</td>
+                            </tr>
+                            <tr *ngIf="assiettetva7">
+                                <th>Assiette 7% : &nbsp;</th>
+                                <td>{{assiette7}} </td>
+                            </tr>
+                            <tr *ngIf="montanttva7">
+                                <th>Montant 7% :&nbsp; </th>
+                                <td>{{montant7}}</td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
-                <div class="row">
-                    <button mat-button class="btn btn-voir right" (click)="voirLess(element.id_Bl)"
-                        *ngIf="voirmoins && id==element.id_Bl">Voir moins
-                    </button>
-                </div>
-            </mat-expansion-panel>
-            <br>
-        </mat-accordion>
-        <button mat-button class="next" matStepperNext>Suivant</button>
+                <hr><br>
+                <button mat-button matStepperPrevious class="btn ">Retour</button>
+                <button mat-button class="btn btn-primary" (click)="nextStep(stepperFcture)">Suivant</button>
+            </div>
+        </form>
     </mat-step>
-    <!-- Mode de Paiement -->
-    <mat-step>
-        <ng-template matStepLabel>Mode de Paiement</ng-template>
-        <button mat-button class="next" matStepperNext>Suivant</button>
 
+    <!-- 3thd step -->
+    <mat-step [stepControl]="addReglementFormGroup" [completed]="isCompleted">
+        <ng-template matStepLabel>Modalité du paiement</ng-template>
+        <form [formGroup]="addReglementFormGroup">
+            <br>
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <label style="color: brown;"> <b>Total Retenues: (+ {{Droit_timbre}} TND):</b> <b>
+                            {{total_Retenues}}</b>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label> <b>Total TTC :</b> <span> {{totalTTc_}}</span> </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <mat-select formControlName="typeRegOne" [(ngModel)]="modePaiement" [disabled]=true>
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <input type="number" matInput formControlName="valueOne"
+                            (ngModelChange)="getvalueModePaiement($event)" [(ngModel)]="totalTTc_reg" />
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2" *ngIf="visibel">
+                    <a class="add-reglement" (click)='addReglement()'> <i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="row" *ngIf="ligneOne">
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <mat-label>Type de Règlement</mat-label>
+                        <mat-select formControlName="typeRegTwo">
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <input type="number" matInput formControlName="valueTwo"
+                            (ngModelChange)="getvalueModePaiementTwo($event)" />
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <a class="delete-reglement" (click)="deleteReglement('1')"> <i class="fas fa-trash-alt"></i></a>
+                </div>
+            </div>
+            <div class="row" *ngIf="ligneTwo">
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <mat-label>Type de Règlement</mat-label>
+                        <mat-select formControlName="typeRegTree">
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <input type="number" matInput formControlName="valueTree" />
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <a class="delete-reglement" (click)="deleteReglement('2')"> <i class="fas fa-trash-alt"></i></a>
+                </div>
+            </div>
+            <mat-form-field class="full-width">
+                <mat-label>Note</mat-label>
+                <textarea matInput placeholder="Note" type="text" class="form-control"
+                    formControlName="note"></textarea>
+            </mat-form-field>
+            <br>
+            <br>
+            <div>
+                <button mat-button matStepperPrevious>Retour</button>
+                <button mat-button class="btn btn-primary" (click)="checkTotalTTC(stepperFcture)">Suivant</button>
+            </div>
+        </form>
     </mat-step>
-    <!-- Done -->
+    <!-- 4th step -->
     <mat-step>
-        <ng-template matStepLabel>Imprimer</ng-template>
-        <p>Enregistrer la facture</p>
+        <ng-template matStepLabel>Compléter les infos</ng-template>
+        <!-- lister les articles choisie -->
+        <div class="container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id produit</th>
+                        <th>Nom produit</th>
+                        <th>infos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of factureArticls ; let i = index;">
+                        <td class="id-item">
+                            <input [ngModel]="item.id_Produit" name="id" class="form-control" type="text"
+                                name="{{item.id_Produit}}" disabled />
+                        </td>
+                        <td class="id-name">
+                            <input [ngModel]="item.nom_Produit" name="name" class="form-control" type="text"
+                                name="{{item.nom_Produit}}" disabled />
+                        </td>
+                        <!--Complétez les infos  E1 | E2 | N°serie -->
+                        <td>
+                            <button mat-button class="btn btn-b" (click)="completezInof(item, i)">Complétez
+                                les
+                                infos</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div class="row" *ngIf="isAccompli">
+            <p>Il faut compléter les informations pour chaque produit pour créer une facture (*)</p>
+        </div>
         <div>
-            <button mat-button class="next" (click)="saveFacture()">Enregistrer</button>
+            <button mat-button matStepperPrevious>Retour</button>
+            <button mat-button class="btn btn-primary" matStepperNext [disabled]="isAccompli">Suivant</button>
         </div>
     </mat-step>
+    <!-- last Step -->
+    <mat-step label="Enregistrer & Imprimer le BL">
+        <form>
+            <br>
+            <br>
+            <br>
+            <div class="row">
+                <div class="col-md-4">
+                    <button mat-raised-button class="add-article" (click)="saveNewFacture()"> <i
+                            class="fas fa-file-pdf"></i>
+                        Enregistrer</button>
+                </div>
+            </div>
+            <br>
+            <br>
+            <div>
+                <button mat-button matStepperPrevious>Retour</button>
+            </div>
+        </form>
+    </mat-step>
+
 </mat-horizontal-stepper>

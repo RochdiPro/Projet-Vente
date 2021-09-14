@@ -13,7 +13,7 @@ export class InfoSerieDialogComponent implements OnInit {
   numero_Serie :  any= []; 
   tableaux_produits_serie: any = [];
   numSerie: any = [];
-  prevSerie : any ; 
+  prevSerie: any = []
 
   constructor(public dialogRef: MatDialogRef<InfoSerieDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private bLservice : BlService )  {
     this.item = data.formPage    
@@ -45,7 +45,7 @@ export class InfoSerieDialogComponent implements OnInit {
     });
   }
   verifN_serieProduit(event: any , i : any ) {
-    if(this.prevSerie[i]){
+    if(this.prevSerie[i] != undefined){
       let index = this.numero_Serie.findIndex((element : any )=> element.name ==this.prevSerie[i]);
         if (index >= 0){
         this.numero_Serie[index].selected = false;

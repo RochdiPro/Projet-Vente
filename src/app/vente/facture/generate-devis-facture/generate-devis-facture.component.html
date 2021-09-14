@@ -93,7 +93,8 @@
                                     class="form-control" type="text" name="{{item.totale_TTC}}" disabled />
                             </td>
                             <td>
-                                <button mat-raised-button class="add-article " (click)="completezInof(item, i)">
+                                <button mat-raised-button class="add-article "
+                                    (click)="completezInof(item, i ,devisArticls)">
                                     Complétez les informations * </button>
                             </td>
                         </tr>
@@ -174,7 +175,7 @@
             <br><br>
             <div class="row">
                 <div class="col-md-4">
-                    <mat-label style="color: brown;"> <b>Total Retenues: (+ 0,600 TND)</b> </mat-label>
+                    <mat-label style="color: brown;"> <b>Total Retenues: (+ {{Droit_timbre}} TND)</b> </mat-label>
                 </div>
                 <div class="col-md-4">
                     <mat-label style="color: brown;"><b> {{total_Retenues}} </b></mat-label>
@@ -182,34 +183,37 @@
             </div>
             <br>
             <div class="row">
-                <div class="col-md-2">
-                    <label> <b>Total TTC :</b> <span> {{totalTTc_}}</span> </label>
+                <div class="col-md-4">
+                    <label> <b>Total TTC :</b> </label>
+                </div>
+                <div class="col-md-4">
+                    <label> <b>{{totalTTc_}}</b> </label>
                 </div>
             </div>
             <!-- first reg -->
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <mat-label>{{typeRegOne}}</mat-label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <mat-label>{{totalTTc_reg}}</mat-label>
                 </div>
             </div>
             <!-- second reg -->
             <div class="row" *ngIf="id_modeP_typeTwo">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <mat-label>{{typeRegTwo}}</mat-label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <mat-label>{{valueRegTwo}}</mat-label>
                 </div>
             </div>
             <!-- therd reg -->
             <div class="row" *ngIf="id_modeP_typeTree">
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <mat-label>{{typeRegTree}}</mat-label>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <mat-label>{{valueRegTree}}</mat-label>
                 </div>
             </div>

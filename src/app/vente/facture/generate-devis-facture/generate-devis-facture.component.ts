@@ -131,7 +131,9 @@ export class GenerateDevisFactureComponent implements OnInit {
   id_modeP_typeTree: any ;
   typeRegOne: any; 
   disable : boolean = true; 
-  total_Retenues : any = 0 ; 
+  total_Retenues : any = 0 ;
+  Droit_timbre = '0.600'
+
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
   
@@ -187,12 +189,13 @@ export class GenerateDevisFactureComponent implements OnInit {
     });
   }
     //** infos   */
-    completezInof(prod: any , i: any  ){
+    completezInof(prod: any , i: any , devisArticls: any  ){
       //** if prod is 4G */ 
         if(this.devisArticls[i].N_Imei == "true"){
           const dialogRef = this.dialog.open(InfosDialogComponent,{
             width:'100%',data : {
-              formPage: prod
+              formPage: prod,
+              lnProd : devisArticls.length
             }
           });
           dialogRef.afterClosed().subscribe((res: any)=>{
@@ -201,14 +204,14 @@ export class GenerateDevisFactureComponent implements OnInit {
               this.disable = res.isAccompli
             }
           });
-          console.log(this.disable);
           
         }
       //** if prod serie */
         else if(this.devisArticls[i].N_Serie == "true"){
           const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
             width:'100%',data : {
-              formPage: prod
+              formPage: prod,
+              lnProd : devisArticls.length
             }
           });
           dialogRef.afterClosed().subscribe((res : any )=>{
@@ -219,7 +222,8 @@ export class GenerateDevisFactureComponent implements OnInit {
         }else{
           const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
             data : {
-              formPage: prod
+              formPage: prod,
+              lnProd : devisArticls.length
             }
           });
           dialogRef.afterClosed().subscribe(()=>{
@@ -466,7 +470,7 @@ export class GenerateDevisFactureComponent implements OnInit {
         total5 += Number(this.devisArticls[i].totale_TTC )-((this.devisArticls[i].prixU * (Number(this.devisArticls[i].remise)) / 100)*this.devisArticls[i].quantite )
         this.totalRemise = Number(total5).toFixed(3);
         this.totalTTc_= this.totalTTc;
-        this.total_Retenues= (Number(this.totalTTc_) + 0.600).toFixed(3)
+        this.total_Retenues= (Number(this.totalTTc_) + Number(this.Droit_timbre)).toFixed(3)
         // ***
         total9 += (Number(this.devisArticls[i].fodec) * (Number(this.devisArticls[i].quantite)));
         this.totalPorcentageFodec = Number(total9).toFixed(3);

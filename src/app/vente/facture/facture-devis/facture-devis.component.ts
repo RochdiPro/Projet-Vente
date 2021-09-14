@@ -47,7 +47,7 @@ export class FactureDevisComponent implements OnInit {
     this.getAllDeviss();
     this.getKeyWordQuote();
   }
-  //** Lister les champ Devis */
+  //** Lister les champ Clients */
   getKeyWordQuote(){
     this.bLService.getAllClient().subscribe((res:any)=>{
      this.keyValues = res});
@@ -78,8 +78,6 @@ export class FactureDevisComponent implements OnInit {
   }
   //** Get Value */
   onChange(ev : any){
-    console.log(ev.target.value);
-    
     this.champ = ev.target.value;
   }
   getValue(ev: any){    
@@ -93,7 +91,12 @@ export class FactureDevisComponent implements OnInit {
       Swal.fire('S\'il vous plaît sélectionner un client','','info')
     }else{
       this.bLService.filterDevisByRangeDate(this.champ, this.date1, this.date2).subscribe((data : any)=>{
-        this.dataSourceDevis= new MatTableDataSource(data.body);    
+        let devis_en_cours : any = []
+        data.body.map((ele: any)=>{ 
+          if ((ele.etat ==='En cours')&& (ele.type==='Proforma'))
+          return devis_en_cours.unshift(ele)
+        });  
+        this.dataSourceDevis= new MatTableDataSource(devis_en_cours);    
         this.dataSourceDevis.sort = this.sort; 
         this.dataSourceDevis.paginator = this.paginator;
         this.loading = false ; 

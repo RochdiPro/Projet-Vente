@@ -213,7 +213,7 @@ export class ListerDevisComponent implements OnInit {
         }
         let typeRegTree : any ; 
         if (data.Reglements[0].Reglement[2] !== ""){
-          if (data.Reglements[0].Reglement[0].code_Type_Reglement_Trois[0]=='4')
+          if (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='4')
           typeRegTree ='Espèces';
           else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='1'){
             typeRegTree ='Virement';
@@ -518,7 +518,7 @@ export class ListerDevisComponent implements OnInit {
         }
         let typeRegTree : any ; 
         if (data.Reglements[0].Reglement[2] !== ""){
-          if (data.Reglements[0].Reglement[0].code_Type_Reglement_Trois[0]=='4')
+          if (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='4')
           typeRegTree ='Espèces';
           else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='1'){
             typeRegTree ='Virement';

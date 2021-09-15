@@ -1397,21 +1397,21 @@ return doc
         }
      
      
-    // this.factureService.getFactureByID(id).subscribe((res: any)=>{  
-    //       this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
-    // });   
+    this.factureService.getFactureByID(id).subscribe((res: any)=>{  
+          this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
+    });   
        setTimeout(async ()=>{
         //** Generate the pdf file */ 
         let pdf_devis = {
           background: [
             {
-              image: await this.getBase64ImageFromURL("../../../assets/images/Fiche_bl_page.jpg"), width: 600
+              image: await this.getBase64ImageFromURL("../../../assets/images/facture.jpeg"), width: 600
             }
           ],
           content: [
             { columns : [
               {
-                text:'BL n° ' +id + ' | ' + this.date+ '\n\n',
+                text:'Facture n° ' +id + ' | ' + this.date+ '\n\n',
                 fontSize: 15,
                 alignment: 'left',
                 color: 'black',
@@ -1425,7 +1425,7 @@ return doc
               columns: [
                 {   
                   text: 
-                  'Nouveau Bon de Livraison'+ '\n'
+                  'Nouvelle Facture'+ '\n'
                    +'Édité par :' + '\t' + '' + '\n'
                 ,
                 fontSize: 12,
@@ -1522,6 +1522,7 @@ return doc
                       [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                       [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                       [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total Retenues', alignment: 'left' }, { text: this.total_Retenues+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                     ]
                   },
                   layout: 'lightHorizontalLines',
@@ -1587,8 +1588,9 @@ return doc
       var myDetail = this.convertFileXml(myBlob,url);
 
       formData.append('Id_Clt',this.infoFormGroup.get('custemerName').value.id_Clt);
+      formData.append('Droit_timbre', this.Droit_timbre );
       formData.append('Id_Responsable','InfoNet' );
-      formData.append('Type', 'BL');
+      formData.append('Type', 'Facture');
       formData.append('Etat', 'En cours' );
       formData.append('Frais_Livraison', frais_Livraison);
       formData.append('Date_Creation',  this.latest_date);
@@ -1609,14 +1611,14 @@ return doc
             }).then((result) => {
               if (result.isConfirmed) {
                 Swal.fire({
-                  title: 'Voulez vous imprimer le BL',
+                  title: 'Voulez vous imprimer la Facture',
                   icon: 'warning',
                   showCancelButton: true,
                   confirmButtonText: 'Oui',
                   cancelButtonText: 'Non',
                 }).then((result) => {
                   if (result.isConfirmed) {  
-                    this.generatePDF(res.id_Bl);
+                    this.generatePDF(res.id_Facture);
                     this.router.navigate(['Menu/Menu-facture/Lister-Facture']);
                   } else if (result.isDismissed) {
                     console.log('Clicked No, File is safe!');

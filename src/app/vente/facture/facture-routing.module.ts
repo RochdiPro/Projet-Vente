@@ -7,11 +7,13 @@ import { FactureATermeComponent } from './facture-aterme/facture-aterme.componen
 import { FactureDevisComponent } from './facture-devis/facture-devis.component';
 import { GenerateDevisFactureComponent } from './generate-devis-facture/generate-devis-facture.component';
 import { ListerFactureComponent } from './lister-facture/lister-facture.component';
+import { UpdateFactureComponent } from './update-facture/update-facture.component';
 
 const routes: Routes = [
   {path: '' , component: FactureComponent, children: [
     {path: 'Ajouter-Facture' , component: AjouterFactureComponent},
     {path: 'Lister-Facture',component: ListerFactureComponent},
+    {path: 'Update-Facture/:id', component: UpdateFactureComponent},
     {path: 'Ajouter-Facture/Facture-terme' , component: FactureATermeComponent},
     {path: 'Ajouter-Facture/BL-Facture', component : BlFactureComponent},
     {path: 'Ajouter-Facture/Devis-Facture',component: FactureDevisComponent},

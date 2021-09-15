@@ -389,6 +389,7 @@ export class UpdateBlComponent implements OnInit {
           if(res.Devis == null )    
           {
             data =res.Bon_Livraison;  
+            console.log(data); 
             this.etatBl = data.Etat[0]       
             this.devise= data["Informations-Generales"][0].Devise[0];
             this.local_id= data["Informations-Generales"][0].Depot[0];

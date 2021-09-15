@@ -10,9 +10,39 @@ const _url = "/ERP/";
 export class FactureService {
 
   constructor( private http : HttpClient) { }
-
+  // get all the champ of facture 
+  getListKeyWord(): Observable <any> {
+    return this.http.get(_url+ 'Liste_Champs_Facture/')
+  }
+    //** Filter By Champ */
+  filterByChampValeur(champ: string , value : string) : Observable<any>{
+      return this.http.get(_url + 'Filtre_Facture/', {
+        params : {
+          Champ: champ, 
+          Valeur: value
+        }, observe: 'response'
+      });
+  }
+  //** Delete Facture */
+  deleteFacture( id : string ): Observable<any>{
+    return this.http.delete(_url + 'Supprimer_Facture/', {
+      params: {
+        Id: id
+      }, observe:'response'
+    })
+  }
+  //  Get All Facture 
+  getAllFacture():Observable<any>{
+    return this.http.get(_url+'Factures');
+  }
   //** Get Facture By ID */
-  getFactureByID(id: any){}
+  getFactureByID(id: any): Observable<any>{
+    return this.http.get(_url+"Facture/",{
+      params: {
+        Id: id
+      }, observe: 'response'
+    })
+  }
   
   //** Get List All Client*/
   getAllClient(): Observable<any>{
@@ -20,7 +50,7 @@ export class FactureService {
   }
 
   //** Get Client By Code/id EP */
-  getClientById(id : string): Observable<any>{
+  getClientById(id : any): Observable<any>{
       return this.http.get(_url +'Client/',{params :{
        Id_Clt: id,
      },observe: 'response'});
@@ -79,5 +109,16 @@ export class FactureService {
   //** createFacure  */
   createFacure(formData: any): Observable<any>{
     return this.http.post(_url+'Creer_Facture/',formData); 
+  }
+  detail(id: any):Observable<any>{
+    return this.http.get(_url+'Detail_Facture/',{
+      params: {
+        Id_Facture : id
+      }, observe:'response', responseType : 'blob'
+    });
+  }
+  //** updateFacture */
+  updateFacture(formData: any):Observable<any>{
+    return this.http.post(_url+'Modifier_Facture/',formData);
   }
 }

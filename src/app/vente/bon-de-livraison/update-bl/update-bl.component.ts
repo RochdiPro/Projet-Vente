@@ -401,11 +401,11 @@ export class UpdateBlComponent implements OnInit {
             this.totalMontantTVA = data.Total[0].TotalTVA[0];
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
-            if(data.Reglements[0].Reglement[1] != "")  {
+            if(data.Reglements[0].Reglement[1] != undefined)  {
               this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
               this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
             }      
-            if(data.Reglements[0].Reglement[2] != "")  {
+            if(data.Reglements[0].Reglement[2] != undefined)  {
               this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
               this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
             }  
@@ -422,11 +422,11 @@ export class UpdateBlComponent implements OnInit {
             this.totalMontantTVA = data.Total[0].TotalTVA[0];
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
-            if(data.Reglements[0].Reglement[1] != "")  {
+            if(data.Reglements[0].Reglement[1] != undefined)  {
               this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
               this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
             }      
-            if(data.Reglements[0].Reglement[2] != "")  {
+            if(data.Reglements[0].Reglement[2] != undefined)  {
               this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
               this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
             }  

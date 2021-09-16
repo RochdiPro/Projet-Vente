@@ -903,7 +903,7 @@ async getProuduitByCode(){
       this.secondValue = ev
       let rest_Two ; 
       this.ligneTwo= true;
-      rest_Two = Number((this.totalTTc)-(this.price)- (this.secondValue)).toFixed(3);
+      rest_Two = Number((this.total_Retenues)-(this.price)- (this.secondValue)).toFixed(3);
       this.addReglementFormGroup.controls['valueTree'].setValue(rest_Two);
   }  
   //** addReglement */
@@ -913,8 +913,8 @@ async getProuduitByCode(){
     this.show++;
     if (this.show == 1){
       this.ligneOne = true;
-      if(parseInt(this.price) <= parseInt(this.totalTTc)){   
-        rest = Number(this.totalTTc - this.price).toFixed(3);
+      if(parseInt(this.price) <= parseInt(this.total_Retenues)){   
+        rest = Number(this.total_Retenues - this.price).toFixed(3);
         this.addReglementFormGroup.controls['valueTwo'].setValue(rest);
       }else{
         Swal.fire( 
@@ -926,7 +926,7 @@ async getProuduitByCode(){
     if (this.show == 2) {  
       let rest_Two ; 
       this.ligneTwo= true;
-      rest_Two = Number((this.totalTTc)-(this.price)- (this.secondValue)).toFixed(3);
+      rest_Two = Number((this.total_Retenues)-(this.price)- (this.secondValue)).toFixed(3);
       this.addReglementFormGroup.controls['valueTree'].setValue(rest_Two);
     } 
   }
@@ -938,14 +938,14 @@ async getProuduitByCode(){
         this.sum -=Number((this.addReglementFormGroup.get('valueTwo').value)); 
         this.addReglementFormGroup.controls['valueTwo'].setValue(0);
         this.addReglementFormGroup.controls['typeRegTwo'].setValue('');
-        (this.sum == this.totalTTc)? this.isCompleted= true : this.isCompleted= false;
+        (this.sum == this.total_Retenues)? this.isCompleted= true : this.isCompleted= false;
       }
       if(l=='2') {
         this.ligneTwo = false; 
         this.sum -=Number((this.addReglementFormGroup.get('valueTree').value));   
         this.addReglementFormGroup.controls['valueTree'].setValue(0);
         this.addReglementFormGroup.controls['typeRegTree'].setValue('');
-        (this.sum == this.totalTTc)? this.isCompleted= true : this.isCompleted= false;
+        (this.sum == this.total_Retenues)? this.isCompleted= true : this.isCompleted= false;
       }
       if((this.ligneOne == false) || (this.ligneTwo == false)) this.show--;
   }

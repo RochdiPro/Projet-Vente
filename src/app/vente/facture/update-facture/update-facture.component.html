@@ -259,6 +259,7 @@
         <form [formGroup]="addReglementFormGroup">
             <br>
             <br>
+            <!--Total Retenues  -->
             <div class="row">
                 <div class="col-md-6">
                     <label style="color: brown;"> <b>Total Retenues: (+ {{Droit_timbre}} TND):</b> <b>
@@ -266,6 +267,7 @@
                     </label>
                 </div>
             </div>
+            <!-- Total TTC  -->
             <div class="row">
                 <div class="col-md-2">
                     <label> <b>Total TTC :</b> <span> {{totalTTc_}}</span> </label>
@@ -389,7 +391,8 @@
             <br>
             <div class="row">
                 <div class="col-md-4">
-                    <button mat-raised-button class="add-article" (click)="updateBl()"> <i class="fas fa-file-pdf"></i>
+                    <button mat-raised-button class="add-article" (click)="updateFacture()"> <i
+                            class="fas fa-file-pdf"></i>
                         Enregistrer</button>
                 </div>
             </div>

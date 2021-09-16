@@ -349,11 +349,12 @@ export class UpdateDevisComponent implements OnInit {
           this.totalMontantTVA = data.Total[0].TotalTVA[0];
           this.totalTTc = data.Total[0].TotalTTC[0];
           this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
-          if(data.Reglements[0].Reglement[1] != "")  {
+          
+          if(data.Reglements[0].Reglement[1] != undefined)  {
             this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
             this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
           }      
-          if(data.Reglements[0].Reglement[2] != "")  {
+          if(data.Reglements[0].Reglement[2] != undefined)  {
             this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
             this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
           }  
@@ -364,7 +365,6 @@ export class UpdateDevisComponent implements OnInit {
           { 
             this.newAttribute = {};
             this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-            this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge[0]); 
             this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
             this.newAttribute.etat = (data.Produits[0].Produits_Simples[0].Produit[i].Etat[0]);
             this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme[0]); 
@@ -394,7 +394,6 @@ export class UpdateDevisComponent implements OnInit {
             { 
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
               this.newAttribute.etat = (data.Produits[0].Produits_4Gs[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
@@ -438,7 +437,6 @@ export class UpdateDevisComponent implements OnInit {
             {
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom[0]); 
               this.newAttribute.etat= (data.Produits[0].Produits_Series[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
@@ -1259,43 +1257,41 @@ TVA.appendChild(TVA7);
 Taxes.appendChild(TVA);
 Taxes.appendChild(Fodec);
 
-//** Type de reglements  */
-var Type_Reglement = doc.createElement("Reglements");  
-//Reglement_Un 
-var reglementUn = doc.createElement("Reglement");
-var codeTypaRegOne = doc.createElement("code_Type_Reglement_Un")  ; codeTypaRegOne.innerHTML = this.addReglementFormGroup.get('typeRegOne').value;
-var typeRegOne = doc.createElement("Type_Reglement_Un"); typeRegOne.innerHTML = typeRegUn; 
-var valueRegOne = doc.createElement("Value_Reglement_Un"); valueRegOne.innerHTML =  this.price; 
-reglementUn.appendChild(codeTypaRegOne);
-reglementUn.appendChild(typeRegOne);
-reglementUn.appendChild(valueRegOne);
+  //** Type de reglements  */
+  var Type_Reglement = doc.createElement("Reglements");  
+  //Reglement_Un 
+   var reglementUn = doc.createElement("Reglement");
+   var codeTypaRegOne = doc.createElement("code_Type_Reglement_Un")  ; codeTypaRegOne.innerHTML = this.addReglementFormGroup.get('typeRegOne').value;
+   var typeRegOne = doc.createElement("Type_Reglement_Un"); typeRegOne.innerHTML = typeRegUn; 
+   var valueRegOne = doc.createElement("Value_Reglement_Un"); valueRegOne.innerHTML =  this.price; 
+   reglementUn.appendChild(codeTypaRegOne);
+   reglementUn.appendChild(typeRegOne);
+   reglementUn.appendChild(valueRegOne);
+   Type_Reglement.appendChild(reglementUn);    
+  // Reglement_Deux
+  var reglementDeux = doc.createElement("Reglement");
+  if (typeRegDeux != undefined){
+    var codeTypaRegTwo = doc.createElement("code_Type_Reglement_Deux")  ; codeTypaRegTwo.innerHTML = this.addReglementFormGroup.get('typeRegTwo').value;
+    var typeRegTwo = doc.createElement("Type_Reglement_Deux"); typeRegTwo.innerHTML = typeRegDeux; 
+    var valueRegTwo = doc.createElement("Value_Reglement_Deux"); valueRegTwo.innerHTML =  this.addReglementFormGroup.get('valueTwo').value; 
+    reglementDeux.appendChild(codeTypaRegTwo);
+    reglementDeux.appendChild(typeRegTwo);
+    reglementDeux.appendChild(valueRegTwo);
+    Type_Reglement.appendChild(reglementDeux);
+  }
 
-// Reglement_Deux
-var reglementDeux = doc.createElement("Reglement");
-if (typeRegDeux != undefined){
-var codeTypaRegTwo = doc.createElement("code_Type_Reglement_Deux")  ; codeTypaRegTwo.innerHTML = this.addReglementFormGroup.get('typeRegTwo').value;
-var typeRegTwo = doc.createElement("Type_Reglement_Deux"); typeRegTwo.innerHTML = typeRegDeux; 
-var valueRegTwo = doc.createElement("Value_Reglement_Deux"); valueRegTwo.innerHTML =  this.addReglementFormGroup.get('valueTwo').value; 
-reglementDeux.appendChild(codeTypaRegTwo);
-reglementDeux.appendChild(typeRegTwo);
-reglementDeux.appendChild(valueRegTwo);
-}
+  // Reglement_Trois
+  var reglementTrois = doc.createElement("Reglement");
 
-// Reglement_Trois
-var reglementTrois = doc.createElement("Reglement");
-
-if (typeRegTrois != undefined){
-var codeTypaRegTree = doc.createElement("code_Type_Reglement_Trois")  ; codeTypaRegTree.innerHTML = this.addReglementFormGroup.get('typeRegTree').value;
-var typeRegTwo = doc.createElement("Type_Reglement_Trois"); typeRegTwo.innerHTML = typeRegTrois; 
-var valueRegTwo = doc.createElement("Value_Reglement_Trois"); valueRegTwo.innerHTML =  this.addReglementFormGroup.get('valueTree').value; 
-reglementTrois.appendChild(codeTypaRegTree)
-reglementTrois.appendChild(typeRegTwo);
-reglementTrois.appendChild(valueRegTwo);
-}
-
-Type_Reglement.appendChild(reglementUn);
-Type_Reglement.appendChild(reglementDeux);
-Type_Reglement.appendChild(reglementTrois);
+ if (typeRegTrois != undefined){
+  var codeTypaRegTree = doc.createElement("code_Type_Reglement_Trois")  ; codeTypaRegTree.innerHTML = this.addReglementFormGroup.get('typeRegTree').value;
+    var typeRegTwo = doc.createElement("Type_Reglement_Trois"); typeRegTwo.innerHTML = typeRegTrois; 
+    var valueRegTwo = doc.createElement("Value_Reglement_Trois"); valueRegTwo.innerHTML =  this.addReglementFormGroup.get('valueTree').value; 
+    reglementTrois.appendChild(codeTypaRegTree)
+    reglementTrois.appendChild(typeRegTwo);
+    reglementTrois.appendChild(valueRegTwo);
+    Type_Reglement.appendChild(reglementTrois);
+ }
 
 
 //******* */
@@ -1368,7 +1364,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -1389,14 +1384,20 @@ for (let i = 0; i < this.devisArticls.length; i++) {
         vProduit_4Gs.appendChild(Produit_4G);
       }
     }else {
-      var Produit_4G = doc.createElement('Produit_4G');
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-        var E1 = doc.createElement('E1'); E1.innerHTML = '0'
-        var E2 = doc.createElement('E2'); E2.innerHTML = '0'
+      for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+        let tableaux_produits_emie: any = {}; 
+        var Produit_4G = doc.createElement('Produit_4G');
+        tableaux_produits_emie.n_serie= '0',
+        tableaux_produits_emie.e1='0';
+        tableaux_produits_emie.e2='0';
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = tableaux_produits_emie.n_serie
+        var E1 = doc.createElement('E1'); E1.innerHTML = tableaux_produits_emie.e1
+        var E2 = doc.createElement('E2'); E2.innerHTML = tableaux_produits_emie.e2
         Produit_4G.appendChild(N_Serie);
         Produit_4G.appendChild(E1);
         Produit_4G.appendChild(E2);
         vProduit_4Gs.appendChild(Produit_4G);
+      }
     }
 
 
@@ -1413,7 +1414,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vProduit_4Gs);
     Produit.appendChild( PrixU)
     Produit.appendChild( TotalFacture )   
@@ -1433,7 +1433,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].M_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise;
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -1448,8 +1447,12 @@ for (let i = 0; i < this.devisArticls.length; i++) {
         vN_Series.appendChild(N_Serie);
       }
     }else{
-      var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
+      for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+        let n_serie ='0'
+
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = n_serie
         vN_Series.appendChild(N_Serie);
+      }
     }
 
 
@@ -1466,7 +1469,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vN_Series)
     Produit.appendChild(PrixU)
     Produit.appendChild( TotalFacture ) 
@@ -1488,7 +1490,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
-    var Charge = doc.createElement('charge'); Charge.innerHTML = this.devisArticls[i].ch
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.devisArticls[i].totale_TTC   
     var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.devisArticls[i].prix_U_TTC;
     var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.devisArticls[i].total_HT;
@@ -1508,7 +1509,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild( TotalFacture )
     Produit.appendChild( PrixU )
 
@@ -1530,13 +1530,16 @@ doc.documentElement.appendChild(Taxes);
 doc.documentElement.appendChild(Type_Reglement);
 return doc
 }
-  convertFileXml(theBlob: Blob, fileName: string): File {
+
+
+convertFileXml(theBlob: Blob, fileName: string): File {
     var b: any = theBlob;
     b.lastModifiedDate = new Date();
     b.name = fileName;
     return <File>theBlob;
-  }
-  contenuTable(data: any, columns: any) {
+}
+
+contenuTable(data: any, columns: any) {
     var body = [];
     
     body.push(columns);
@@ -1549,9 +1552,9 @@ return doc
       body.push(dataRow);
     });
      return body;
-  }
+}
   //** Generate a table */
-  generateTable(data: any, columns: any) {
+generateTable(data: any, columns: any) {
     return {
       table: {
         headerRows: 1,
@@ -1560,9 +1563,9 @@ return doc
         alignment: "center"
       }, layout: 'headerLineOnly',
     };
-  }
+}
     //** Generate the PDF file  */
-  async generatePDF(id :any){
+async generatePDF(id :any){
      // check if this "Devis" is Proforma or "simple/estimatif"
         let imgUrl : string ; 
         if( this.typeDevis === 'Estimatif'){
@@ -1796,10 +1799,10 @@ return doc
       };
       img.src = url;
     });
-  }
+}
 
  //** Save Data after updated */ 
- saveData(){
+saveData(){
   let frais_Livraison : any = 0
   let url = "assets/Devis.xml";
   const formData : any = new FormData();
@@ -1840,6 +1843,8 @@ return doc
               cancelButtonText: 'Non',
             }).then((result) => {
               if (result.isConfirmed) {
+                console.log(res.id_Devis);
+                
                 this.generatePDF(res.id_Devis);
                 this.router.navigate(['Menu/Menu-Devis/Lister-devis']);
               } else if (result.isDismissed) {
@@ -1852,4 +1857,5 @@ return doc
         });
   });
  }
+ 
 }

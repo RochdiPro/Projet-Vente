@@ -398,11 +398,11 @@ export class GenererBlComponent implements OnInit {
           this.totalMontantTVA = data.Total[0].TotalTVA[0];
           this.totalTTc = data.Total[0].TotalTTC[0];
           this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
-          if(data.Reglements[0].Reglement[1] != "")  {
+          if(data.Reglements[0].Reglement[1] != undefined)  {
             this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
             this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
           }      
-          if(data.Reglements[0].Reglement[2] != "")  {
+          if(data.Reglements[0].Reglement[2] != undefined)  {
             this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
             this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
           }  
@@ -413,7 +413,6 @@ export class GenererBlComponent implements OnInit {
           { 
             this.newAttribute = {};
             this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-            this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
             this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
             this.newAttribute.etat = (data.Produits[0].Produits_Simples[0].Produit[i].Etat[0]);
             this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
@@ -443,7 +442,6 @@ export class GenererBlComponent implements OnInit {
             { 
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
               this.newAttribute.etat = (data.Produits[0].Produits_4Gs[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
@@ -484,7 +482,6 @@ export class GenererBlComponent implements OnInit {
             {
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom[0]); 
               this.newAttribute.etat= (data.Produits[0].Produits_Series[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
@@ -882,7 +879,7 @@ async getProuduitByCode(){
 
   
   //** Delete Item from the Table */
-  deleteItemValue(index : any){
+deleteItemValue(index : any){
     Swal.fire({
       title: 'Êtes-vous sûr?',
       icon: 'warning',
@@ -905,15 +902,15 @@ async getProuduitByCode(){
     );
     this.calculTotal();
     this.calculAssiettes();
-  }
+}
 
   //** Go Forward  */
-  goForward(stepper : MatStepper){
+goForward(stepper : MatStepper){
     stepper.next();
-  }
+}
 
   //** open Dialog */
-  openDialog(){
+openDialog(){
     const dialogRef = this.dialog.open(DialogContentAddArticleDialogComponent,{
       width: '100%',data: {
         fromPage : this.devisArticls,
@@ -976,10 +973,10 @@ async getProuduitByCode(){
         }
 
       });
-  }
+}
 
   //** Plz choose at least one product in the next step */
-  nextStep(stepper : MatStepper){
+nextStep(stepper : MatStepper){
     let addPrice : any = 0 
     this.isNull = false;
     if((this.totalTTc !=0)){
@@ -1213,7 +1210,6 @@ var Produits_Series = doc.createElement('Produits_Series')
 var Produits_4Gs = doc.createElement('Produits_4Gs')
 var Produits_Simples  = doc.createElement('Produits_Simples')
 var signaler_Probleme = doc.createElement("Signaler_Probleme");
-var reglements = doc.createElement("Reglements");
 
 //** TVA* */
 var Taxes = doc.createElement("Taxes");
@@ -1257,6 +1253,7 @@ var valueRegOne = doc.createElement("Value_Reglement_Un"); valueRegOne.innerHTML
 reglementUn.appendChild(codeTypaRegOne);
 reglementUn.appendChild(typeRegOne);
 reglementUn.appendChild(valueRegOne);
+Type_Reglement.appendChild(reglementUn);
 
 // Reglement_Deux
 var reglementDeux = doc.createElement("Reglement");
@@ -1267,6 +1264,7 @@ var valueRegTwo = doc.createElement("Value_Reglement_Deux"); valueRegTwo.innerHT
 reglementDeux.appendChild(codeTypaRegTwo);
 reglementDeux.appendChild(typeRegTwo);
 reglementDeux.appendChild(valueRegTwo);
+Type_Reglement.appendChild(reglementDeux);
 }
 
 // Reglement_Trois
@@ -1279,11 +1277,8 @@ var valueRegTwo = doc.createElement("Value_Reglement_Trois"); valueRegTwo.innerH
 reglementTrois.appendChild(codeTypaRegTree)
 reglementTrois.appendChild(typeRegTwo);
 reglementTrois.appendChild(valueRegTwo);
-}
-
-Type_Reglement.appendChild(reglementUn);
-Type_Reglement.appendChild(reglementDeux);
 Type_Reglement.appendChild(reglementTrois);
+}
 
 
 //******* */
@@ -1506,8 +1501,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
 Produits.appendChild(Produits_Simples);
 Produits.appendChild(Produits_Series);
 Produits.appendChild(Produits_4Gs);
-
-
 //******* */
 doc.documentElement.appendChild(etatElement);
 doc.documentElement.appendChild(infoElement);
@@ -1518,13 +1511,15 @@ doc.documentElement.appendChild(Taxes);
 doc.documentElement.appendChild(Type_Reglement);
 return doc
 }
-  convertFileXml(theBlob: Blob, fileName: string): File {
+
+convertFileXml(theBlob: Blob, fileName: string): File {
     var b: any = theBlob;
     b.lastModifiedDate = new Date();
     b.name = fileName;
     return <File>theBlob;
-  }
-  contenuTable(data: any, columns: any) {
+}
+
+contenuTable(data: any, columns: any) {
     var body = [];
     
     body.push(columns);
@@ -1537,9 +1532,9 @@ return doc
       body.push(dataRow);
     });
      return body;
-  }
+}
   //** Generate a table */
-  generateTable(data: any, columns: any) {
+generateTable(data: any, columns: any) {
     return {
       table: {
         headerRows: 1,
@@ -1548,9 +1543,9 @@ return doc
         alignment: "center"
       }, layout: 'headerLineOnly',
     };
-  }
+}
     //** Generate the PDF file  */
-  async generatePDF(id :any){
+async generatePDF(id :any){
         this.bLservice.getBlByID(id).subscribe((res: any)=>{        
           this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
       }); 
@@ -1755,9 +1750,9 @@ return doc
        },1000)   
 
 
-  }
+}
   //** Convert the Image in base64  */
-  getBase64ImageFromURL(url : any) {
+getBase64ImageFromURL(url : any) {
     return new Promise((resolve, reject) => {
       var img = new Image();
       img.setAttribute("crossOrigin", "anonymous");
@@ -1776,7 +1771,7 @@ return doc
       img.src = url;
     });
   }
-  gererateDevisBL(){
+gererateDevisBL(){
     let formData : any = new FormData();
     let url = "assets/BL.xml";
     //** Generate the file XML */
@@ -1818,5 +1813,5 @@ return doc
           console.log(err)
       });  
   });
-  } 
+} 
 }

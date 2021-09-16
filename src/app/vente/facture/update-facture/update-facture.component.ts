@@ -387,7 +387,8 @@ export class UpdateFactureComponent implements OnInit {
       fileReader.onloadend = () =>{
         this.detail = fileReader.result; // data: application/xml in base64
         let data : any; 
-        xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{            
+        xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{     
+         //  if the details commes from Bon_Livraison
           if(res.Bon_Livraison != undefined )    
           {
             data =res.Bon_Livraison;  
@@ -405,12 +406,15 @@ export class UpdateFactureComponent implements OnInit {
             this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
             if(data.Reglements[0].Reglement[1] != "")  {
               this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
-              this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
+              this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0];
+              this.addReglementFormGroup.controls['valueTwo'].setValue(this.valueRegTwo);
             }      
             if(data.Reglements[0].Reglement[2] != "")  {
               this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
-              this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
+              this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0];
+              this.addReglementFormGroup.controls['valueTree'].setValue(this.valueRegTree);
             }  
+                //  if the details commes from Devis
           }else if (res.Devis != undefined){
             data =res.Devis;
             this.local_id= data["Informations-Generales"][0].Depot[0];
@@ -424,14 +428,20 @@ export class UpdateFactureComponent implements OnInit {
             this.totalMontantTVA = data.Total[0].TotalTVA[0];
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
+            
+            
             if(data.Reglements[0].Reglement[1] != "")  {
               this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
-              this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
+              this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0];
+              this.addReglementFormGroup.controls['valueTwo'].setValue(this.valueRegTwo);
             }      
             if(data.Reglements[0].Reglement[2] != "")  {
               this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
-              this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
+              this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0];
+              this.addReglementFormGroup.controls['valueTree'].setValue(this.valueRegTree);
+
             }  
+               //  if the details commes from Facture
           }else{
             data =res.Facture;
             this.local_id= data["Informations-Generales"][0].Depot[0];
@@ -445,13 +455,15 @@ export class UpdateFactureComponent implements OnInit {
             this.totalMontantTVA = data.Total[0].TotalTVA[0];
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
+            console.log(this.totalTTc_reg);
             if(data.Reglements[0].Reglement[1] != "")  {
               this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
-              this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
+              this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0];
             }      
             if(data.Reglements[0].Reglement[2] != "")  {
               this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
-              this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
+              this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0];
+
             }
           }
         
@@ -1051,6 +1063,7 @@ async getProuduitByCode(){
       for(let i= 0 ; i < this.factureProds.length; i++){
         totalTTc_reg +=Number(this.factureProds[i].totale_TTC);
       }
+      totalTTc_reg+=Number(this.Droit_timbre)
       addPrice =   Number(totalTTc_reg - this.totalTTc_reg).toFixed(3);
       if(addPrice<0){
         this.addReglementFormGroup.controls['valueOne'].setValue(Number(totalTTc_reg).toFixed(3));
@@ -1058,10 +1071,8 @@ async getProuduitByCode(){
       }
       else if(addPrice> this.addReglementFormGroup.get('valueTwo').value){
         this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
-        this.id_modeP_typeTwo='4'
       }else{
         this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
-        this.id_modeP_typeTwo='4'
       }
       
       this.addArticleFormGroup.controls['lengthTableDevis'].setValue(this.factureProds.length);
@@ -1082,10 +1093,8 @@ async getProuduitByCode(){
   //** Ckeck Total TTC in the reglement step */
   checkTotalTTC(stepper : MatStepper){
     this.isCompleted= false;
-    this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));                
-   console.log(Number(this.sum),Number(this.total_Retenues),Number((this.addReglementFormGroup.get('valueOne').value)),Number((this.addReglementFormGroup.get('valueTwo').value)),Number((this.addReglementFormGroup.get('valueTree').value)));
-   
-    if(Number(this.sum)!=Number(this.total_Retenues)){
+    this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));                   
+    if(Number(this.sum)!=Number(this.totalTTc_reg)){
       this.isCompleted= false;
       Swal.fire( 
       'Attention! vérifiez le totale',
@@ -1102,8 +1111,8 @@ async getProuduitByCode(){
     if(this.price != undefined){
       let rest
       this.visibel= true;
-      if(parseInt(this.price) <= parseInt(this.totalTTc)){   
-        rest = Number(this.totalTTc - this.price).toFixed(3);
+      if(parseInt(this.price) <= parseInt(this.totalTTc_reg)){   
+        rest = Number(this.totalTTc_reg - this.price).toFixed(3);
         this.secondValue = rest;
         this.addReglementFormGroup.controls['valueTwo'].setValue(rest);
 
@@ -1112,58 +1121,57 @@ async getProuduitByCode(){
     }    
   }
 }
-  //** Get the Second value */
-  getvalueModePaiementTwo(ev: any){
+//** Get the Second value */
+getvalueModePaiementTwo(ev: any){
     this.secondValue = ev
     let rest_Two ; 
     this.ligneTwo= true;
-    rest_Two = Number((this.totalTTc)-(this.price)- (this.secondValue)).toFixed(3);
+    rest_Two = Number((this.totalTTc_reg)-(this.price)- (this.secondValue)).toFixed(3);
     this.addReglementFormGroup.controls['valueTree'].setValue(rest_Two);
-  }
-  //** addReglement */
-  addReglement(){
-    let rest ; 
-    (this.show<0)? this.show=0 : console.log(this.sum);
-    this.show++;
-    if (this.show == 1){
-      this.ligneOne = true;
-      if(parseInt(this.price) <= parseInt(this.totalTTc)){   
-        rest = Number(this.totalTTc - this.price).toFixed(3);
-        this.addReglementFormGroup.controls['valueTwo'].setValue(rest);
-      }else{
-        Swal.fire( 
-          'Attention! vérifiez le totale',
-          'Total TTC!',
-          'error');
-      }
-    }  
-    if (this.show == 2) {  
-      let rest_Two ; 
-      this.ligneTwo= true;
-      rest_Two = Number((this.totalTTc)-(this.price)- (this.secondValue)).toFixed(3);
-      this.addReglementFormGroup.controls['valueTree'].setValue(rest_Two);
-    } 
-  }
-
-  // * DeleteReglement */
-  deleteReglement(l:string){    
-      if(l=='1') {
-        this.ligneOne = false;
-        this.isCompleted= false;
-        this.sum -=Number((this.addReglementFormGroup.get('valueTwo').value)); 
-        this.addReglementFormGroup.controls['valueTwo'].setValue(0);
-        this.addReglementFormGroup.controls['typeRegTwo'].setValue('');
-        (this.sum == this.totalTTc)? this.isCompleted= true : this.isCompleted= false;
-      }
-      if(l=='2') {
-        this.ligneTwo = false; 
-        this.sum -=Number((this.addReglementFormGroup.get('valueTree').value));   
-        this.addReglementFormGroup.controls['valueTree'].setValue(0);
-        this.addReglementFormGroup.controls['typeRegTree'].setValue('');
-        (this.sum == this.totalTTc)? this.isCompleted= true : this.isCompleted= false;
-      }
-      if((this.ligneOne == false) || (this.ligneTwo == false)) this.show--;
-  }
+}  
+//** addReglement */
+addReglement(){
+  let rest ; 
+  (this.show<0)? this.show=0 : console.log(this.sum);
+  this.show++;
+  if (this.show == 1){
+    this.ligneOne = true;
+    if(parseInt(this.price) <= parseInt(this.totalTTc_reg)){   
+      rest = Number(this.totalTTc_reg - this.price).toFixed(3);
+      this.addReglementFormGroup.controls['valueTwo'].setValue(rest);
+    }else{
+      Swal.fire( 
+        'Attention! vérifiez le totale',
+        'Total TTC!',
+        'error');
+    }
+  }  
+  if (this.show == 2) {  
+    let rest_Two ; 
+    this.ligneTwo= true;
+    rest_Two = Number((this.totalTTc_reg)-(this.price)- (this.secondValue)).toFixed(3);
+    this.addReglementFormGroup.controls['valueTree'].setValue(rest_Two);
+  } 
+}
+// * DeleteReglement */
+deleteReglement(l:string){    
+    if(l=='1') {
+      this.ligneOne = false;
+      this.isCompleted= false;
+      this.sum -=Number((this.addReglementFormGroup.get('valueTwo').value)); 
+      this.addReglementFormGroup.controls['valueTwo'].setValue(0);
+      this.addReglementFormGroup.controls['typeRegTwo'].setValue('');
+      (this.sum == this.totalTTc_reg)? this.isCompleted= true : this.isCompleted= false;
+    }
+    if(l=='2') {
+      this.ligneTwo = false; 
+      this.sum -=Number((this.addReglementFormGroup.get('valueTree').value));   
+      this.addReglementFormGroup.controls['valueTree'].setValue(0);
+      this.addReglementFormGroup.controls['typeRegTree'].setValue('');
+      (this.sum == this.totalTTc_reg)? this.isCompleted= true : this.isCompleted= false;
+    }
+    if((this.ligneOne == false) || (this.ligneTwo == false)) this.show--;
+}
   //** Product is in stock  */
   isInStock(id : any){
     this.factureService.getInfoProductByIdFromStock(id).subscribe((res : any)=>{
@@ -1856,9 +1864,9 @@ return doc
       img.src = url;
     });
   }
-  updateBl(){
+  updateFacture(){
     let frais_Livraison = 0;
-    let url = "assets/BL.xml";
+    let url = "assets/Facture.xml";
     const formData : any = new FormData();
     //** Generate the file XML */
     //** Create an XmlHttpRequest */

@@ -178,4 +178,14 @@ export class BlService {
       },observe: 'response'
     });
   }
+    //** Filtre_Devis_Par_Client_Date1_Date2 */
+    filterBLByRangeDate(client : any , date1: any , date2: any ):Observable<any>{
+      return this.http.get(_url+"Filtre_Bon_Livraison_Par_Client_Date1_Date2/",{
+        params:{
+          Client: client,
+          Date1: date1,
+          Date2: date2
+        },observe: 'response'
+      });
+    }
 }

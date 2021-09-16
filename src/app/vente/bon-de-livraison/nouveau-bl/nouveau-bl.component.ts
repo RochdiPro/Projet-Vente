@@ -984,6 +984,7 @@ async getProuduitByCode(){
       }, layout: 'headerLineOnly',
     };
   }
+
   //*************************************************** The XML structure **************************************/
   createXMLStructure(url: string , data : any){
     let typeRegUn : any ; 
@@ -1082,7 +1083,7 @@ var valueRegOne = doc.createElement("Value_Reglement_Un"); valueRegOne.innerHTML
 reglementUn.appendChild(codeTypaRegOne);
 reglementUn.appendChild(typeRegOne);
 reglementUn.appendChild(valueRegOne);
-
+Type_Reglement.appendChild(reglementUn);
 // Reglement_Deux
 var reglementDeux = doc.createElement("Reglement");
 if (typeRegDeux != undefined){
@@ -1092,6 +1093,7 @@ var valueRegTwo = doc.createElement("Value_Reglement_Deux"); valueRegTwo.innerHT
 reglementDeux.appendChild(codeTypaRegTwo);
 reglementDeux.appendChild(typeRegTwo);
 reglementDeux.appendChild(valueRegTwo);
+Type_Reglement.appendChild(reglementDeux);
 }
 
 // Reglement_Trois
@@ -1104,11 +1106,8 @@ var valueRegTwo = doc.createElement("Value_Reglement_Trois"); valueRegTwo.innerH
 reglementTrois.appendChild(codeTypaRegTree)
 reglementTrois.appendChild(typeRegTwo);
 reglementTrois.appendChild(valueRegTwo);
-}
-
-Type_Reglement.appendChild(reglementUn);
-Type_Reglement.appendChild(reglementDeux);
 Type_Reglement.appendChild(reglementTrois);
+}
 
 
 //******* */
@@ -1166,171 +1165,176 @@ total.appendChild(totalTVA);
 total.appendChild(totalTTC);
 total.appendChild(totalFodec);
 
-//** Add Produits */
-for (let i = 0; i < this.blArticls.length; i++) {
-  if (this.blArticls[i].n_Imei == "true") {
-    this.blArticls[i].signaler_probleme= true; 
-    var Produit = doc.createElement('Produit')
-    var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit
-    var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit
-    var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
-    var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
-    var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
-    var Signaler_probleme = doc.createElement('Signaler_probleme'); Signaler_probleme.innerHTML = this.blArticls[i].signaler_probleme
-    var Qte = doc.createElement('Qte'); Qte.innerHTML = this.blArticls[i].quantite
-    var Tva = doc.createElement('Tva'); Tva.innerHTML = this.blArticls[i].tva
-    var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.blArticls[i].montant_TVA
-    var fodec = doc.createElement('fodec'); fodec.innerHTML = this.blArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.blArticls[i].ch
-    var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.blArticls[i].prixU
-    var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise
-    var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.blArticls[i].totale_TTC
-    var vProduit_4Gs = doc.createElement('Produit_4Gs');
-    var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
-    var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
+    //** Add Produits */
+    for (let i = 0; i < this.blArticls.length; i++) {
+      if (this.blArticls[i].n_Imei == "true") {
+        this.blArticls[i].signaler_probleme= true; 
+        var Produit = doc.createElement('Produit')
+        var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit
+        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
+        var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
+        var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
+        var Signaler_probleme = doc.createElement('Signaler_probleme'); Signaler_probleme.innerHTML = this.blArticls[i].signaler_probleme
+        var Qte = doc.createElement('Qte'); Qte.innerHTML = this.blArticls[i].quantite
+        var Tva = doc.createElement('Tva'); Tva.innerHTML = this.blArticls[i].tva
+        var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.blArticls[i].montant_TVA
+        var fodec = doc.createElement('fodec'); fodec.innerHTML = this.blArticls[i].fodec
+        var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.blArticls[i].prixU
+        var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise
+        var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.blArticls[i].totale_TTC
+        var vProduit_4Gs = doc.createElement('Produit_4Gs');
+        var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
+        var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
 
+        
+        if(this.blArticls[i].tableaux_produits_emie != undefined){
+          for (let j = 0; j < this.blArticls[i].tableaux_produits_emie.length; j++) {
+            var Produit_4G = doc.createElement('Produit_4G');
+            var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = this.blArticls[i].tableaux_produits_emie[j].n_serie
+            var E1 = doc.createElement('E1'); E1.innerHTML = this.blArticls[i].tableaux_produits_emie[j].e1
+            var E2 = doc.createElement('E2'); E2.innerHTML = this.blArticls[i].tableaux_produits_emie[j].e2
+            Produit_4G.appendChild(N_Serie);
+            Produit_4G.appendChild(E1);
+            Produit_4G.appendChild(E2);
+            vProduit_4Gs.appendChild(Produit_4G);
+          }
+        }else {
+          for (let j = 0; j < this.blArticls[i].quantite; j++) {
+            let tableaux_produits_emie: any = {}; 
+            var Produit_4G = doc.createElement('Produit_4G');
+            tableaux_produits_emie.n_serie= '0',
+            tableaux_produits_emie.e1='0';
+            tableaux_produits_emie.e2='0';
+            var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = tableaux_produits_emie.n_serie
+            var E1 = doc.createElement('E1'); E1.innerHTML = tableaux_produits_emie.e1
+            var E2 = doc.createElement('E2'); E2.innerHTML = tableaux_produits_emie.e2
+            Produit_4G.appendChild(N_Serie);
+            Produit_4G.appendChild(E1);
+            Produit_4G.appendChild(E2);
+            vProduit_4Gs.appendChild(Produit_4G);
+          }
+        }
     
-    if(this.blArticls[i].tableaux_produits_emie != undefined){
-      for (let j = 0; j < this.blArticls[i].tableaux_produits_emie.length; j++) {
-        var Produit_4G = doc.createElement('Produit_4G');
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = this.blArticls[i].tableaux_produits_emie[j].n_serie
-        var E1 = doc.createElement('E1'); E1.innerHTML = this.blArticls[i].tableaux_produits_emie[j].e1
-        var E2 = doc.createElement('E2'); E2.innerHTML = this.blArticls[i].tableaux_produits_emie[j].e2
-        Produit_4G.appendChild(N_Serie);
-        Produit_4G.appendChild(E1);
-        Produit_4G.appendChild(E2);
-        vProduit_4Gs.appendChild(Produit_4G);
+
+        Produit.appendChild(id);
+        Produit.appendChild(Nom);
+        Produit.appendChild(Etat)
+        Produit.appendChild(Prix_U_TTC);
+        Produit.appendChild(Total_HT);
+        Produit.appendChild(Remise);
+        Produit.appendChild(dn_Serie);
+        Produit.appendChild(dn_Imei);
+        Produit.appendChild(Signaler_probleme);
+        Produit.appendChild(Qte);
+        Produit.appendChild(Tva);
+        Produit.appendChild(m_Tva);
+        Produit.appendChild(fodec);
+        Produit.appendChild(vProduit_4Gs);
+        Produit.appendChild( PrixU)
+        Produit.appendChild( TotalFacture )   
+        Produit.appendChild( PrixU )
+        Produits_4Gs.appendChild(Produit);
       }
-    }else {
-      var Produit_4G = doc.createElement('Produit_4G');
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-        var E1 = doc.createElement('E1'); E1.innerHTML = '0'
-        var E2 = doc.createElement('E2'); E2.innerHTML = '0'
-        Produit_4G.appendChild(N_Serie);
-        Produit_4G.appendChild(E1);
-        Produit_4G.appendChild(E2);
-        vProduit_4Gs.appendChild(Produit_4G);
-    }
+      else if (this.blArticls[i].n_Serie == "true") {
+        this.blArticls[i].signaler_probleme= true; 
+        var Produit = doc.createElement('Produit')
+        var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
+        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit; 
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;       
+        var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
+        var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
+        var Signaler_probleme = doc.createElement('Signaler_probleme'); Signaler_probleme.innerHTML = this.blArticls[i].signaler_probleme
+        var Qte = doc.createElement('Qte'); Qte.innerHTML = this.blArticls[i].quantite
+        var Tva = doc.createElement('Tva'); Tva.innerHTML = this.blArticls[i].tva
+        var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.blArticls[i].M_TVA
+        var fodec = doc.createElement('fodec'); fodec.innerHTML = this.blArticls[i].fodec
+        var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.blArticls[i].prixU
+        var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise;
+        var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.blArticls[i].totale_TTC
+        var vN_Series = doc.createElement('N_Series');
+        var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
+        var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
 
 
-    Produit.appendChild(id);
-    Produit.appendChild(Nom);
-    Produit.appendChild(Etat)
-    Produit.appendChild(Prix_U_TTC);
-    Produit.appendChild(Total_HT);
-    Produit.appendChild(Remise);
-    Produit.appendChild(dn_Serie);
-    Produit.appendChild(dn_Imei);
-    Produit.appendChild(Signaler_probleme);
-    Produit.appendChild(Qte);
-    Produit.appendChild(Tva);
-    Produit.appendChild(m_Tva);
-    Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
-    Produit.appendChild(vProduit_4Gs);
-    Produit.appendChild( PrixU)
-    Produit.appendChild( TotalFacture )   
-    Produit.appendChild( PrixU )
-    Produits_4Gs.appendChild(Produit);
-  }
-  else if (this.blArticls[i].n_Serie == "true") {
-    this.blArticls[i].signaler_probleme= true; 
-    var Produit = doc.createElement('Produit')
-    var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
-    var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit; 
-    var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;       
-    var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
-    var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
-    var Signaler_probleme = doc.createElement('Signaler_probleme'); Signaler_probleme.innerHTML = this.blArticls[i].signaler_probleme
-    var Qte = doc.createElement('Qte'); Qte.innerHTML = this.blArticls[i].quantite
-    var Tva = doc.createElement('Tva'); Tva.innerHTML = this.blArticls[i].tva
-    var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.blArticls[i].M_TVA
-    var fodec = doc.createElement('fodec'); fodec.innerHTML = this.blArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.blArticls[i].ch
-    var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.blArticls[i].prixU
-    var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise;
-    var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.blArticls[i].totale_TTC
-    var vN_Series = doc.createElement('N_Series');
-    var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
-    var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
+        if(this.blArticls[i].tableaux_produits_serie != undefined){
+          for (let j = 0; j < this.blArticls[i].tableaux_produits_serie.length; j++) {
+            var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = this.blArticls[i].tableaux_produits_serie[j]
+            vN_Series.appendChild(N_Serie);
+          }
+        }else{
+          for (let j = 0; j < this.blArticls[i].quantite; j++) {
+            let n_serie ='0'
+
+            var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = n_serie
+            vN_Series.appendChild(N_Serie);
+          }
+        }
 
 
-    if(this.blArticls[i].tableaux_produits_serie != undefined){
-      for (let j = 0; j < this.blArticls[i].tableaux_produits_serie.length; j++) {
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = this.blArticls[i].tableaux_produits_serie[j]
-        vN_Series.appendChild(N_Serie);
+        Produit.appendChild(id);
+        Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
+        Produit.appendChild(Prix_U_TTC);
+        Produit.appendChild(Total_HT);
+        Produit.appendChild(Remise);
+        Produit.appendChild(dn_Serie);
+        Produit.appendChild(dn_Imei);
+        Produit.appendChild(Signaler_probleme);
+        Produit.appendChild(Qte);
+        Produit.appendChild(Tva);
+        Produit.appendChild(m_Tva);
+        Produit.appendChild(fodec);
+        Produit.appendChild(vN_Series)
+        Produit.appendChild(PrixU)
+        Produit.appendChild( TotalFacture ) 
+
+        Produits_Series.appendChild(Produit);
       }
-    }else{
-      var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-        vN_Series.appendChild(N_Serie);
+      else {
+        this.blArticls[i].signaler_probleme= true; 
+        var Produit = doc.createElement('Produit')
+        var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
+        var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit;
+        var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
+        var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise;
+        var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
+        var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
+        var Signaler_probleme = doc.createElement('Signaler_probleme'); Signaler_probleme.innerHTML = this.blArticls[i].signaler_probleme
+        var Qte = doc.createElement('Qte'); Qte.innerHTML = this.blArticls[i].quantite
+        var Tva = doc.createElement('Tva'); Tva.innerHTML = this.blArticls[i].tva
+        var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.blArticls[i].montant_TVA
+        var fodec = doc.createElement('fodec'); fodec.innerHTML = this.blArticls[i].fodec
+        var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.blArticls[i].prixU
+        var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.blArticls[i].totale_TTC   
+        var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
+        var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
+
+
+
+        Produit.appendChild(id);
+        Produit.appendChild(Nom);
+        Produit.appendChild(Etat);
+        Produit.appendChild(Prix_U_TTC);
+        Produit.appendChild(Total_HT);
+        Produit.appendChild(Remise);
+        Produit.appendChild(dn_Serie);
+        Produit.appendChild(dn_Imei);
+        Produit.appendChild(Signaler_probleme);
+        Produit.appendChild(Qte);
+        Produit.appendChild(Tva);
+        Produit.appendChild(m_Tva);
+        Produit.appendChild(fodec);
+        Produit.appendChild( TotalFacture )
+        Produit.appendChild( PrixU )
+
+        Produits_Simples.appendChild(Produit);
+      }
     }
+    Produits.appendChild(Produits_Simples);
+    Produits.appendChild(Produits_Series);
+    Produits.appendChild(Produits_4Gs);
 
-
-    Produit.appendChild(id);
-    Produit.appendChild(Nom);
-    Produit.appendChild(Etat);
-    Produit.appendChild(Prix_U_TTC);
-    Produit.appendChild(Total_HT);
-    Produit.appendChild(Remise);
-    Produit.appendChild(dn_Serie);
-    Produit.appendChild(dn_Imei);
-    Produit.appendChild(Signaler_probleme);
-    Produit.appendChild(Qte);
-    Produit.appendChild(Tva);
-    Produit.appendChild(m_Tva);
-    Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
-    Produit.appendChild(vN_Series)
-    Produit.appendChild(PrixU)
-    Produit.appendChild( TotalFacture ) 
-
-    Produits_Series.appendChild(Produit);
-  }
-  else {
-    this.blArticls[i].signaler_probleme= true; 
-    var Produit = doc.createElement('Produit')
-    var id = doc.createElement('Id'); id.innerHTML = this.blArticls[i].id_Produit;
-    var Nom = doc.createElement('Nom'); Nom.innerHTML = this.blArticls[i].nom_Produit;
-    var Etat = doc.createElement('Etat'); Etat.innerHTML = this.blArticls[i].etat;
-    var Remise = doc.createElement('Remise'); Remise.innerHTML = this.blArticls[i].remise;
-    var dn_Imei = doc.createElement('n_Imei'); dn_Imei.innerHTML = this.blArticls[i].n_Imei;
-    var dn_Serie = doc.createElement('n_Serie'); dn_Serie.innerHTML = this.blArticls[i].n_Serie;
-    var Signaler_probleme = doc.createElement('Signaler_probleme'); Signaler_probleme.innerHTML = this.blArticls[i].signaler_probleme
-    var Qte = doc.createElement('Qte'); Qte.innerHTML = this.blArticls[i].quantite
-    var Tva = doc.createElement('Tva'); Tva.innerHTML = this.blArticls[i].tva
-    var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.blArticls[i].montant_TVA
-    var fodec = doc.createElement('fodec'); fodec.innerHTML = this.blArticls[i].fodec
-    var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.blArticls[i].prixU
-    var Charge = doc.createElement('charge'); Charge.innerHTML = this.blArticls[i].ch
-    var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.blArticls[i].totale_TTC   
-    var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.blArticls[i].prix_U_TTC;
-    var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.blArticls[i].total_HT;
-
-
-
-    Produit.appendChild(id);
-    Produit.appendChild(Nom);
-    Produit.appendChild(Etat);
-    Produit.appendChild(Prix_U_TTC);
-    Produit.appendChild(Total_HT);
-    Produit.appendChild(Remise);
-    Produit.appendChild(dn_Serie);
-    Produit.appendChild(dn_Imei);
-    Produit.appendChild(Signaler_probleme);
-    Produit.appendChild(Qte);
-    Produit.appendChild(Tva);
-    Produit.appendChild(m_Tva);
-    Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
-    Produit.appendChild( TotalFacture )
-    Produit.appendChild( PrixU )
-
-    Produits_Simples.appendChild(Produit);
-  }
-}
-Produits.appendChild(Produits_Simples);
-Produits.appendChild(Produits_Series);
-Produits.appendChild(Produits_4Gs);
 
 
 //******* */
@@ -1344,15 +1348,15 @@ doc.documentElement.appendChild(Type_Reglement);
 return doc
 }
 
-  convertFileXml(theBlob: Blob, fileName: string): File {
+convertFileXml(theBlob: Blob, fileName: string): File {
     var b: any = theBlob;
     b.lastModifiedDate = new Date();
     b.name = fileName;
     return <File>theBlob;
-  }
+}
 
     //** Generate the PDF file  */
-  async generatePDF(id :any){    
+async generatePDF(id :any){    
         // check type de reglement 
         let typeRegOne : any ; 
         let typeRegTwo : any ; 
@@ -1560,9 +1564,9 @@ return doc
        },1000)   
 
 
-  }
+}
    
-  saveBL(){
+saveBL(){
     let frais_Livraison = 0;
     let url = "assets/BL.xml";
     const formData : any = new FormData();
@@ -1617,6 +1621,6 @@ return doc
                  console.log(err)
             });
     });
-  }
+}
 }
  

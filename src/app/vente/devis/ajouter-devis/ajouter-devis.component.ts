@@ -1109,7 +1109,7 @@ export class AjouterDevisComponent implements OnInit {
    reglementUn.appendChild(codeTypaRegOne);
    reglementUn.appendChild(typeRegOne);
    reglementUn.appendChild(valueRegOne);
-
+   Type_Reglement.appendChild(reglementUn);    
   // Reglement_Deux
   var reglementDeux = doc.createElement("Reglement");
   if (typeRegDeux != undefined){
@@ -1119,6 +1119,7 @@ export class AjouterDevisComponent implements OnInit {
     reglementDeux.appendChild(codeTypaRegTwo);
     reglementDeux.appendChild(typeRegTwo);
     reglementDeux.appendChild(valueRegTwo);
+    Type_Reglement.appendChild(reglementDeux);
   }
 
   // Reglement_Trois
@@ -1131,11 +1132,11 @@ export class AjouterDevisComponent implements OnInit {
     reglementTrois.appendChild(codeTypaRegTree)
     reglementTrois.appendChild(typeRegTwo);
     reglementTrois.appendChild(valueRegTwo);
+    Type_Reglement.appendChild(reglementTrois);
  }
    
-   Type_Reglement.appendChild(reglementUn);
-   Type_Reglement.appendChild(reglementDeux);
-   Type_Reglement.appendChild(reglementTrois);
+   
+   
 
 
    //******* */
@@ -1208,7 +1209,6 @@ export class AjouterDevisComponent implements OnInit {
         var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
         var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
         var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-        var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
         var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
         var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise
         var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -1229,14 +1229,20 @@ export class AjouterDevisComponent implements OnInit {
             vProduit_4Gs.appendChild(Produit_4G);
           }
         }else {
-          var Produit_4G = doc.createElement('Produit_4G');
-            var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-            var E1 = doc.createElement('E1'); E1.innerHTML = '0'
-            var E2 = doc.createElement('E2'); E2.innerHTML = '0'
+          for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+            let tableaux_produits_emie: any = {}; 
+            var Produit_4G = doc.createElement('Produit_4G');
+            tableaux_produits_emie.n_serie= '0',
+            tableaux_produits_emie.e1='0';
+            tableaux_produits_emie.e2='0';
+            var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = tableaux_produits_emie.n_serie
+            var E1 = doc.createElement('E1'); E1.innerHTML = tableaux_produits_emie.e1
+            var E2 = doc.createElement('E2'); E2.innerHTML = tableaux_produits_emie.e2
             Produit_4G.appendChild(N_Serie);
             Produit_4G.appendChild(E1);
             Produit_4G.appendChild(E2);
             vProduit_4Gs.appendChild(Produit_4G);
+          }
         }
     
 
@@ -1253,7 +1259,6 @@ export class AjouterDevisComponent implements OnInit {
         Produit.appendChild(Tva);
         Produit.appendChild(m_Tva);
         Produit.appendChild(fodec);
-        Produit.appendChild(Charge);
         Produit.appendChild(vProduit_4Gs);
         Produit.appendChild( PrixU)
         Produit.appendChild( TotalFacture )   
@@ -1273,7 +1278,6 @@ export class AjouterDevisComponent implements OnInit {
         var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
         var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].M_TVA
         var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-        var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
         var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
         var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise;
         var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -1288,8 +1292,12 @@ export class AjouterDevisComponent implements OnInit {
             vN_Series.appendChild(N_Serie);
           }
         }else{
-          var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
+          for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+            let n_serie ='0'
+
+            var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = n_serie
             vN_Series.appendChild(N_Serie);
+          }
         }
 
 
@@ -1306,7 +1314,6 @@ export class AjouterDevisComponent implements OnInit {
         Produit.appendChild(Tva);
         Produit.appendChild(m_Tva);
         Produit.appendChild(fodec);
-        Produit.appendChild(Charge);
         Produit.appendChild(vN_Series)
         Produit.appendChild(PrixU)
         Produit.appendChild( TotalFacture ) 
@@ -1328,7 +1335,6 @@ export class AjouterDevisComponent implements OnInit {
         var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
         var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
         var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
-        var Charge = doc.createElement('charge'); Charge.innerHTML = this.devisArticls[i].ch
         var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.devisArticls[i].totale_TTC   
         var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.devisArticls[i].prix_U_TTC;
         var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.devisArticls[i].total_HT;
@@ -1348,7 +1354,6 @@ export class AjouterDevisComponent implements OnInit {
         Produit.appendChild(Tva);
         Produit.appendChild(m_Tva);
         Produit.appendChild(fodec);
-        Produit.appendChild(Charge);
         Produit.appendChild( TotalFacture )
         Produit.appendChild( PrixU )
 

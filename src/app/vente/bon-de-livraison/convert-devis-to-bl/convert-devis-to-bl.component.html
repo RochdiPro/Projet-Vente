@@ -1,4 +1,4 @@
-<h1 class="col-xs-8 text-center">Convertir le devis N° {{devis_ID}} vers BL </h1>
+<h1 class="col-xs-8 text-center">Convertir Proforma N° {{devis_ID}} vers BL </h1>
 <br>
 <div class="col-xs-8 text-center">
     <div class="spinner-border" role="status" *ngIf="!loading">
@@ -6,7 +6,7 @@
     </div>
 </div>
 <br>
-<div class="container">
+<div class="container" *ngIf="loading">
     <div>
         <h5>1- Informations Générales</h5>
         <br>

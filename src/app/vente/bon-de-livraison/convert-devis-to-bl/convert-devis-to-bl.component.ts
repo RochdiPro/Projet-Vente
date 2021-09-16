@@ -234,11 +234,11 @@ export class ConvertDevisToBlComponent implements OnInit {
             this.totalMontantTVA = data.Total[0].TotalTVA[0];
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
-            if(data.Reglements[0].Reglement[1] != "")  {
+            if(data.Reglements[0].Reglement[1] != undefined)  {
               this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
               this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
             }      
-            if(data.Reglements[0].Reglement[2] != "")  {
+            if(data.Reglements[0].Reglement[2] != undefined)  {
               this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
               this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
             }  
@@ -276,7 +276,6 @@ export class ConvertDevisToBlComponent implements OnInit {
             { 
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
               this.newAttribute.etat = (data.Produits[0].Produits_Simples[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
@@ -306,7 +305,6 @@ export class ConvertDevisToBlComponent implements OnInit {
               { 
                 this.newAttribute = {};
                 this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
                 this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
                 this.newAttribute.etat = (data.Produits[0].Produits_4Gs[0].Produit[i].Etat[0]);
                 this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
@@ -347,7 +345,6 @@ export class ConvertDevisToBlComponent implements OnInit {
               {
                 this.newAttribute = {};
                 this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
                 this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom[0]); 
                 this.newAttribute.etat= (data.Produits[0].Produits_Series[0].Produit[i].Etat[0]);
                 this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
@@ -582,6 +579,7 @@ var valueRegOne = doc.createElement("Value_Reglement_Un"); valueRegOne.innerHTML
 reglementUn.appendChild(codeTypaRegOne);
 reglementUn.appendChild(typeRegOne);
 reglementUn.appendChild(valueRegOne);
+Type_Reglement.appendChild(reglementUn);
 
 // Reglement_Deux
 var reglementDeux = doc.createElement("Reglement");
@@ -592,6 +590,7 @@ var valueRegTwo = doc.createElement("Value_Reglement_Deux"); valueRegTwo.innerHT
 reglementDeux.appendChild(codeTypaRegTwo);
 reglementDeux.appendChild(typeRegTwo);
 reglementDeux.appendChild(valueRegTwo);
+Type_Reglement.appendChild(reglementDeux);
 }
 
 // Reglement_Trois
@@ -604,11 +603,9 @@ var valueRegTwo = doc.createElement("Value_Reglement_Trois"); valueRegTwo.innerH
 reglementTrois.appendChild(codeTypaRegTree)
 reglementTrois.appendChild(typeRegTwo);
 reglementTrois.appendChild(valueRegTwo);
+Type_Reglement.appendChild(reglementTrois);
 }
 
-Type_Reglement.appendChild(reglementUn);
-Type_Reglement.appendChild(reglementDeux);
-Type_Reglement.appendChild(reglementTrois);
 
 
 //******* */
@@ -616,8 +613,8 @@ Type_Reglement.appendChild(reglementTrois);
 Produits.setAttribute('Fournisseur','InfoNet');
 Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
 
-var nameEtat = "Devis_BL";
-var typeName = "Devis";
+var nameEtat = "Proforma_BL";
+var typeName = "Proforma";
 var locale_depot = this.infoFormGroup.get('local').value.id_Local;
 var devise = this.infoFormGroup.get('devise').value;
 var signaler_Prob = doc.createTextNode("True");
@@ -844,13 +841,14 @@ doc.documentElement.appendChild(Type_Reglement);
 return doc
 }
 
-  convertFileXml(theBlob: Blob, fileName: string): File {
+convertFileXml(theBlob: Blob, fileName: string): File {
     var b: any = theBlob;
     b.lastModifiedDate = new Date();
     b.name = fileName;
     return <File>theBlob;
-  }
-  contenuTable(data: any, columns: any) {
+}
+
+contenuTable(data: any, columns: any) {
     var body = [];
     
     body.push(columns);
@@ -863,9 +861,9 @@ return doc
       body.push(dataRow);
     });
      return body;
-  }
+}
   //** Generate a table */
-  generateTable(data: any, columns: any) {
+generateTable(data: any, columns: any) {
     return {
       table: {
         headerRows: 1,
@@ -874,10 +872,10 @@ return doc
         alignment: "center"
       }, layout: 'headerLineOnly',
     };
-  }
+}
 
   //** Convert the Image in base64  */
-  getBase64ImageFromURL(url : any) {
+getBase64ImageFromURL(url : any) {
     return new Promise((resolve, reject) => {
       var img = new Image();
       img.setAttribute("crossOrigin", "anonymous");
@@ -895,10 +893,10 @@ return doc
       };
       img.src = url;
     });
-  }
+}
   
     //** Generate the PDF file  */
-  async generatePDF(id_bl :any, id_devis: any){      
+async generatePDF(id_bl :any, id_devis: any){      
       this.bLservice.getBlByID(id_bl).subscribe((res: any)=>{  
         this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
      });   
@@ -1074,7 +1072,7 @@ return doc
 
 }
 //** Convertir le Devis vers BL */
-  convertDevisDL(){
+convertDevisDL(){
     let formData : any = new FormData()
     formData.append('Id_Devis', this.devis_ID);
     formData.append('Total_Retunes',this.totalTTc_)

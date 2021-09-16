@@ -126,7 +126,7 @@ export class FactureATermeComponent implements OnInit {
     if(this.champ == ''){
       Swal.fire('S\'il vous plaît sélectionner un client','','info')
     }else{
-      this.bLService.filterDevisByRangeDate(this.champ, this.date1, this.date2).subscribe((data : any)=>{
+      this.bLService.filterBLByRangeDate(this.champ, this.date1, this.date2).subscribe((data : any)=>{
         this.dataSourceBl= new MatTableDataSource(data.body);    
         this.dataSourceBl.sort = this.sort; 
         this.dataSourceBl.paginator = this.paginator;

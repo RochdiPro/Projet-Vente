@@ -189,7 +189,7 @@ isAccompli: boolean = true;
   }
 
     //** infos   */
- completezInof(prod: any , i: any  ){
+ completezInof(prod: any , i: any , data: any ){
    
     //** if prod is 4G */ 
       if(this.factureArticls[i].n_Imei == "true"){

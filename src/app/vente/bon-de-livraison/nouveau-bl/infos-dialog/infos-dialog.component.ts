@@ -35,7 +35,7 @@ export class InfosDialogComponent implements OnInit {
       for(let j = 0 ; j< this.nbrQte.length; j++)
       if(this.item.tableaux_produits_emie[j] != undefined)
         { console.log(this.item.tableaux_produits_emie[j]);
-          this.numSerie[j] = this.item.tableaux_produits_emie[j].n_serie;
+          this.numSerie[j] = this.item.tableaux_produits_emie[j].n_serie[0];
           this.num_ImeiOne[j]= this.item.tableaux_produits_emie[j].e1
           this.num_ImeiTwo[j]= this.item.tableaux_produits_emie[j].e2
           

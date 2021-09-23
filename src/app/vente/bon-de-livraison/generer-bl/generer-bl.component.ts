@@ -133,8 +133,9 @@ export class GenererBlComponent implements OnInit {
   client_id : string = ''
   valueRegTree: any ;
   id_modeP_typeTree: any ; 
-  typeRegTwo: any ;
-  typeRegTree: any ;
+  typeRegOne: any; 
+  typeRegTwo: any 
+  typeRegTree : any 
   locals: any = []; 
   local_id: any; 
   local: any;
@@ -221,9 +222,9 @@ export class GenererBlComponent implements OnInit {
       });
     }
          //** infos   */
-  completezInof(prod: any , i: any  ){
+  completezInof(prod: any , i: any  , data : any ){
     //** if prod is 4G */ 
-      if(this.devisArticls[i].N_Imei == "true"){
+      if(this.devisArticls[i].n_Imei == "true"){
         const dialogRef = this.dialog.open(InfosDialogComponent,{
           width:'100%',data : {
             formPage: prod
@@ -236,7 +237,7 @@ export class GenererBlComponent implements OnInit {
         });
       }
     //** if prod serie */
-      else if(this.devisArticls[i].N_Serie == "true"){
+      else if(this.devisArticls[i].n_Serie == "true"){
         const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
           width:'100%',data : {
             formPage: prod
@@ -378,6 +379,7 @@ export class GenererBlComponent implements OnInit {
       }
     }
   }
+  //** Get Detail Devis  */
   getDetail(){
     this.devisService.detail(this.devis_ID.toString()).subscribe((detail: any)=>{
       //** Parsing an XML file unisng  'xml2js' lebraby*/
@@ -406,6 +408,33 @@ export class GenererBlComponent implements OnInit {
             this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
             this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
           }  
+          if(this.modePaiement=='4')
+            this.typeRegOne ='Espèces';
+          else if (this.modePaiement=='1'){
+            this.typeRegOne ='Virement';
+          }else if (this.modePaiement=='2'){
+            this.typeRegOne ='Chèque';
+          }else if (this.modePaiement=='3'){
+            this.typeRegOne ='Monétique';
+          }
+          if(this.id_modeP_typeTwo=='4')
+            this.typeRegTwo ='Espèces';
+          else if (this.id_modeP_typeTwo=='1'){
+            this.typeRegTwo ='Virement';
+          }else if (this.id_modeP_typeTwo=='2'){
+            this.typeRegTwo ='Chèque';
+          }else if (this.id_modeP_typeTwo=='3'){
+            this.typeRegTwo ='Monétique';
+          }
+          if( this.id_modeP_typeTree =='4')
+          this.typeRegTree ='Espèces';
+          else if ( this.id_modeP_typeTree =='1'){
+            this.typeRegTree ='Virement';
+          }else if ( this.id_modeP_typeTree =='2'){
+            this.typeRegTree ='Chèque';
+          }else if ( this.id_modeP_typeTree =='3'){
+            this.typeRegTree ='Monétique';
+          }
         });
         
         if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
@@ -419,8 +448,8 @@ export class GenererBlComponent implements OnInit {
             this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
             this.newAttribute.montant_TVA=(data.Produits[0].Produits_Simples[0].Produit[i].Montant_Tva[0]);
             this.newAttribute.fodec=(data.Produits[0].Produits_Simples[0].Produit[i].fodec[0]);
-            this.newAttribute.N_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
-            this.newAttribute.N_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
+            this.newAttribute.n_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
+            this.newAttribute.n_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
             this.newAttribute.produits_simple = (data.Produits[0].Produits_Simples[0].Produit[i].produits_simple);           
             this.newAttribute.remise= (data.Produits[0].Produits_Simples[0].Produit[i].Remise[0]);
             this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Simples[0].Produit[i].PrixUTTC[0]);
@@ -449,8 +478,8 @@ export class GenererBlComponent implements OnInit {
               this.newAttribute.montant_TVA=(data.Produits[0].Produits_4Gs[0].Produit[i].Montant_Tva[0]);
 
               this.newAttribute.fodec=(data.Produits[0].Produits_4Gs[0].Produit[i].fodec[0]);
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_4Gs[0].Produit[i].produits_simple); 
               this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];          
               let tableaux_produits_emie = []
@@ -490,8 +519,8 @@ export class GenererBlComponent implements OnInit {
    
 
               this.newAttribute.fodec=(data.Produits[0].Produits_Series[0].Produit[i].fodec);              
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_Series[0].Produit[i].produits_simple);           
               this.newAttribute.tva = data.Produits[0].Produits_Series[0].Produit[i].Tva[0]; 
               let tableaux_produits_serie = []
@@ -1161,31 +1190,31 @@ nextStep(stepper : MatStepper){
     let typeRegUn : any ; 
     let typeRegDeux : any ; 
     let typeRegTrois: any ; 
-      if(this.addReglementFormGroup.get('typeRegOne').value=='4')
+      if(this.modePaiement =='4')
       typeRegUn ='Espèces';
-    else if (this.addReglementFormGroup.get('typeRegOne').value=='1'){
+    else if (this.modePaiement =='1'){
       typeRegUn ='Virement';
-    }else if (this.addReglementFormGroup.get('typeRegOne').value=='2'){
+    }else if (this.modePaiement =='2'){
       typeRegUn ='Chèque';
-    }else if (this.addReglementFormGroup.get('typeRegOne').value=='3'){
+    }else if (this.modePaiement =='3'){
       typeRegUn ='Monétique';
     }
-    if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
+    if(this.id_modeP_typeTwo =='4')
        typeRegDeux ='Espèces';
-    else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
+    else if (this.id_modeP_typeTwo =='1'){
       typeRegDeux ='Virement';
-    }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
+    }else if (this.id_modeP_typeTwo =='2'){
       typeRegDeux ='Chèque';
-    }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
+    }else if (this.id_modeP_typeTwo =='3'){
       typeRegDeux ='Monétique';
     }
-    if(this.addReglementFormGroup.get('typeRegTree').value=='4')
+    if(this.id_modeP_typeTree =='4')
     typeRegTrois ='Espèces';
-    else if (this.addReglementFormGroup.get('typeRegTree').value=='1'){
+    else if (this.id_modeP_typeTree =='1'){
       typeRegTrois ='Virement';
-    }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
+    }else if (this.id_modeP_typeTree =='2'){
       typeRegTrois ='Chèque';
-    }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
+    }else if (this.id_modeP_typeTree =='3'){
       typeRegTrois ='Monétique';
     }
 var doc = document.implementation.createDocument(url, 'Bon_Livraison', null);
@@ -1210,6 +1239,7 @@ var Produits_Series = doc.createElement('Produits_Series')
 var Produits_4Gs = doc.createElement('Produits_4Gs')
 var Produits_Simples  = doc.createElement('Produits_Simples')
 var signaler_Probleme = doc.createElement("Signaler_Probleme");
+var reglements = doc.createElement("Reglements");
 
 //** TVA* */
 var Taxes = doc.createElement("Taxes");
@@ -1281,14 +1311,15 @@ Type_Reglement.appendChild(reglementTrois);
 }
 
 
+
 //******* */
 
 Produits.setAttribute('Fournisseur','InfoNet');
 Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
 
-var nameEtat = 'Devis_Generate';
-var typeName = "Devis";
-var locale_depot = this.infoFormGroup.get('local').value.id_Local;
+var nameEtat = "Proforma_BL";
+var typeName = "Proforma";
+var locale_depot = this.local.id_Local;
 var devise = this.infoFormGroup.get('devise').value;
 var signaler_Prob = doc.createTextNode("True");
 var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
@@ -1351,7 +1382,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -1372,14 +1402,20 @@ for (let i = 0; i < this.devisArticls.length; i++) {
         vProduit_4Gs.appendChild(Produit_4G);
       }
     }else {
-      var Produit_4G = doc.createElement('Produit_4G');
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-        var E1 = doc.createElement('E1'); E1.innerHTML = '0'
-        var E2 = doc.createElement('E2'); E2.innerHTML = '0'
+      for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+        let tableaux_produits_emie: any = {}; 
+        var Produit_4G = doc.createElement('Produit_4G');
+        tableaux_produits_emie.n_serie= '0',
+        tableaux_produits_emie.e1='0';
+        tableaux_produits_emie.e2='0';
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = tableaux_produits_emie.n_serie
+        var E1 = doc.createElement('E1'); E1.innerHTML = tableaux_produits_emie.e1
+        var E2 = doc.createElement('E2'); E2.innerHTML = tableaux_produits_emie.e2
         Produit_4G.appendChild(N_Serie);
         Produit_4G.appendChild(E1);
         Produit_4G.appendChild(E2);
         vProduit_4Gs.appendChild(Produit_4G);
+      }
     }
 
 
@@ -1396,7 +1432,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vProduit_4Gs);
     Produit.appendChild( PrixU)
     Produit.appendChild( TotalFacture )   
@@ -1416,7 +1451,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].M_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise;
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -1431,8 +1465,12 @@ for (let i = 0; i < this.devisArticls.length; i++) {
         vN_Series.appendChild(N_Serie);
       }
     }else{
-      var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
+      for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+        let n_serie ='0'
+
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = n_serie
         vN_Series.appendChild(N_Serie);
+      }
     }
 
 
@@ -1449,7 +1487,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vN_Series)
     Produit.appendChild(PrixU)
     Produit.appendChild( TotalFacture ) 
@@ -1471,7 +1508,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
-    var Charge = doc.createElement('charge'); Charge.innerHTML = this.devisArticls[i].ch
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.devisArticls[i].totale_TTC   
     var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.devisArticls[i].prix_U_TTC;
     var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.devisArticls[i].total_HT;
@@ -1491,7 +1527,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild( TotalFacture )
     Produit.appendChild( PrixU )
 
@@ -1501,6 +1536,8 @@ for (let i = 0; i < this.devisArticls.length; i++) {
 Produits.appendChild(Produits_Simples);
 Produits.appendChild(Produits_Series);
 Produits.appendChild(Produits_4Gs);
+
+
 //******* */
 doc.documentElement.appendChild(etatElement);
 doc.documentElement.appendChild(infoElement);

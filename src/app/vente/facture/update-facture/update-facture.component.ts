@@ -474,7 +474,6 @@ export class UpdateFactureComponent implements OnInit {
           { 
             this.newAttribute = {};
             this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-            this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
             this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
             this.newAttribute.etat = (data.Produits[0].Produits_Simples[0].Produit[i].Etat[0]);
 
@@ -510,7 +509,6 @@ export class UpdateFactureComponent implements OnInit {
             { 
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
               this.newAttribute.etat = (data.Produits[0].Produits_4Gs[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
@@ -560,7 +558,6 @@ export class UpdateFactureComponent implements OnInit {
             {
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom); 
               this.newAttribute.etat= (data.Produits[0].Produits_Series[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
@@ -589,7 +586,6 @@ export class UpdateFactureComponent implements OnInit {
             this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
             this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
             
-            this.newAttribute.charge = (data.Produits[0].Produits_Series[0].Produit[i].charge);
             this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Series[0].Produit[i].PrixUTTC[0]);
             this.newAttribute.total_HT= (data.Produits[0].Produits_Series[0].Produit[i].Total_HT[0]);
             this.newAttribute.totale_TTC = (data.Produits[0].Produits_Series[0].Produit[i].TotalFacture[0]);

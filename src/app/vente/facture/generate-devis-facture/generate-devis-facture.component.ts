@@ -132,7 +132,9 @@ export class GenerateDevisFactureComponent implements OnInit {
   typeRegOne: any; 
   disable : boolean = true; 
   total_Retenues : any = 0 ;
-  Droit_timbre = '0.600'
+  Droit_timbre = '0.600';
+  local_id: any ;
+  local: any ; 
 
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
@@ -251,6 +253,12 @@ export class GenerateDevisFactureComponent implements OnInit {
     }); 
 
   }
+      //** Get local by id */
+  getLocalById(id: any ){
+        this.devisService.getLocalById(id).subscribe((res: any)=>{
+          this.local= res.body 
+        });
+  }
   //** Get Devis by ID */
   async getDevisByID(){
     this.devisService.getQuoteByID(this.devis_ID.toString()).subscribe((data: any)=>{
@@ -275,6 +283,8 @@ export class GenerateDevisFactureComponent implements OnInit {
           xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{      
             data =res.Devis;
             this.devise= data["Informations-Generales"][0].Devise[0];
+            this.local_id= data["Informations-Generales"][0].Depot[0];
+            this.getLocalById(this.local_id)
             this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
             this.totalMontantFodec= data.Total[0].TotalFodec[0];
             this.totalRemise = data.Total[0].TotalRemise[0];
@@ -282,11 +292,11 @@ export class GenerateDevisFactureComponent implements OnInit {
             this.totalMontantTVA = data.Total[0].TotalTVA[0];
             this.totalTTc = data.Total[0].TotalTTC[0];
             this.totalTTc_reg = data.Reglements[0].Reglement[0].Value_Reglement_Un[0];  
-            if(data.Reglements[0].Reglement[1] != "")  {
+            if(data.Reglements[0].Reglement[1] != undefined)  {
               this.valueRegTwo = data.Reglements[0].Reglement[1].Value_Reglement_Deux[0];
               this.id_modeP_typeTwo= data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]
             }      
-            if(data.Reglements[0].Reglement[2] != "")  {
+            if(data.Reglements[0].Reglement[2] != undefined)  {
               this.valueRegTree = data.Reglements[0].Reglement[2].Value_Reglement_Trois[0];
               this.id_modeP_typeTree= data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]
             }  
@@ -324,7 +334,6 @@ export class GenerateDevisFactureComponent implements OnInit {
             { 
               this.newAttribute = {};
               this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
               this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
               this.newAttribute.etat = (data.Produits[0].Produits_Simples[0].Produit[i].Etat[0]);
               this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
@@ -354,7 +363,6 @@ export class GenerateDevisFactureComponent implements OnInit {
               { 
                 this.newAttribute = {};
                 this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
                 this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
                 this.newAttribute.etat = (data.Produits[0].Produits_4Gs[0].Produit[i].Etat[0]);
                 this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
@@ -395,7 +403,6 @@ export class GenerateDevisFactureComponent implements OnInit {
               {
                 this.newAttribute = {};
                 this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
                 this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom[0]); 
                 this.newAttribute.etat= (data.Produits[0].Produits_Series[0].Produit[i].Etat[0]);
                 this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
@@ -426,7 +433,6 @@ export class GenerateDevisFactureComponent implements OnInit {
               this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
               this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
               
-              this.newAttribute.charge = (data.Produits[0].Produits_Series[0].Produit[i].charge);
               this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Series[0].Produit[i].PrixUTTC[0]);
               this.newAttribute.total_HT= (data.Produits[0].Produits_Series[0].Produit[i].Total_HT[0]);
               this.newAttribute.totale_TTC = (data.Produits[0].Produits_Series[0].Produit[i].TotalFacture[0]);

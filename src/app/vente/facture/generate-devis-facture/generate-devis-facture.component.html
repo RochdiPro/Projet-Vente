@@ -1,4 +1,4 @@
-<h1 class="col-xs-8 text-center">Générer le devis N° {{devis_ID}} vers Facture </h1>
+<h1 class="col-xs-8 text-center">Générer le Proforma N° {{devis_ID}} vers Facture </h1>
 <br>
 <div class="col-xs-8 text-center">
     <div class="spinner-border" role="status" *ngIf="!loading">
@@ -30,6 +30,10 @@
             </div>
             <!-- +++++++++++++++++++++++++++++++++ -->
             <div class="row">
+                <div class="col-md-4 mb-3">
+                    <mat-label><b>Local : </b></mat-label>
+                    <mat-label> {{ local.nom_Local}} </mat-label>
+                </div>
                 <!-- select Custemer  -->
                 <div class="col-md-4 mb-3" *ngIf="loading">
                     <mat-label><b> Client(e) : </b></mat-label>
@@ -237,7 +241,7 @@
             <div class="row ">
 
                 <button mat-raised-button class="add-article " (click)="convertDevisFacture()" [disabled]="disable">
-                    Générer le Devis </button>
+                    Générer Facture </button>
             </div>
             <br>
         </form>

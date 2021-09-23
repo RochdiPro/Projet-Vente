@@ -3,13 +3,8 @@
     <div mat-dialog-content>
         <table>
             <tbody *ngFor="let qte of nbrQte;let i = index;">
-                <tr><b>Ligne n° {{i+1}} </b></tr>
                 <tr>
-                    <td>Numéro Série</td>
-                    <td>Numéro Imei 1</td>
-                    <td>Numéro Imei 2</td>
-                </tr>
-                <tr>
+                    <td class="td-number"><b>{{i+1}} - </b></td>
                     <td>
                         <ng-select placeholder="Numéro Série" [searchable]="true" [clearable]="false" id="{{i}}"
                             [(ngModel)]="numSerie[i]" (change)="verifN_serieProduit($event, i )">

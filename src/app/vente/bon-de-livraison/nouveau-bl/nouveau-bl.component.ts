@@ -185,7 +185,9 @@ locals: any = [];
   }
 
     //** infos   */
- completezInof(prod: any , i: any  ){
+ completezInof(prod: any , i: any , data: any ){
+   console.log(data);
+   
    
     //** if prod is 4G */ 
       if(this.blArticls[i].n_Imei == "true"){
@@ -512,6 +514,7 @@ locals: any = [];
                   this.newAttribute.produits4g = "";
                   this.newAttribute.etat = '' 
                   this.newAttribute.etat = 'Dispo.'
+                  console.log(this.newAttribute);
                   this.blArticls.push(this.newAttribute);
                   this.calculTotal();
                   this.calculAssiettes();
@@ -683,6 +686,7 @@ async getProuduitByCode(){
                   this.newAttribute.produitsSeries = "";
                   this.newAttribute.produits4g = ""; 
                   this.newAttribute.etat = 'Dispo.'
+                  
                   this.blArticls.push(this.newAttribute);
                   this.calculTotal();
                   this.calculAssiettes();
@@ -1167,6 +1171,8 @@ total.appendChild(totalFodec);
 
     //** Add Produits */
     for (let i = 0; i < this.blArticls.length; i++) {
+    
+      
       if (this.blArticls[i].n_Imei == "true") {
         this.blArticls[i].signaler_probleme= true; 
         var Produit = doc.createElement('Produit')

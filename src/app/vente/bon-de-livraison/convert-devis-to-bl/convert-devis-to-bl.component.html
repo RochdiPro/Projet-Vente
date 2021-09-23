@@ -30,6 +30,10 @@
             </div>
             <!-- +++++++++++++++++++++++++++++++++ -->
             <div class="row">
+                <div class="col-md-4 mb-3">
+                    <mat-label><b>Local : </b></mat-label>
+                    <mat-label> {{ local.nom_Local}} </mat-label>
+                </div>
                 <!-- select Custemer  -->
                 <div class="col-md-4 mb-3" *ngIf="loading">
                     <mat-label><b> Client(e) : </b></mat-label>
@@ -56,6 +60,7 @@
                             <th>Remise(%)</th>
                             <th>Fodec(%)</th>
                             <th>Total TTC</th>
+                            <th>Compléter les infos</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,6 +96,11 @@
                             <td>
                                 <input [ngModel]="item.totale_TTC" [ngModelOptions]="{standalone: true}"
                                     class="form-control" type="text" name="{{item.totale_TTC}}" disabled />
+                            </td>
+                            <td>
+                                <button mat-raised-button class="add-article "
+                                    (click)="completezInof(item, i ,devisArticls)">
+                                    Complétez les informations </button>
                             </td>
                         </tr>
                     </tbody>

@@ -206,7 +206,7 @@ fileReader.onloadend = () =>{
               typeRegOne ='Monétique';
   }
   let typeRegTwo : any ; 
-  if (data.Reglements[0].Reglement[1] !== ""){
+  if (data.Reglements[0].Reglement[1] !== undefined){
     if (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='4')
     typeRegTwo ='Espèces';
     else if  (data.Reglements[0].Reglement[1].code_Type_Reglement_Deux[0]=='1'){
@@ -218,7 +218,7 @@ fileReader.onloadend = () =>{
   }
   }
   let typeRegTree : any ; 
-  if (data.Reglements[0].Reglement[2] !== ""){
+  if (data.Reglements[0].Reglement[2] !== undefined){
     if (data.Reglements[0].Reglement[0].code_Type_Reglement_Trois[0]=='4')
     typeRegTree ='Espèces';
     else if  (data.Reglements[0].Reglement[2].code_Type_Reglement_Trois[0]=='1'){

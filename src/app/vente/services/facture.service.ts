@@ -121,4 +121,9 @@ export class FactureService {
   updateFacture(formData: any):Observable<any>{
     return this.http.post(_url+'Modifier_Facture/',formData);
   }
+
+  //** Get Details BLs  */
+  getDetailsBls(liste: any ): Observable<any>{
+    return this.http.post(_url+'Detail_BLs_en_Facture',liste,{observe:'response', responseType : 'blob'});
+  }
 }

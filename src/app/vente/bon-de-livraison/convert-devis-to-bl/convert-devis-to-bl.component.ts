@@ -11,6 +11,9 @@ import Swal from 'sweetalert2';
 import * as xml2js from 'xml2js';
 import { BlService } from '../../services/bl.service';
 import { DevisService } from '../../services/devis.service';
+import { InfoSerieDialogComponent } from '../nouveau-bl/info-serie-dialog/info-serie-dialog.component';
+import { InfoSimpleDialogComponent } from '../nouveau-bl/info-simple-dialog/info-simple-dialog.component';
+import { InfosDialogComponent } from '../nouveau-bl/infos-dialog/infos-dialog.component';
 
 const pdfMake = require("pdfmake/build/pdfmake");
 const pdfFonts = require("pdfmake/build/vfs_fonts");
@@ -128,6 +131,8 @@ export class ConvertDevisToBlComponent implements OnInit {
   valueRegTree : any ; 
   id_modeP_typeTree: any ;
   typeRegOne: any; 
+  local_id : any ; 
+  local: any ; 
   
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
@@ -149,6 +154,7 @@ export class ConvertDevisToBlComponent implements OnInit {
 
       this.infoFormGroup = this._formBuilder.group({
       numDevis:[''],
+      local: [''],
       dateDevis:[''],
       modePaiement: [''],
       typeDevis:[''],
@@ -183,7 +189,47 @@ export class ConvertDevisToBlComponent implements OnInit {
       note: ['',]
     });
   }
-
+      //** infos   */
+      completezInof(prod: any , i: any  , data: any){
+        console.log(data);
+        
+            //** if prod is 4G */ 
+              if(this.devisArticls[i].N_Imei == "true"){
+                const dialogRef = this.dialog.open(InfosDialogComponent,{
+                  width:'100%',data : {
+                    formPage: prod
+                  }
+                });
+                dialogRef.afterClosed().subscribe((res: any)=>{
+                  if(res !=undefined){
+                    this.devisArticls[i].tableaux_produits_emie = res.data; 
+                  }
+                });
+              }
+            //** if prod serie */
+              else if(this.devisArticls[i].N_Serie == "true"){
+                const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
+                  width:'100%',data : {
+                    formPage: prod
+                  }
+                });
+                dialogRef.afterClosed().subscribe((res : any )=>{
+                  if(res !=undefined)
+                    this.devisArticls[i].tableaux_produits_serie = res.data; 
+                });
+              }else{
+                const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
+                  data : {
+                    formPage: prod
+                  }
+                });
+                dialogRef.afterClosed().subscribe(()=>{
+                  console.log('Closed');
+                });
+              }
+        
+          }
+          
   //** Get All Client */
   async getAllClient(){
     this.devisService.getAllClient().subscribe( res => {
@@ -214,7 +260,12 @@ export class ConvertDevisToBlComponent implements OnInit {
       this.getClientId(this.id_client.toString());
     }); 
   }
-
+    //** Get local by id */
+  getLocalById(id: any ){
+      this.bLservice.getLocalById(id).subscribe((res: any)=>{
+        this.local= res.body 
+      });
+  }
   //** Get Detail Devis  */
   getDetail(){
       this.devisService.detail(this.devis_ID.toString()).subscribe((detail: any)=>{
@@ -227,6 +278,8 @@ export class ConvertDevisToBlComponent implements OnInit {
           xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{      
             data =res.Devis;
             this.devise= data["Informations-Generales"][0].Devise[0];
+            this.local_id= data["Informations-Generales"][0].Depot[0];
+            this.getLocalById(this.local_id)
             this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
             this.totalMontantFodec= data.Total[0].TotalFodec[0];
             this.totalRemise = data.Total[0].TotalRemise[0];
@@ -678,7 +731,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -699,14 +751,20 @@ for (let i = 0; i < this.devisArticls.length; i++) {
         vProduit_4Gs.appendChild(Produit_4G);
       }
     }else {
-      var Produit_4G = doc.createElement('Produit_4G');
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-        var E1 = doc.createElement('E1'); E1.innerHTML = '0'
-        var E2 = doc.createElement('E2'); E2.innerHTML = '0'
+      for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+        let tableaux_produits_emie: any = {}; 
+        var Produit_4G = doc.createElement('Produit_4G');
+        tableaux_produits_emie.n_serie= '0',
+        tableaux_produits_emie.e1='0';
+        tableaux_produits_emie.e2='0';
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = tableaux_produits_emie.n_serie
+        var E1 = doc.createElement('E1'); E1.innerHTML = tableaux_produits_emie.e1
+        var E2 = doc.createElement('E2'); E2.innerHTML = tableaux_produits_emie.e2
         Produit_4G.appendChild(N_Serie);
         Produit_4G.appendChild(E1);
         Produit_4G.appendChild(E2);
         vProduit_4Gs.appendChild(Produit_4G);
+      }
     }
 
 
@@ -723,7 +781,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vProduit_4Gs);
     Produit.appendChild( PrixU)
     Produit.appendChild( TotalFacture )   
@@ -743,7 +800,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.devisArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].M_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.devisArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.devisArticls[i].remise;
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.devisArticls[i].totale_TTC
@@ -758,8 +814,12 @@ for (let i = 0; i < this.devisArticls.length; i++) {
         vN_Series.appendChild(N_Serie);
       }
     }else{
-      var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
+      for (let j = 0; j < this.devisArticls[i].quantite; j++) {
+        let n_serie ='0'
+
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = n_serie
         vN_Series.appendChild(N_Serie);
+      }
     }
 
 
@@ -776,7 +836,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vN_Series)
     Produit.appendChild(PrixU)
     Produit.appendChild( TotalFacture ) 
@@ -798,7 +857,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.devisArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.devisArticls[i].fodec
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.devisArticls[i].prixU
-    var Charge = doc.createElement('charge'); Charge.innerHTML = this.devisArticls[i].ch
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.devisArticls[i].totale_TTC   
     var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.devisArticls[i].prix_U_TTC;
     var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.devisArticls[i].total_HT;
@@ -818,7 +876,6 @@ for (let i = 0; i < this.devisArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild( TotalFacture )
     Produit.appendChild( PrixU )
 

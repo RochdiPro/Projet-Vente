@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import * as xml2js from 'xml2js';
 import { BlService } from '../../services/bl.service';
+import { FactureService } from '../../services/facture.service';
 
 const pdfMake = require("pdfmake/build/pdfmake");
 
@@ -35,7 +36,8 @@ export class FactureATermeComponent implements OnInit {
   clt : any;
   detail: any;
   xmldata : any
-  newAttribute : any = {};
+  newAttributeBL : any = {};
+  newAttribute: any = {};
   blArticls : any = []; 
   totalHTBrut : any = 0; 
   totalMontantFodec : any = 0;   
@@ -77,9 +79,18 @@ export class FactureATermeComponent implements OnInit {
   dateRangeStart : any ;
   dateRangeEnd: any; 
   blArticlsGeneral: any = [];
+  liste_Produit: any = []; 
   date1: any ; 
   date2: any ;
   showResult: boolean = false; 
+  typeRegOne: any; 
+  typeRegTwo: any 
+  typeRegTree : any 
+  valueRegTree: any ;
+  id_modeP_typeTree: any ; 
+  modePaiement:any; 
+
+  data: any // get the Detail_BLs_en_Facture 
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
   displayedColumns: string[] = ['checkbox','id_Bl', 'type', 'date_Creation', 'total_ttc' ,'Voir_pdf'];
@@ -89,7 +100,7 @@ export class FactureATermeComponent implements OnInit {
 
   // @Output() listBl = new EventEmitter();
   
-  constructor(private _formBuilder: FormBuilder ,private bLService : BlService, public datepipe: DatePipe,private router: Router) { 
+  constructor(private _formBuilder: FormBuilder ,private factureService : FactureService,private blService: BlService, public datepipe: DatePipe,private router: Router) { 
     this.infoFormGroup = this._formBuilder.group({
       lengthOfListBl : ['', Validators.required]
     })
@@ -100,16 +111,16 @@ export class FactureATermeComponent implements OnInit {
     this.getKeyWordQuote();
   }
     // dateRangeChange
-    dateRangeChangeDateOne(d : any){
+  dateRangeChangeDateOne(d : any){
       this.date1= this.datepipe.transform(d.value, 'YYYY/MM/dd');    
-    }
-      dateRangeChangeDateTwo(d : any){
+  }
+  dateRangeChangeDateTwo(d : any){
         this.date2= this.datepipe.transform(d.value, 'YYYY/MM/dd')
-      }
+  }
 
   //** Lister Clients  */
   getKeyWordQuote(){
-    this.bLService.getAllClient().subscribe((res:any)=>{
+    this.factureService.getAllClient().subscribe((res:any)=>{
       this.keyValues = res});
       }
   //** Get Value */
@@ -126,7 +137,8 @@ export class FactureATermeComponent implements OnInit {
     if(this.champ == ''){
       Swal.fire('S\'il vous plaît sélectionner un client','','info')
     }else{
-      this.bLService.filterBLByRangeDate(this.champ, this.date1, this.date2).subscribe((data : any)=>{
+      this.blService.filterBLByRangeDate(this.champ, this.date1, this.date2).subscribe((data : any)=>{
+        this.getClientId(this.champ);
         this.dataSourceBl= new MatTableDataSource(data.body);    
         this.dataSourceBl.sort = this.sort; 
         this.dataSourceBl.paginator = this.paginator;
@@ -227,411 +239,6 @@ export class FactureATermeComponent implements OnInit {
         }
       }
     }
-    //** Get Detail BL  */
-  getDetail(id: string){
-      this.id = id
-      this.blArticls = [];
-      this.loadingDetail = true
-      this.bLService.detail(id).subscribe((detail: any)=>{
-        //** Parsing an XML file unisng  'xml2js' lebraby*/
-        const fileReader = new FileReader(); 
-        // Convert blob to base64 with onloadend function
-        fileReader.onloadend = () =>{
-          this.detail = fileReader.result; // data: application/xml in base64
-          let data : any; 
-          xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{    
-            if(res.Devis == null)  
-            {
-              data =res.BL;
-              this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
-              this.totalMontantFodec= data.Total[0].TotalFodec[0];
-              this.totalRemise = data.Total[0].TotalRemise[0];
-              this.totalHT = data.Total[0].TotalHTNet[0];
-              this.totalMontantTVA = data.Total[0].TotalTVA[0];
-              this.totalTTc = data.Total[0].TotalTTC[0];
-              this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];          
-              this.id_modeP_typeTwo = data.Type_Reglement[0].TypeRegTwo[0];
-    
-              this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
-            }else{
-              data =res.Devis;
-              this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
-              this.totalMontantFodec= data.Total[0].TotalFodec[0];
-              this.totalRemise = data.Total[0].TotalRemise[0];
-              this.totalHT = data.Total[0].TotalHTNet[0];
-              this.totalMontantTVA = data.Total[0].TotalTVA[0];
-              this.totalTTc = data.Total[0].TotalTTC[0];
-              this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];          
-              this.id_modeP_typeTwo = data.Type_Reglement[0].TypeRegTwo[0];
-    
-              this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
-            }
-                
-          });
-          
-            if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
-            for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
-            { 
-              this.newAttribute = {};
-              this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
-              this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
-              this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
-              this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
-              // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Simples[0].Produit[i].Montant_Tva[0]);
-              this.newAttribute.fodec=(data.Produits[0].Produits_Simples[0].Produit[i].fodec[0]);
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
-              this.newAttribute.produits_simple = (data.Produits[0].Produits_Simples[0].Produit[i].produits_simple);           
-              this.newAttribute.remise= (data.Produits[0].Produits_Simples[0].Produit[i].Remise[0]);
-              this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Simples[0].Produit[i].PrixUTTC[0]);
-              this.newAttribute.total_HT= (data.Produits[0].Produits_Simples[0].Produit[i].Total_HT[0]);
-              this.newAttribute.prixU = (data.Produits[0].Produits_Simples[0].Produit[i].PrixU[0])
-              this.newAttribute.totale_TTC = (data.Produits[0].Produits_Simples[0].Produit[i].TotalFacture[0]);
-              this.newAttribute.tva = data.Produits[0].Produits_Simples[0].Produit[i].Tva[0];
-              // Montant Tva u = (prix*tva)/100
-              this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-              this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-              this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-  
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);    
-              this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);       
-              this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-              this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
-              this.blArticls.push(this.newAttribute);
-              this.calculTotal();
-              this.calculAssiettes();
-            }
-            }
-            if(data.Produits[0].Produits_4Gs[0].Produit!= undefined){
-              for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit.length; i++) 
-              { 
-                this.newAttribute = {};
-                this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
-                this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
-                this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
-                this.newAttribute.quantite=(data.Produits[0].Produits_4Gs[0].Produit[i].Qte[0]); 
-                // this.newAttribute.montant_TVA=(data.Produits[0].Produits_4Gs[0].Produit[i].Montant_Tva[0]);
-                
-                this.newAttribute.fodec=(data.Produits[0].Produits_4Gs[0].Produit[i].fodec[0]);
-                this.newAttribute.N_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
-                this.newAttribute.N_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
-                this.newAttribute.produits_simple = (data.Produits[0].Produits_4Gs[0].Produit[i].produits_simple); 
-                this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];          
-                let tableaux_produits_emie = []
-                for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G.length; i++) {
-                  let elem_4g : any = {};
-                  elem_4g.n_serie = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].N_Serie;
-                  elem_4g.e1 = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].E1
-                  elem_4g.e2 = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].E2   
-                  tableaux_produits_emie.push(elem_4g)
-                }
-                this.newAttribute.remise= (data.Produits[0].Produits_4Gs[0].Produit[i].Remise[0]);
-                this.newAttribute.tableaux_produits_emie=tableaux_produits_emie;
-                this.newAttribute.prixU = (data.Produits[0].Produits_4Gs[0].Produit[i].PrixU[0]);
-  
-                      // Montant Tva u = (prix*tva)/100
-                this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-                this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-                this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-              
-                this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-                this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-                this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
-                this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_4Gs[0].Produit[i].PrixUTTC[0]);
-                this.newAttribute.total_HT= (data.Produits[0].Produits_4Gs[0].Produit[i].Total_HT[0]);
-                this.newAttribute.totale_TTC = (data.Produits[0].Produits_4Gs[0].Produit[i].TotalFacture[0]);
-                this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3); 
-                this.blArticls.push(this.newAttribute);
-                  this.calculTotal();
-                this.calculAssiettes();
-                
-              }
-            }
-            if(data.Produits[0].Produits_Series[0].Produit!= undefined){
-              for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit.length; i++) 
-              {
-                this.newAttribute = {};
-                this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
-                this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom); 
-                this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
-                this.newAttribute.quantite=(data.Produits[0].Produits_Series[0].Produit[i].Qte[0]); 
-                // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Series[0].Produit[i].Montant_Tva[0]);
-                this.newAttribute.fodec=(data.Produits[0].Produits_Series[0].Produit[i].fodec);              
-                this.newAttribute.N_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
-                this.newAttribute.N_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
-                this.newAttribute.produits_simple = (data.Produits[0].Produits_Series[0].Produit[i].produits_simple);           
-                this.newAttribute.tva = data.Produits[0].Produits_Series[0].Produit[i].Tva[0]; 
-                let tableaux_produits_serie = []
-                for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie.length; i++) {
-                  tableaux_produits_serie.push( data.Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie[i])
-                
-              }  
-              this.newAttribute.remise= (data.Produits[0].Produits_Series[0].Produit[i].Remise[0]);      
-              this.newAttribute.tableaux_produits_serie=tableaux_produits_serie;
-              this.newAttribute.prixU = (data.Produits[0].Produits_Series[0].Produit[i].PrixU[0]);
-              
-              // Montant Tva u = (prix*tva)/100
-              this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-              this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-              this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-  
-              this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-              this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-              this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
-              
-              this.newAttribute.charge = (data.Produits[0].Produits_Series[0].Produit[i].charge);
-              this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Series[0].Produit[i].PrixUTTC[0]);
-              this.newAttribute.total_HT= (data.Produits[0].Produits_Series[0].Produit[i].Total_HT[0]);
-              this.newAttribute.totale_TTC = (data.Produits[0].Produits_Series[0].Produit[i].TotalFacture[0]);
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-              this.blArticls.push(this.newAttribute);
-              this.calculTotal();
-              this.calculAssiettes();
-              }
-            }
-        }          
-        fileReader.readAsDataURL(detail.body);
-        this.loadingDetail = false; 
-    }); 
-    this.voirmoins = true;
-    this.voirPlus = false
-  }
-      //** Get Detail BL for Generat table  */
-  getDetailForGeneral(id: string){
-      this.loadingGeneral = true
-      this.bLService.detail(id).subscribe((detail: any)=>{
-        //** Parsing an XML file unisng  'xml2js' lebraby*/
-        const fileReader = new FileReader(); 
-        // Convert blob to base64 with onloadend function
-        fileReader.onloadend = () =>{
-          this.detail = fileReader.result; // data: application/xml in base64
-          let data : any; 
-          xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{    
-            if(res.Devis == null)  
-            {
-              data =res.BL;
-              this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
-              this.totalMontantFodec= data.Total[0].TotalFodec[0];
-              this.totalRemise = data.Total[0].TotalRemise[0];
-              this.totalHT = data.Total[0].TotalHTNet[0];
-              this.totalMontantTVA = data.Total[0].TotalTVA[0];
-              this.totalTTc = data.Total[0].TotalTTC[0];
-              this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];          
-              this.id_modeP_typeTwo = data.Type_Reglement[0].TypeRegTwo[0];
-    
-              this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
-            }else{
-              data =res.Devis;
-              this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
-              this.totalMontantFodec= data.Total[0].TotalFodec[0];
-              this.totalRemise = data.Total[0].TotalRemise[0];
-              this.totalHT = data.Total[0].TotalHTNet[0];
-              this.totalMontantTVA = data.Total[0].TotalTVA[0];
-              this.totalTTc = data.Total[0].TotalTTC[0];
-              this.totalTTc_reg = data.Type_Reglement[0].ValueRegOne[0];          
-              this.id_modeP_typeTwo = data.Type_Reglement[0].TypeRegTwo[0];
-    
-              this.valueRegTwo = data.Type_Reglement[0].ValueRegTwo[0];
-            }
-                
-          });
-          
-            if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
-            for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
-            { 
-              this.newAttribute = {};
-              this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
-              this.newAttribute.charge=(data.Produits[0].Produits_Simples[0].Produit[i].Charge); 
-              this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
-              this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
-              this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
-              // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Simples[0].Produit[i].Montant_Tva[0]);
-              this.newAttribute.fodec=(data.Produits[0].Produits_Simples[0].Produit[i].fodec[0]);
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
-              this.newAttribute.produits_simple = (data.Produits[0].Produits_Simples[0].Produit[i].produits_simple);           
-              this.newAttribute.remise= (data.Produits[0].Produits_Simples[0].Produit[i].Remise[0]);
-              this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Simples[0].Produit[i].PrixUTTC[0]);
-              this.newAttribute.total_HT= (data.Produits[0].Produits_Simples[0].Produit[i].Total_HT[0]);
-              this.newAttribute.prixU = (data.Produits[0].Produits_Simples[0].Produit[i].PrixU[0])
-              this.newAttribute.totale_TTC = (data.Produits[0].Produits_Simples[0].Produit[i].TotalFacture[0]);
-              this.newAttribute.tva = data.Produits[0].Produits_Simples[0].Produit[i].Tva[0];
-              // Montant Tva u = (prix*tva)/100
-              this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-              this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-              this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-  
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);    
-              this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);       
-              this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-              this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
-              
-              this.blArticlsGeneral.push(this.newAttribute);
-              // this.blArticlsGeneral.filter((item : any , index: any) => {
-              //   this.blArticlsGeneral.indexOf(item) === index
-              //   // if (this.blArticlsGeneral.indexOf(item.id_Produit) !== index){
-              //   //   console.log('new itme');
-              //   //   this.blArticlsGeneral.push(item);
-                  
-              //   // }
-              //   // else {
-              //   //   let ind : any ;
-              //   //    ind = this.blArticlsGeneral.findIndex(((x: any)=>parseInt(x.id_Produit) === parseInt(this.newAttribute.id_produit))); 
-              //   //    console.log(ind);
-              //   //    this.blArticlsGeneral[ind].quantite = parseInt(this.blArticlsGeneral[ind].quantite) + parseInt(this.newAttribute.quantite);
-              //   //    this.blArticlsGeneral[ind].prixU = (Number(this.blArticlsGeneral[ind].prixU) + Number(this.newAttribute.prixU)).toFixed(3);
-              //   // }
-              // })
-     
-             
-            
-              this.calculTotal();
-              this.calculAssiettes();
-            }
-            }
-            
-            
-            if(data.Produits[0].Produits_4Gs[0].Produit!= undefined){
-              for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit.length; i++) 
-              { 
-                this.newAttribute = {};
-                this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_4Gs[0].Produit[i].Charge); 
-                this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
-                this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
-                this.newAttribute.quantite=(data.Produits[0].Produits_4Gs[0].Produit[i].Qte[0]); 
-                // this.newAttribute.montant_TVA=(data.Produits[0].Produits_4Gs[0].Produit[i].Montant_Tva[0]);
-                
-                this.newAttribute.fodec=(data.Produits[0].Produits_4Gs[0].Produit[i].fodec[0]);
-                this.newAttribute.N_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
-                this.newAttribute.N_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
-                this.newAttribute.produits_simple = (data.Produits[0].Produits_4Gs[0].Produit[i].produits_simple); 
-                this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];          
-                let tableaux_produits_emie = []
-                for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G.length; i++) {
-                  let elem_4g : any = {};
-                  elem_4g.n_serie = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].N_Serie;
-                  elem_4g.e1 = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].E1
-                  elem_4g.e2 = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].E2   
-                  tableaux_produits_emie.push(elem_4g)
-                }
-                this.newAttribute.remise= (data.Produits[0].Produits_4Gs[0].Produit[i].Remise[0]);
-                this.newAttribute.tableaux_produits_emie=tableaux_produits_emie;
-                this.newAttribute.prixU = (data.Produits[0].Produits_4Gs[0].Produit[i].PrixU[0]);
-  
-                      // Montant Tva u = (prix*tva)/100
-                this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-                this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-                this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-              
-                this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-                this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-                this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
-                this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_4Gs[0].Produit[i].PrixUTTC[0]);
-                this.newAttribute.total_HT= (data.Produits[0].Produits_4Gs[0].Produit[i].Total_HT[0]);
-                this.newAttribute.totale_TTC = (data.Produits[0].Produits_4Gs[0].Produit[i].TotalFacture[0]);
-                this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3); 
-              
-                // this.blArticlsGeneral.filter((item : any , index: any) => {
-                //   this.blArticlsGeneral.indexOf(item) === index
-                //   // if (this.blArticlsGeneral.indexOf(item.id_Produit) !== index){
-                //   //   console.log('new itme');
-                //   //   this.blArticlsGeneral.push(item);
-                    
-                //   // }
-                //   // else {
-                //   //   let ind : any ;
-                //   //    ind = this.blArticlsGeneral.findIndex(((x: any)=>parseInt(x.id_Produit) === parseInt(this.newAttribute.id_produit))); 
-                //   //    console.log(ind);
-                //   //    this.blArticlsGeneral[ind].quantite = parseInt(this.blArticlsGeneral[ind].quantite) + parseInt(this.newAttribute.quantite);
-                //   //    this.blArticlsGeneral[ind].prixU = (Number(this.blArticlsGeneral[ind].prixU) + Number(this.newAttribute.prixU)).toFixed(3);
-                //   // }
-                // });
-                this.blArticlsGeneral.push(this.newAttribute);
-                this.calculTotal();
-                this.calculAssiettes();
-                
-              }
-            }
-            
-            if(data.Produits[0].Produits_Series[0].Produit!= undefined){
-              for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit.length; i++) 
-              {
-                this.newAttribute = {};
-                this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
-                this.newAttribute.charge=(data.Produits[0].Produits_Series[0].Produit[i].Charge); 
-                this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom); 
-                this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
-                this.newAttribute.quantite=(data.Produits[0].Produits_Series[0].Produit[i].Qte[0]); 
-                // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Series[0].Produit[i].Montant_Tva[0]);
-                this.newAttribute.fodec=(data.Produits[0].Produits_Series[0].Produit[i].fodec);              
-                this.newAttribute.N_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
-                this.newAttribute.N_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
-                this.newAttribute.produits_simple = (data.Produits[0].Produits_Series[0].Produit[i].produits_simple);           
-                this.newAttribute.tva = data.Produits[0].Produits_Series[0].Produit[i].Tva[0]; 
-                let tableaux_produits_serie = []
-                for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie.length; i++) {
-                  tableaux_produits_serie.push( data.Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie[i])
-                
-              }  
-              this.newAttribute.remise= (data.Produits[0].Produits_Series[0].Produit[i].Remise[0]);      
-              this.newAttribute.tableaux_produits_serie=tableaux_produits_serie;
-              this.newAttribute.prixU = (data.Produits[0].Produits_Series[0].Produit[i].PrixU[0]);
-              
-              // Montant Tva u = (prix*tva)/100
-              this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
-              this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
-              this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
-  
-              this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
-              this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
-              this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
-              
-              this.newAttribute.charge = (data.Produits[0].Produits_Series[0].Produit[i].charge);
-              this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Series[0].Produit[i].PrixUTTC[0]);
-              this.newAttribute.total_HT= (data.Produits[0].Produits_Series[0].Produit[i].Total_HT[0]);
-              this.newAttribute.totale_TTC = (data.Produits[0].Produits_Series[0].Produit[i].TotalFacture[0]);
-              this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
-              console.log(this.newAttribute.id_Produit);
-            
-              
-            //  this.blArticlsGeneral.filter((item : any , index: any) => {
-            //   this.blArticlsGeneral.indexOf(item) === index
-            //     // if (this.blArticlsGeneral.indexOf(item.id_Produit) !== index){
-            //     //   console.log('new itme');
-            //     //   this.blArticlsGeneral.push(item);
-                  
-            //     // }
-            //     // else {
-            //     //   let ind : any ;
-            //     //    ind = this.blArticlsGeneral.findIndex(((x: any)=>parseInt(x.id_Produit) === parseInt(this.newAttribute.id_produit))); 
-            //     //    console.log(ind);
-            //     //    this.blArticlsGeneral[ind].quantite = parseInt(this.blArticlsGeneral[ind].quantite) + parseInt(this.newAttribute.quantite);
-            //     //    this.blArticlsGeneral[ind].prixU = (Number(this.blArticlsGeneral[ind].prixU) + Number(this.newAttribute.prixU)).toFixed(3);
-            //     // }
-            //   });
-             
-              this.blArticlsGeneral.push(this.newAttribute)
-              this.calculTotal();
-              this.calculAssiettes();
-              }
-            }
-            
-        } 
-        var result = this.blArticlsGeneral.reduce((unique : any , o: any) => {
-          if(!unique.some((obj: any) => obj.id_Produit === o.id_Produit && obj.nom_Produit === o.nom_Produit)) {
-            unique.push(o);
-          }
-          return unique;
-      },[]);
-      console.log('result', result); 
-        fileReader.readAsDataURL(detail.body);
-        this.loadingGeneral = false; 
-    }); 
-  }
   voirLess(id : any ){
     if (this.id === id){
       this.voirmoins = false
@@ -651,7 +258,8 @@ export class FactureATermeComponent implements OnInit {
   }
    //** Get Client by ID */
    getClientId(id : any): any{
-    this.bLService.getClientById(id.toString()).subscribe((res: any ) => {
+     this.loading= true;
+    this.factureService.getClientById(id.toString()).subscribe((res: any ) => {
       this.clt= res.body; 
     }); 
   }
@@ -710,7 +318,7 @@ export class FactureATermeComponent implements OnInit {
   viewPDF(bl: any){
     this.getClientId(bl.id_Clt);
     this.date =  this.datepipe.transform(bl.date_Creation, 'dd/MM/YYYY');
-    // this.bLService.detail(devis.id_Bl.toString()).subscribe((detail: any)=>{
+    // this.factureService.detail(devis.id_Bl.toString()).subscribe((detail: any)=>{
     //   var devisArr :any = [];
     //   //** Parsing an XML file unisng  'xml2js' lebraby*/
     //   const fileReader = new FileReader(); 
@@ -918,12 +526,286 @@ export class FactureATermeComponent implements OnInit {
   goForward(stepper : MatStepper){
       stepper.next();
   }
+
   detailBlFacture(stepper : MatStepper ){
     if(this.listBlCheched.length !== 0){
-      // generate the table blArticlsGeneral 
-      for(let i = 0 ; i< this.listBlCheched.length ; i++){
-        this.getDetailForGeneral(this.listBlCheched[i].id_Bl)
+      // generate EP Detail_BLs_en_Facture
+      let char = '';
+      for(let i =0; i<this.listBlCheched.length; i++){
+        
+        char+=this.listBlCheched[i].id_Bl+'/'
       }
+      // char = id_Bl1/id_Bl2../
+      let newListeDate : any = new FormData(); 
+      newListeDate.append('Liste', char)
+      this.factureService.getDetailsBls(newListeDate).subscribe((detail: any)=>{
+        //** Parsing an XML file unisng  'xml2js' lebraby*/
+        const fileReader = new FileReader(); 
+        // Convert blob to base64 with onloadend function
+        fileReader.onloadend = () =>{
+          this.detail = fileReader.result; // data: application/xml in base64
+          let data : any; 
+          xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{
+            data = res.Facture;
+            console.log(data);
+            // general info 
+            if(data.Produits[0].Produits_Simples[0].Produit!= undefined){
+              for (let i = 0; i < data.Produits[0].Produits_Simples[0].Produit.length; i++) 
+              { 
+                this.newAttribute = {};
+                this.newAttribute.id_Produit=(data.Produits[0].Produits_Simples[0].Produit[i].Id[0]); 
+                this.newAttribute.nom_Produit =(data.Produits[0].Produits_Simples[0].Produit[i].Nom[0]); 
+                this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Simples[0].Produit[i].Signaler_probleme); 
+                this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
+                this.newAttribute.fodec=(data.Produits[0].Produits_Simples[0].Produit[i].fodec[0]);
+                this.newAttribute.n_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
+                this.newAttribute.n_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
+                this.newAttribute.produits_simple = (data.Produits[0].Produits_Simples[0].Produit[i].produits_simple);           
+                this.newAttribute.remise= (data.Produits[0].Produits_Simples[0].Produit[i].Remise[0]);
+                this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Simples[0].Produit[i].PrixUTTC[0]);
+                this.newAttribute.total_HT= (data.Produits[0].Produits_Simples[0].Produit[i].Total_HT[0]);
+                this.newAttribute.prixU = (data.Produits[0].Produits_Simples[0].Produit[i].PrixU[0])
+                this.newAttribute.totale_TTC = (data.Produits[0].Produits_Simples[0].Produit[i].Total_HT[0]);
+                this.newAttribute.tva = data.Produits[0].Produits_Simples[0].Produit[i].Tva[0];
+                // Montant Tva u = (prix*tva)/100
+                this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+    
+                this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);    
+                this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);       
+                this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
+                
+                this.blArticlsGeneral.push(this.newAttribute);           
+                this.calculTotal();
+                this.calculAssiettes();
+              }
+              }
+              
+              if(data.Produits[0].Produits_4Gs[0].Produit!= undefined){
+                for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit.length; i++) 
+                { 
+                  this.newAttribute = {};
+                  this.newAttribute.id_Produit=(data.Produits[0].Produits_4Gs[0].Produit[i].Id[0]); 
+                  this.newAttribute.nom_Produit =(data.Produits[0].Produits_4Gs[0].Produit[i].Nom[0]); 
+                  this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_4Gs[0].Produit[i].Signaler_probleme); 
+                  this.newAttribute.quantite=(data.Produits[0].Produits_4Gs[0].Produit[i].Qte[0]); 
+                  
+                  this.newAttribute.fodec=(data.Produits[0].Produits_4Gs[0].Produit[i].fodec[0]);
+                  this.newAttribute.n_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
+                  this.newAttribute.n_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
+                  this.newAttribute.produits_simple = (data.Produits[0].Produits_4Gs[0].Produit[i].produits_simple); 
+                  this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];          
+                  let tableaux_produits_emie = []
+                  for (let i = 0; i < data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G.length; i++) {
+                    let elem_4g : any = {};
+                    elem_4g.n_serie = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].N_Serie;
+                    elem_4g.e1 = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].E1
+                    elem_4g.e2 = data.Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[i].E2   
+                    tableaux_produits_emie.push(elem_4g)
+                  }
+                  this.newAttribute.remise= (data.Produits[0].Produits_4Gs[0].Produit[i].Remise[0]);
+                  this.newAttribute.tableaux_produits_emie=tableaux_produits_emie;
+                  this.newAttribute.prixU = (data.Produits[0].Produits_4Gs[0].Produit[i].PrixU[0]);
+    
+                        // Montant Tva u = (prix*tva)/100
+                  this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                  this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                  this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+                
+                  this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
+                  this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                  this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
+                  this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_4Gs[0].Produit[i].PrixUTTC[0]);
+                  this.newAttribute.total_HT= (data.Produits[0].Produits_4Gs[0].Produit[i].Total_HT[0]);
+                  this.newAttribute.totale_TTC = (data.Produits[0].Produits_4Gs[0].Produit[i].Total_HT[0]);
+                  this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3); 
+                
+                  this.blArticlsGeneral.push(this.newAttribute);
+                  this.calculTotal();
+                  this.calculAssiettes();
+                  
+                }
+              }
+              
+              if(data.Produits[0].Produits_Series[0].Produit!= undefined){
+                for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit.length; i++) 
+                {
+                  this.newAttribute = {};
+                  this.newAttribute.id_Produit=(data.Produits[0].Produits_Series[0].Produit[i].Id[0]); 
+                  this.newAttribute.nom_Produit =(data.Produits[0].Produits_Series[0].Produit[i].Nom); 
+                  this.newAttribute.Signaler_probleme=(data.Produits[0].Produits_Series[0].Produit[i].Signaler_probleme); 
+                  this.newAttribute.quantite=(data.Produits[0].Produits_Series[0].Produit[i].Qte[0]); 
+                  this.newAttribute.fodec=(data.Produits[0].Produits_Series[0].Produit[i].fodec);              
+                  this.newAttribute.N_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
+                  this.newAttribute.N_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
+                  this.newAttribute.produits_simple = (data.Produits[0].Produits_Series[0].Produit[i].produits_simple);           
+                  this.newAttribute.tva = data.Produits[0].Produits_Series[0].Produit[i].Tva[0]; 
+                  let tableaux_produits_serie = []
+                  for (let i = 0; i < data.Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie.length; i++) {
+                    tableaux_produits_serie.push( data.Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie[i])
+                  
+                }  
+                this.newAttribute.remise= (data.Produits[0].Produits_Series[0].Produit[i].Remise[0]);      
+                this.newAttribute.tableaux_produits_serie=tableaux_produits_serie;
+                this.newAttribute.prixU = (data.Produits[0].Produits_Series[0].Produit[i].PrixU[0]);
+                
+                // Montant Tva u = (prix*tva)/100
+                this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+    
+                this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
+                this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
+                
+                this.newAttribute.charge = (data.Produits[0].Produits_Series[0].Produit[i].charge);
+                this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Series[0].Produit[i].PrixUTTC[0]);
+                this.newAttribute.total_HT= (data.Produits[0].Produits_Series[0].Produit[i].Total_HT[0]);
+                this.newAttribute.totale_TTC = (data.Produits[0].Produits_Series[0].Produit[i].Total_HT[0]);
+                this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);              
+                this.blArticlsGeneral.push(this.newAttribute)
+                this.calculTotal();
+                this.calculAssiettes();
+                }
+              }
+              
+            // Details 
+            if(data.Liste_Produit[0].BL != undefined){
+              for (let i = 0; i < data.Liste_Produit[0].BL.length; i++) {
+                console.log(i, data.Liste_Produit[0].BL[i].Id_BL[0]);
+                
+                  if(data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit!= undefined){
+                    for (let j = 0; j < data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit.length; j++) 
+                    { 
+                      this.newAttribute = {};
+                      this.newAttribute.id_Bl = data.Liste_Produit[0].BL[i].Id_BL[0]
+                      this.newAttribute.id_Produit=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Id[0]); 
+                      this.newAttribute.nom_Produit =(data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Nom[0]); 
+                      this.newAttribute.Signaler_probleme=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Signaler_probleme); 
+                      this.newAttribute.quantite=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Qte[0]); 
+                      this.newAttribute.fodec=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].fodec[0]);
+                      this.newAttribute.N_Imei = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].n_Imei); 
+                      this.newAttribute.N_Serie = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].n_Serie); 
+                      this.newAttribute.produits_simple = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].produits_simple);           
+                      this.newAttribute.remise= (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Remise[0]);
+                      this.newAttribute.prix_U_TTC= (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].PrixUTTC[0]);
+                      this.newAttribute.total_HT= (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Total_HT[0]);
+                      this.newAttribute.prixU = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].PrixU[0])
+                      this.newAttribute.totale_TTC = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Total_HT[0]);
+                      this.newAttribute.tva = data.Liste_Produit[0].BL[i].Produits[0].Produits_Simples[0].Produit[j].Tva[0];
+                      // Montant Tva u = (prix*tva)/100
+                      this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                      this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                      this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+          
+                      this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);    
+                      this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);       
+                      this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                      this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
+                      
+                     this.blArticls.push(this.newAttribute);
+                              
+                    }
+                    }
+                  
+                  if(data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit!= undefined){
+                    for (let j = 0; j < data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit.length; j++) 
+                    { 
+                      this.newAttribute = {};
+                      this.newAttribute.id_Bl = data.Liste_Produit[0].BL[i].Id_BL[0]
+                      this.newAttribute.id_Produit=(data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Id[0]); 
+                      this.newAttribute.nom_Produit =(data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Nom[0]); 
+                      this.newAttribute.Signaler_probleme=(data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Signaler_probleme); 
+                      this.newAttribute.quantite=(data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Qte[0]); 
+                      
+                      this.newAttribute.fodec=(data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].fodec[0]);
+                      this.newAttribute.N_Imei = (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].n_Imei); 
+                      this.newAttribute.N_Serie = (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].n_Serie); 
+                      this.newAttribute.produits_simple = (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].produits_simple); 
+                      this.newAttribute.tva = data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Tva[0];          
+                      let tableaux_produits_emie = []
+                      for (let k = 0; k < data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G.length; k++) {
+                        let elem_4g : any = {};
+                        elem_4g.n_serie = data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[k].N_Serie;
+                        elem_4g.e1 = data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[k].E1
+                        elem_4g.e2 = data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[0].Produit_4Gs[0].Produit_4G[k].E2   
+                        tableaux_produits_emie.push(elem_4g)
+                      }
+                      this.newAttribute.remise= (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Remise[0]);
+                      this.newAttribute.tableaux_produits_emie=tableaux_produits_emie;
+                      this.newAttribute.prixU = (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].PrixU[0]);
+        
+                      // Montant Tva u = (prix*tva)/100
+                      this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                      this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                      this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+                    
+                      this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
+                      this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                      this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
+                      this.newAttribute.prix_U_TTC= (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].PrixUTTC[0]);
+                      this.newAttribute.total_HT= (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Total_HT[0]);
+                      this.newAttribute.totale_TTC = (data.Liste_Produit[0].BL[i].Produits[0].Produits_4Gs[0].Produit[j].Total_HT[0]);
+                      this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3); 
+                    
+                     this.blArticls.push(this.newAttribute);
+                    
+                    }
+                  }
+
+                  if(data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit!= undefined){
+                    for (let j = 0; j < data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit.length; j++) 
+                    {
+                      this.newAttribute = {};
+                      this.newAttribute.id_Bl = data.Liste_Produit[0].BL[i].Id_BL[0]
+                      this.newAttribute.id_Produit=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Id[0]); 
+                      this.newAttribute.nom_Produit =(data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Nom); 
+                      this.newAttribute.Signaler_probleme=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Signaler_probleme); 
+                      this.newAttribute.quantite=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Qte[0]); 
+                      this.newAttribute.fodec=(data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].fodec);              
+                      this.newAttribute.N_Imei = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].n_Imei); 
+                      this.newAttribute.N_Serie = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].n_Serie); 
+                      this.newAttribute.produits_simple = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].produits_simple);           
+                      this.newAttribute.tva = data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Tva[0]; 
+                      let tableaux_produits_serie = []
+                     
+                      for (let k = 0; k< data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie.length; k++) {
+                        tableaux_produits_serie.push( data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[0].N_Series[0].N_Serie[k])
+                    }  
+                    this.newAttribute.remise= (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Remise[0]);      
+                    this.newAttribute.tableaux_produits_serie=tableaux_produits_serie;
+                    this.newAttribute.prixU = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].PrixU[0]);
+                    
+                    // Montant Tva u = (prix*tva)/100
+                    this.newAttribute.finalPrice=  (this.newAttribute.prixU - (this.newAttribute.prixU * (Number(this.newAttribute.remise)) / 100)).toFixed(3)  
+                    this.Montant_TVA = Number(this.newAttribute.finalPrice) * Number((this.newAttribute.tva)/ 100) ;
+                    this.newAttribute.montant_TVA = Number(this.Montant_TVA).toFixed(3);
+        
+                    this.newAttribute.montant_HT = ((Number(this.newAttribute.prixU) * Number(this.newAttribute.quantite)) * (1 - (Number(this.newAttribute.remise)) / 100)).toFixed(3);
+                    this.Montant_Fodec = (this.newAttribute.montant_HT * this.newAttribute.fodec) / 100;
+                    this.newAttribute.montant_Fodec = Number(this.Montant_Fodec);
+                    
+                    this.newAttribute.prix_U_TTC= (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].PrixUTTC[0]);
+                    this.newAttribute.total_HT= (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Total_HT[0]);
+                    this.newAttribute.totale_TTC = (data.Liste_Produit[0].BL[i].Produits[0].Produits_Series[0].Produit[j].Total_HT[0]);
+                    this.newAttribute.total_TVA = ((Number(this.newAttribute.montant_TVA)) / (Number(this.newAttribute.quantite))).toFixed(3);
+                  
+                    this.blArticls.push(this.newAttribute);
+                  
+                    }
+                  }
+                  console.log("...",this.blArticls);
+              }
+            }  
+           })}
+           
+           
+           fileReader.readAsDataURL(detail.body);
+            this.loadingGeneral = false; 
+      });
+
       this.infoFormGroup.controls['lengthOfListBl'].setValue(this.listBlCheched.length); 
       this.goForward(stepper);
     }

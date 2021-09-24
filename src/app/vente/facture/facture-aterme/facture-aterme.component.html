@@ -237,10 +237,91 @@
         <button mat-button class="next" matStepperNext>Suivant</button>
     </mat-step>
     <!-- Mode de Paiement -->
-    <mat-step>
-        <ng-template matStepLabel>Mode de Paiement</ng-template>
-        <button mat-button class="next" matStepperNext>Suivant</button>
-
+    <!-- 3thd step -->
+    <mat-step [stepControl]="addReglementFormGroup" [completed]="isCompleted">
+        <ng-template matStepLabel>Modalité du paiement</ng-template>
+        <form [formGroup]="addReglementFormGroup">
+            <br>
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <label style="color: brown;"> <b>Total à payer: (+ {{Droit_timbre}} TND):</b> <b>
+                            {{total_Retenues}}</b>
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <label> <b>Total TTC :</b> <span> {{totalTTc_}}</span> </label>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <mat-select formControlName="typeRegOne" [(ngModel)]="modePaiement" [disabled]=true>
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <input type="number" matInput formControlName="valueOne"
+                            (ngModelChange)="getvalueModePaiement($event)" [(ngModel)]="totalTTc_reg" />
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2" *ngIf="visibel">
+                    <a class="add-reglement" (click)='addReglement()'> <i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="row" *ngIf="ligneOne">
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <mat-label>Type de Règlement</mat-label>
+                        <mat-select formControlName="typeRegTwo">
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <input type="number" matInput formControlName="valueTwo"
+                            (ngModelChange)="getvalueModePaiementTwo($event)" />
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <a class="delete-reglement" (click)="deleteReglement('1')"> <i class="fas fa-trash-alt"></i></a>
+                </div>
+            </div>
+            <div class="row" *ngIf="ligneTwo">
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <mat-label>Type de Règlement</mat-label>
+                        <mat-select formControlName="typeRegTree">
+                            <mat-option *ngFor="let mp of modepaiement" [value]="mp.id">{{mp.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <mat-form-field>
+                        <input type="number" matInput formControlName="valueTree" />
+                    </mat-form-field>
+                </div>
+                <div class="col-md-2">
+                    <a class="delete-reglement" (click)="deleteReglement('2')"> <i class="fas fa-trash-alt"></i></a>
+                </div>
+            </div> -->
+            <mat-form-field class="full-width">
+                <mat-label>Note</mat-label>
+                <textarea matInput placeholder="Note" type="text" class="form-control"
+                    formControlName="note"></textarea>
+            </mat-form-field>
+            <br>
+            <br>
+            <div>
+                <button mat-button matStepperPrevious>Retour</button>
+                <button mat-button class="btn btn-primary" matStepperNext>Suivant</button>
+            </div>
+        </form>
     </mat-step>
     <!-- Done -->
     <mat-step>

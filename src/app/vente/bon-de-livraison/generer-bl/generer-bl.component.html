@@ -1,4 +1,4 @@
-<h1 class="col-xs-8 text-center">Générer le devis N° {{devis_ID}} vers BL </h1>
+<h1 class="col-xs-8 text-center">Générer le Proforma N° {{devis_ID}} vers BL </h1>
 <br>
 <div class="col-xs-8 text-center">
     <div class="spinner-border" role="status" *ngIf="!loading">
@@ -53,7 +53,8 @@
                 <div class="col-md-4 mb-3">
                     <mat-form-field>
                         <mat-label>Local</mat-label>
-                        <mat-select formControlName="local" [(ngModel)]="local.id_Local" required>
+                        <mat-select formControlName="local" [(ngModel)]="local.id_Local"
+                            (selectionChange)="changeLocal($event)" required>
                             <mat-option *ngFor="let l of locals" [value]="l.id_Local">{{l.nom_Local}}</mat-option>
                         </mat-select>
                         <mat-error *ngIf="infoFormGroup.get('local').invalid">

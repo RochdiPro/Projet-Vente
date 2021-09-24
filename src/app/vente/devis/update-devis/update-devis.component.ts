@@ -193,6 +193,18 @@ export class UpdateDevisComponent implements OnInit {
         this.locals = res
       })
     }
+    changeLocal(event : any){
+      // Delete table content if the location changes
+      if(event.value){
+        this.devisArticls= []; 
+        this.totalHTBrut = 0; 
+        this.remiseDiff=0;
+        this.totalHT= 0;
+        this.totalMontantFodec= 0;
+        this.totalMontantTVA= 0;
+        this.totalTTc= 0
+    }
+  }  
   //** Get All Client */
   async getAllClient(){
     this.devisService.getAllClient().subscribe( res => {
@@ -321,7 +333,8 @@ export class UpdateDevisComponent implements OnInit {
     const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
     width: '100%', data : {
     formPage: prod,
-    local : this.local.nom_Local
+    local : this.local.nom_Local,
+    locals:this.locals
       }
       });
       dialogRef.afterClosed().subscribe(()=>{

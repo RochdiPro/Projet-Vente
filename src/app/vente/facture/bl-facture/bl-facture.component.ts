@@ -175,11 +175,23 @@ isAccompli: boolean = true;
       this.locals = res
     })
   }
+  changeLocal(event : any){
+    // Delete table content if the location changes
+    if(event.value){
+      this.factureArticls= []; 
+      this.totalHTBrut = 0; 
+      this.remiseDiff=0;
+      this.totalHT= 0;
+      this.totalMontantFodec= 0;
+      this.totalMontantTVA= 0;
+      this.totalTTc= 0
+     } 
+  }
   // viewPlus 
   viewPlus(prod: any ){
     const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
       width: '100%', data : {
-        formPage: prod , local : this.infoFormGroup.get('local').value.nom_Local
+        formPage: prod , local : this.infoFormGroup.get('local').value.nom_Local, locals:this.locals
       }
     });
     dialogRef.afterClosed().subscribe(()=>{
@@ -1522,7 +1534,7 @@ return doc
                       [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                       [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                       [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total Retenues', alignment: 'left' }, { text: this.total_Retenues+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+                      [{ text: 'Total à payer', alignment: 'left' }, { text: this.total_Retenues+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
                     ]
                   },
                   layout: 'lightHorizontalLines',

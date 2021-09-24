@@ -10,17 +10,22 @@ import { DevisService } from 'src/app/vente/services/devis.service';
 export class VoirPlusDialogComponent implements OnInit {
   item: any =[]; 
   local : any; 
+  locals: any
   type: string; 
   num : any ;
   loading : boolean = true
+  qtePerLocals: any = []; 
   
   constructor(public dialogRef: MatDialogRef<VoirPlusDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private devisService : DevisService) {
     this.item = data.formPage    
     this.local= data.local
+    this.locals= data.locals
+    this.getQtePerLocals()
     this.devisService.quentiteProdLocal(this.item.id_Produit, this.local).subscribe((res:any)=> {this.num = res.body
     this.loading = false; 
-    })
-    console.log(this.item);
+    });
+
+   
     
     if (this.item.n_Imei == "true"){
       this.type ="Produit 4G"
@@ -31,7 +36,21 @@ export class VoirPlusDialogComponent implements OnInit {
       this.type ="Produit Simple"
     }    
    }
-
+  getQtePerLocals(){
+    console.log('hello');
+    
+    for(let i=0; i<this.locals.length; i++){
+      let nom_Local: any = '';
+      let objectQtePerLocal : any = {}
+      nom_Local = this.locals[i].nom_Local;
+      this.devisService.quentiteProdLocal(this.item.id_Produit, nom_Local).subscribe((res: any)=>{
+        objectQtePerLocal.num = res.body;
+        objectQtePerLocal.nom_Local= nom_Local; 
+        this.qtePerLocals.push(objectQtePerLocal);
+        this.loading = false; 
+      });
+    }
+  }
   ngOnInit(): void {
   }
 

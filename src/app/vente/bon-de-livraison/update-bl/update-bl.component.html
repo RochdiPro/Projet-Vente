@@ -38,7 +38,8 @@
                 <div class="col-md-4 mb-3">
                     <mat-form-field>
                         <mat-label>Local</mat-label>
-                        <mat-select formControlName="local" [(ngModel)]="local.id_Local" required>
+                        <mat-select formControlName="local" [(ngModel)]="local.id_Local"
+                            (selectionChange)="changeLocal($event)" required>
                             <mat-option *ngFor="let l of locals" [value]="l.id_Local">{{l.nom_Local}}</mat-option>
                         </mat-select>
                         <mat-error *ngIf="infoFormGroup.get('local').invalid">

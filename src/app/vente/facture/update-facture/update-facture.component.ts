@@ -211,7 +211,7 @@ export class UpdateFactureComponent implements OnInit {
   viewPlus(prod: any ){
     const dialogRef = this.dialog.open(VoirPlusDialogComponent,{
       width: '100%', data : {
-        formPage: prod , local : this.local.nom_Local
+        formPage: prod , local : this.local.nom_Local, locals:this.locals
       }
     });
     dialogRef.afterClosed().subscribe(()=>{

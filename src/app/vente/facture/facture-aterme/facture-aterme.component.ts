@@ -23,6 +23,7 @@ export class FactureATermeComponent implements OnInit {
 
   infoFormGroup : FormGroup;
   panelOpenState = true;
+  addReglementFormGroup : FormGroup
 
   champ : string = '';
   value: string = '';
@@ -89,7 +90,11 @@ export class FactureATermeComponent implements OnInit {
   valueRegTree: any ;
   id_modeP_typeTree: any ; 
   modePaiement:any; 
-
+  total_Retenues : any = 0; 
+  Droit_timbre = '0.600'
+  isNull : boolean;
+  isCompleted: boolean
+  sum : any = 0; 
   data: any // get the Detail_BLs_en_Facture 
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
@@ -103,7 +108,16 @@ export class FactureATermeComponent implements OnInit {
   constructor(private _formBuilder: FormBuilder ,private factureService : FactureService,private blService: BlService, public datepipe: DatePipe,private router: Router) { 
     this.infoFormGroup = this._formBuilder.group({
       lengthOfListBl : ['', Validators.required]
-    })
+    });
+    this.addReglementFormGroup = this._formBuilder.group({
+      typeRegOne : ['', Validators.required],
+      typeRegTwo : ['',],
+      typeRegTree : ['',],
+      valueOne : ['0', Validators.required],
+      valueTwo : ['0',],
+      valueTree : ['0',],
+      note: ['',]
+    });
   }
 
   ngOnInit(): void {
@@ -817,7 +831,109 @@ export class FactureATermeComponent implements OnInit {
         'info');
     }  
   }
+  //** Plz choose at least one product in the next step */
+  nextStep(stepper : MatStepper){
+    this.isNull = false;
+    if((this.totalTTc !=0)){
+      let totalTTc_reg = 0;
+      for(let i= 0 ; i < this.listBlCheched.length; i++){
+        totalTTc_reg +=Number(this.listBlCheched[i].totale_TTC);
+      }
+      this.totalTTc_reg = Number(totalTTc_reg + Number(this.Droit_timbre)).toFixed(3) 
+      this.goForward(stepper); 
+      this.isNull = true;
+    }else{
+      this.isNull = false;
+      Swal.fire( 
+        'Veuillez choisir au moins un produit');
+    }
+  }
 
+//** Ckeck Total TTC in the reglement step */
+checkTotalTTC(stepper : MatStepper){
+      this.isCompleted= false;
+      this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));                
+     console.log(Number(this.sum),Number(this.total_Retenues),Number((this.addReglementFormGroup.get('valueOne').value)),Number((this.addReglementFormGroup.get('valueTwo').value)),Number((this.addReglementFormGroup.get('valueTree').value)));
+     
+      if(Number(this.sum)!=Number(this.total_Retenues)){
+        this.isCompleted= false;
+        Swal.fire( 
+        'Attention! vérifiez le totale',
+        'Total TTC!',
+        'error');
+      }else{
+        this.isCompleted= true;
+        this.goForward(stepper)
+      }
+}
+
+// get price of the Reglement one 
+getvalueModePaiement(ev: any){
+  //   this.price = Number(ev).toFixed(3)
+  //   if(this.price != undefined){
+  //     let rest
+  //     this.visibel= true;
+  //     if(parseInt(this.price) <= parseInt(this.total_Retenues)){   
+  //       rest = Number(this.total_Retenues - this.price).toFixed(3);
+  //       this.secondValue = rest;
+  //       this.addReglementFormGroup.controls['valueTwo'].setValue(rest);
+
+  //   }else{
+  //     this.visibel = false; 
+  //   }    
+  // }
+}
+//** Get the Second value */
+getvalueModePaiementTwo(ev: any){
+    // this.secondValue = ev
+    // let rest_Two ; 
+    // this.ligneTwo= true;
+    // rest_Two = Number((this.total_Retenues)-(this.price)- (this.secondValue)).toFixed(3);
+    // this.addReglementFormGroup.controls['valueTree'].setValue(rest_Two);
+}  
+//** addReglement */
+addReglement(){
+  // let rest ; 
+  // (this.show<0)? this.show=0 : console.log(this.sum);
+  // this.show++;
+  // if (this.show == 1){
+  //   this.ligneOne = true;
+  //   if(parseInt(this.price) <= parseInt(this.total_Retenues)){   
+  //     rest = Number(this.total_Retenues - this.price).toFixed(3);
+  //     this.addReglementFormGroup.controls['valueTwo'].setValue(rest);
+  //   }else{
+  //     Swal.fire( 
+  //       'Attention! vérifiez le totale',
+  //       'Total TTC!',
+  //       'error');
+  //   }
+  // }  
+  // if (this.show == 2) {  
+  //   let rest_Two ; 
+  //   this.ligneTwo= true;
+  //   rest_Two = Number((this.total_Retenues)-(this.price)- (this.secondValue)).toFixed(3);
+  //   this.addReglementFormGroup.controls['valueTree'].setValue(rest_Two);
+  // } 
+}
+// * DeleteReglement */
+deleteReglement(l:string){    
+    // if(l=='1') {
+    //   this.ligneOne = false;
+    //   this.isCompleted= false;
+    //   this.sum -=Number((this.addReglementFormGroup.get('valueTwo').value)); 
+    //   this.addReglementFormGroup.controls['valueTwo'].setValue(0);
+    //   this.addReglementFormGroup.controls['typeRegTwo'].setValue('');
+    //   (this.sum == this.total_Retenues)? this.isCompleted= true : this.isCompleted= false;
+    // }
+    // if(l=='2') {
+    //   this.ligneTwo = false; 
+    //   this.sum -=Number((this.addReglementFormGroup.get('valueTree').value));   
+    //   this.addReglementFormGroup.controls['valueTree'].setValue(0);
+    //   this.addReglementFormGroup.controls['typeRegTree'].setValue('');
+    //   (this.sum == this.total_Retenues)? this.isCompleted= true : this.isCompleted= false;
+    // }
+    // if((this.ligneOne == false) || (this.ligneTwo == false)) this.show--;
+}
   // save the bill
   saveFacture(){
     let formData : any = new FormData(); 

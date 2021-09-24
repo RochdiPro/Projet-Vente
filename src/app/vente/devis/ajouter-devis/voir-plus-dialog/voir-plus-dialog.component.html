@@ -76,7 +76,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Quantite en stock {{local | uppercase}} </th>
+                <th>Quantité en stock {{local | uppercase}} </th>
                 <th>Type</th>
             </tr>
         </thead>
@@ -91,5 +91,23 @@
             </tr>
         </tbody>
     </table>
-
+    <br>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Quantité en stock dans tous les Locaux</th>
+                <th>Quantité</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of qtePerLocals">
+                <td class="td-locals">
+                    <input name="qte" class="form-control" type="text" [(ngModel)]="item.nom_Local" disabled />
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="type" [(ngModel)]="item.num" disabled />
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>

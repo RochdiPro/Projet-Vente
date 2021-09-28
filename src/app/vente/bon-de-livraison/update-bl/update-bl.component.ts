@@ -113,7 +113,7 @@ export class UpdateBlComponent implements OnInit {
   date : any; 
   subscription: Subscription;
   nameClient: string;
-  id_client: string;
+  id_client: any;
   getProdId : boolean = false; 
   getProdCode: boolean = false; 
   price: any;
@@ -137,6 +137,9 @@ export class UpdateBlComponent implements OnInit {
   locals: any = []; 
   local: any ; 
   local_id: any ;
+  isFinished: any = 0 ; 
+  suivant: boolean= false;
+  paid : boolean = false; 
 
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
@@ -162,7 +165,7 @@ export class UpdateBlComponent implements OnInit {
       dateDevis:[''],
       modePaiement: [''],
       typeDevis:[''],
-      companyName: [''],
+      companyName: [{}],
       custemerName: [''],
       devise: [''],
       adresse: [''],
@@ -230,46 +233,54 @@ export class UpdateBlComponent implements OnInit {
       
     })
   }
-      //** infos   */
-  completezInof(prod: any , i: any  , data: any){
-    console.log(data);
+    //** infos   */
+  completezInof(prod: any , i: any , data: any ){
+      console.log(data);
+      
+       //** if prod is 4G */ 
+         if(this.blArticls[i].n_Imei == "true"){
+           const dialogRef = this.dialog.open(InfosDialogComponent,{
+             width:'100%',data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe((res: any)=>{
+             if(res !=undefined){
+           
+               this.blArticls[i].tableaux_produits_emie = res.data; 
+               if(res.isAccompli == false)[
+                 this.isFinished ++
+               ]
+   
+             }
+           });
+         }
+       //** if prod serie */
+         else if(this.blArticls[i].n_Serie == "true"){
+           const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
+             width:'100%',data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe((res : any )=>{
+             this.blArticls[i].tableaux_produits_serie = res.data; 
+             if(res.isAccompli == false)[
+               this.isFinished ++
+             ]
+           });
+         }else{
+           const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
+             data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe(()=>{
+             console.log('Closed');
+             this.isFinished ++
+           });
+         }
     
-        //** if prod is 4G */ 
-          if(this.blArticls[i].N_Imei == "true"){
-            const dialogRef = this.dialog.open(InfosDialogComponent,{
-              width:'100%',data : {
-                formPage: prod
-              }
-            });
-            dialogRef.afterClosed().subscribe((res: any)=>{
-              if(res !=undefined){
-                this.blArticls[i].tableaux_produits_emie = res.data; 
-              }
-            });
-          }
-        //** if prod serie */
-          else if(this.blArticls[i].N_Serie == "true"){
-            const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
-              width:'100%',data : {
-                formPage: prod
-              }
-            });
-            dialogRef.afterClosed().subscribe((res : any )=>{
-              if(res !=undefined)
-                this.blArticls[i].tableaux_produits_serie = res.data; 
-            });
-          }else{
-            const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
-              data : {
-                formPage: prod
-              }
-            });
-            dialogRef.afterClosed().subscribe(()=>{
-              console.log('Closed');
-            });
-          }
-    
-      }
+  }
       
   //** Get All Client */
   async getAllClient(){
@@ -278,15 +289,17 @@ export class UpdateBlComponent implements OnInit {
     })
   }
   //** Get Client by id  */
-  async getClientId(id : string){
+  async getClientId(id : any){
     this.bLservice.getClientById(id).subscribe(res => {      
       this.custemerName = res.body;
       this.nameClient = res.body.nom_Client;
-      this.id_client= res.body.id_Clt;      
+      this.id_client= res.body.id_Clt;   
       this.loading = true; 
       this.nom_client = this.nameClient;
       this.client_id = this.id_client;
-      this.adresse_clt= this.custemerName.adresse
+      this.adresse_clt= this.custemerName.adresse;
+      
+
     }); 
   }
   //** Get Devis by ID */
@@ -295,7 +308,7 @@ export class UpdateBlComponent implements OnInit {
       this.blData = data.body; 
       this.id_client = this.blData.id_Clt
       this.modePaiement = this.blData.mode_Paiement;
-      this.note = this.blData.description;  
+      this.note = this.blData.description; 
       this.getClientId(this.id_client);
     }); 
   }
@@ -460,8 +473,8 @@ export class UpdateBlComponent implements OnInit {
             this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
             // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Simples[0].Produit[i].Montant_Tva[0]);
             this.newAttribute.fodec=(data.Produits[0].Produits_Simples[0].Produit[i].fodec[0]);
-            this.newAttribute.N_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
-            this.newAttribute.N_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
+            this.newAttribute.n_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
+            this.newAttribute.n_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
             this.newAttribute.produits_simple = (data.Produits[0].Produits_Simples[0].Produit[i].produits_simple);           
             this.newAttribute.remise= (data.Produits[0].Produits_Simples[0].Produit[i].Remise[0]);
             this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Simples[0].Produit[i].PrixUTTC[0]);
@@ -495,8 +508,8 @@ export class UpdateBlComponent implements OnInit {
               // this.newAttribute.montant_TVA=(data.Produits[0].Produits_4Gs[0].Produit[i].Montant_Tva[0]);
               
               this.newAttribute.fodec=(data.Produits[0].Produits_4Gs[0].Produit[i].fodec[0]);
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_4Gs[0].Produit[i].produits_simple); 
               this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];          
               let tableaux_produits_emie = []
@@ -543,8 +556,8 @@ export class UpdateBlComponent implements OnInit {
               this.newAttribute.quantite=(data.Produits[0].Produits_Series[0].Produit[i].Qte[0]); 
               // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Series[0].Produit[i].Montant_Tva[0]);
               this.newAttribute.fodec=(data.Produits[0].Produits_Series[0].Produit[i].fodec);              
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_Series[0].Produit[i].produits_simple);           
               this.newAttribute.tva = data.Produits[0].Produits_Series[0].Produit[i].Tva[0]; 
               let tableaux_produits_serie = []
@@ -1032,57 +1045,65 @@ async getProuduitByCode(){
 
   //** Plz choose at least one product in the next step */
   nextStep(stepper : MatStepper){
-    let addPrice : any = 0 
     this.isNull = false;
     if((this.totalTTc !=0)){
       let totalTTc_reg = 0;
       for(let i= 0 ; i < this.blArticls.length; i++){
         totalTTc_reg +=Number(this.blArticls[i].totale_TTC);
       }
-      addPrice =   Number(totalTTc_reg - this.totalTTc_reg).toFixed(3);
-      if(addPrice<0){
-        this.addReglementFormGroup.controls['valueOne'].setValue(Number(totalTTc_reg).toFixed(3));
-        this.addReglementFormGroup.controls['valueTwo'].setValue(Number(0).toFixed(3))
-      }
-      else if(addPrice> this.addReglementFormGroup.get('valueTwo').value){
-        this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
-        this.id_modeP_typeTwo='4'
-      }else{
-        this.addReglementFormGroup.controls['valueTwo'].setValue(addPrice)
-        this.id_modeP_typeTwo='4'
-      }
-      
+      this.totalTTc_reg = Number(totalTTc_reg).toFixed(3) 
       this.addArticleFormGroup.controls['lengthTableDevis'].setValue(this.blArticls.length);
-      this.goForward(stepper); 
-      this.isNull = true;
+      if (this.isFinished == this.blArticls.length){
+        this.suivant = true; 
+      }
+      if(this.suivant == false){
+        Swal.fire( 
+          'veuillez compléter les informations','','warning');
+      }else{
+        this.goForward(stepper); 
+        this.isNull = true;
+      }
+
     }else{
       this.isNull = false;
       Swal.fire( 
         'Veuillez choisir au moins un produit');
     }
-    if(Number(this.addReglementFormGroup.get('valueTwo').value)>0){
-      this.id_modeP_typeTwo='4'
-    }
-    if(Number(this.addReglementFormGroup.get('valueTree').value)>0){
-      this.id_modeP_typeTwo='4'
-    }
+
   }
   //** Ckeck Total TTC in the reglement step */
   checkTotalTTC(stepper : MatStepper){
+    this.isCompleted= false;
+    this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));        
+    if(this.sum!=Number(this.totalTTc)){
       this.isCompleted= false;
-      this.sum= (Number((this.addReglementFormGroup.get('valueOne').value))+Number((this.addReglementFormGroup.get('valueTwo').value))+Number((this.addReglementFormGroup.get('valueTree').value)));
+      Swal.fire( 
+      'Attention! vérifiez le totale',
+      'Total TTC!',
+      'error');
+    }else{
+      Swal.fire({
+        title: 'Le paiement a-t-il été effectué ?', 
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non!',
+      reverseButtons: true}).then((res)=>{
+        if (res.isConfirmed) {
+          this.paid= true; 
+          this.isCompleted= true;
+          this.goForward(stepper)
+        }else{
+          this.paid= false; 
+          this.isCompleted= true;
+          this.goForward(stepper)
+        }
+    
+      }).catch(()=>{
+      })
       
-      if(Number(this.sum).toFixed(3)!=Number(this.totalTTc).toFixed(3)){
-        this.isCompleted= false;
-        Swal.fire( 
-        'Attention! vérifiez le totale',
-        'Total TTC!',
-        'error');
-      }else{
-        this.isCompleted= true;
-        this.goForward(stepper)
-      }
     }
+}
   // get price of the Reglement one 
   getvalueModePaiement(ev: any){
     this.price = Number(ev).toFixed(3)
@@ -1344,12 +1365,17 @@ Type_Reglement.appendChild(reglementTrois);
 
 
 //******* */
+Produits.setAttribute('Clinet',this.custemerName.nom_Client);
+Produits.setAttribute('Local', this.local.nom_Local);
 
-Produits.setAttribute('Fournisseur','InfoNet');
-Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
-
-var nameEtat = this.etatBl;
-var typeName = "BL";
+if( this.paid == true ){
+  var nameEtat ="Validée";
+}else if(this.paid== false){
+  var nameEtat= "Conservée"
+}else{
+  var nameEtat = "En cours";
+}
+var typeName = "Bon_Livraison";
 var devise = this.infoFormGroup.get('devise').value;
 var locale_depot = this.local.id_Local;
 var signaler_Prob = doc.createTextNode("True");
@@ -1861,13 +1887,18 @@ return doc
       let xmlFile = new XMLSerializer().serializeToString(doc_.documentElement);
       var myBlob = new Blob([xmlFile], { type: 'application/xml' });
       var myDetail = this.convertFileXml(myBlob,url);
-      console.log(this.bl_ID);
-      
+     
       formData.append('Id', this.bl_ID)
       formData.append('Id_Clt',this.client_id );
+      if( this.paid == true ){
+        formData.append('Etat', "Validée" );
+      }else if(this.paid== false){
+        formData.append('Etat', "Conservée" );
+      }else{
+        formData.append('Etat', "En cours" );
+      } 
       formData.append('Id_Responsable','InfoNet' );
-      formData.append('Type', this.blData.type +'- BL');
-      formData.append('Etat', this.blData.etat );
+      formData.append('Type', 'Bon_Livraison');
       formData.append('Frais_Livraison', frais_Livraison);
       formData.append('Date_Creation',  this.latest_date);
       formData.append('Total_HT_Brut', this.totalHTBrut);
@@ -1900,6 +1931,7 @@ return doc
                     this.generatePDF(res.id_Bl);
                     this.router.navigate(['Menu/Menu-BonLivraison/Lister-BL']);
                   } else if (result.isDismissed) {
+                    this.router.navigate(['Menu/Menu-BonLivraison/Lister-BL']);
                     console.log('Clicked No, File is safe!');
                   }
                 });

@@ -14,6 +14,7 @@ export class InfoSerieDialogComponent implements OnInit {
   tableaux_produits_serie: any = [];
   numSerie: any = [];
   prevSerie: any = []
+  isAccompli: boolean = true; 
 
   constructor(public dialogRef: MatDialogRef<InfoSerieDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private bLservice : BlService )  {
     this.item = data.formPage    
@@ -73,9 +74,11 @@ export class InfoSerieDialogComponent implements OnInit {
       else {
         this.tableaux_produits_serie.push(this.numSerie[i])
 
-        Swal.fire("info Vérifié");   
+            this.isAccompli= false;
+
+        Swal.fire("info Vérifié", '', 'success');   
       }
-        this.dialogRef.close({event: 'close', data : this.tableaux_produits_serie});
+        this.dialogRef.close({event: 'close', data : this.tableaux_produits_serie, isAccompli: this.isAccompli});
     }
     
   }

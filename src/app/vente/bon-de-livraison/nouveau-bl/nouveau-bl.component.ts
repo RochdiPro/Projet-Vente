@@ -110,6 +110,9 @@ Prix: any = 0;
 Totale_TTC: any = 0;
 numBL : any = 0 ; 
 locals: any = [];
+isFinished: any = 0 ; 
+suivant: boolean= false;
+paid : boolean = false; 
 
 @ViewChild(MatPaginator) paginator: any = MatPaginator;
 @ViewChild(MatSort) sort: any = MatSort;
@@ -200,7 +203,6 @@ locals: any = [];
  completezInof(prod: any , i: any , data: any ){
    console.log(data);
    
-   
     //** if prod is 4G */ 
       if(this.blArticls[i].n_Imei == "true"){
         const dialogRef = this.dialog.open(InfosDialogComponent,{
@@ -210,7 +212,12 @@ locals: any = [];
         });
         dialogRef.afterClosed().subscribe((res: any)=>{
           if(res !=undefined){
+        
             this.blArticls[i].tableaux_produits_emie = res.data; 
+            if(res.isAccompli == false)[
+              this.isFinished ++
+            ]
+
           }
         });
       }
@@ -223,6 +230,9 @@ locals: any = [];
         });
         dialogRef.afterClosed().subscribe((res : any )=>{
           this.blArticls[i].tableaux_produits_serie = res.data; 
+          if(res.isAccompli == false)[
+            this.isFinished ++
+          ]
         });
       }else{
         const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
@@ -232,9 +242,10 @@ locals: any = [];
         });
         dialogRef.afterClosed().subscribe(()=>{
           console.log('Closed');
+          this.isFinished ++
         });
       }
-
+ 
   }
 
   //** Error Message
@@ -859,13 +870,23 @@ async getProuduitByCode(){
         }
         this.totalTTc_reg = Number(totalTTc_reg).toFixed(3) 
         this.addArticleFormGroup.controls['lengthTableDevis'].setValue(this.blArticls.length);
-        this.goForward(stepper); 
-        this.isNull = true;
+        if (this.isFinished == this.blArticls.length){
+          this.suivant = true; 
+        }
+        if(this.suivant == false){
+          Swal.fire( 
+            'veuillez compléter les informations','','warning');
+        }else{
+          this.goForward(stepper); 
+          this.isNull = true;
+        }
+
       }else{
         this.isNull = false;
         Swal.fire( 
           'Veuillez choisir au moins un produit');
       }
+
     }
   //** Go Forward  */
   goForward(stepper : MatStepper){
@@ -883,8 +904,26 @@ async getProuduitByCode(){
           'Total TTC!',
           'error');
         }else{
-          this.isCompleted= true;
-          this.goForward(stepper)
+          Swal.fire({
+            title: 'Le paiement a-t-il été effectué ?', 
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Oui',
+            cancelButtonText: 'Non!',
+          reverseButtons: true}).then((res)=>{
+            if (res.isConfirmed) {
+              this.paid= true; 
+              this.isCompleted= true;
+              this.goForward(stepper)
+            }else{
+              this.paid= false; 
+              this.isCompleted= true;
+              this.goForward(stepper)
+            }
+        
+          }).catch(()=>{
+          })
+          
         }
   }
   // get price of the Reglement one 
@@ -1128,10 +1167,16 @@ Type_Reglement.appendChild(reglementTrois);
 
 //******* */
 
-Produits.setAttribute('Fournisseur','InfoNet');
-Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
+Produits.setAttribute('Client',this.infoFormGroup.get('custemerName').value.nom_Client);
+Produits.setAttribute('Local', this.infoFormGroup.get('local').value.nom_Local);
+if( this.paid == true ){
+  var nameEtat ="Validée";
+}else if(this.paid== false){
+  var nameEtat= "Conservée"
+}else{
+  var nameEtat = "En cours";
+}
 
-var nameEtat ="En cours";
 var typeName = "Devis";
 var locale_depot = this.infoFormGroup.get('local').value.id_Local;
 var devise = this.infoFormGroup.get('devise').value;
@@ -1598,9 +1643,15 @@ saveBL(){
       var myDetail = this.convertFileXml(myBlob,url);
 
       formData.append('Id_Clt',this.infoFormGroup.get('custemerName').value.id_Clt);
+      if( this.paid == true ){
+        formData.append('Etat', "Validée" );
+      }else if(this.paid== false){
+        formData.append('Etat', "Conservée" );
+      }else{
+        formData.append('Etat', "En cours" );
+      } 
       formData.append('Id_Responsable','InfoNet' );
-      formData.append('Type', 'BL');
-      formData.append('Etat', 'En cours' );
+      formData.append('Type', 'Bon_Livraison');
       formData.append('Frais_Livraison', frais_Livraison);
       formData.append('Date_Creation',  this.latest_date);
       formData.append('Total_HT_Brut', this.totalHTBrut);

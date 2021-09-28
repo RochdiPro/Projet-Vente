@@ -241,7 +241,9 @@ export class ConvertDevisToBlComponent implements OnInit {
     this.devisService.getClientById(id).subscribe(res => {
       this.custemerName = res.body;
       this.nameClient = res.body.nom_Client;
-      this.id_client= res.body.id_Clt;      
+      this.id_client= res.body.id_Clt;   
+      this.infoFormGroup.controls['custemerName'].setValue(this.custemerName)
+   
       this.loading = true; 
       this.nom_client = this.nameClient;
       this.client_id = this.id_client;
@@ -663,10 +665,10 @@ Type_Reglement.appendChild(reglementTrois);
 
 //******* */
 
-Produits.setAttribute('Fournisseur','InfoNet');
-Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
+Produits.setAttribute('Clinet',this.infoFormGroup.get('custemerName').value.nom_Client);
+Produits.setAttribute('Local', this.local.nom_Local);
 
-var nameEtat = "Proforma_BL";
+var nameEtat = "En cours";
 var typeName = "Proforma";
 var locale_depot = this.infoFormGroup.get('local').value.id_Local;
 var devise = this.infoFormGroup.get('devise').value;

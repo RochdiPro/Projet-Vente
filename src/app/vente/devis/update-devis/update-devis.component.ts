@@ -222,7 +222,8 @@ export class UpdateDevisComponent implements OnInit {
     this.devisService.getClientById(id).subscribe(res => {
       this.custemerName = res.body;
       this.nameClient = res.body.nom_Client;
-      this.id_client= res.body.id_Clt;      
+      this.id_client= res.body.id_Clt;   
+      // this.infoFormGroup.controls['custemerName'].setValue(this.custemerName);
       this.loading = true; 
     }); 
   }
@@ -352,6 +353,8 @@ export class UpdateDevisComponent implements OnInit {
         let data : any; 
         xml2js.parseString(atob(this.detail.substr(28)),(err: any , res : any)=>{      
           data =res.Devis;
+          console.log(data);
+          
           this.devise= data["Informations-Generales"][0].Devise[0];
           this.local_id= data["Informations-Generales"][0].Depot[0];
           this.getLocalById(this.local_id)
@@ -1309,8 +1312,8 @@ Taxes.appendChild(Fodec);
 
 //******* */
 
-Produits.setAttribute('Fournisseur','InfoNet');
-Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
+Produits.setAttribute('Clinet',this.custemerName.nom_Client);
+Produits.setAttribute('Local', this.local.nom_Local);
 
 var nameEtat ="En cours";
 var typeName = "Devis";
@@ -1319,7 +1322,7 @@ var locale_depot = this.local.id_Local;
 var signaler_Prob = doc.createTextNode("True");
 var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
 var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
-var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value.id_Clt);
+var id_Clt = doc.createTextNode(this.custemerName.id_Clt);
 var id_Fr = doc.createTextNode('1');
 
 

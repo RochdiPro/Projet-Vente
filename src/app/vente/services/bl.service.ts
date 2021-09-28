@@ -18,10 +18,10 @@ export class BlService {
 
   //** Get Client By Code/id EP */
   getClientById(id : string): Observable<any>{
-      return this.http.get(_url +'Client/',{params :{
-       Id_Clt: id,
-     },observe: 'response'});
-  }
+    return this.http.get(_url +'Client/',{params :{
+     Id_Clt: id,
+   },observe: 'response'});
+ }
   //** Get Article by Id  */
   getArticleById(id:string):Observable<any> {
       return this.http.get(_url+'Fiche_Produit/',{
@@ -187,5 +187,9 @@ export class BlService {
           Date2: date2
         },observe: 'response'
       });
+    }
+  
+    abandonnerBL(id: any ):Observable<any>{
+      return this.http.post(_url+"Abandonner_BL", id); 
     }
 }

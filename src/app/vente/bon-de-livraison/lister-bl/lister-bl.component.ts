@@ -28,7 +28,7 @@ export class ListerBlComponent implements OnInit {
   clt : any;
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
-  displayedColumns: string[] = ['modifier','id_Bl', 'etat', 'date_Creation', 'total_ttc', 'supprimer', 'exporter_pdf','Voir_pdf'];
+  displayedColumns: string[] = ['modifier','id_Bl', 'etat', 'date_Creation', 'total_ttc','annuler', 'supprimer', 'exporter_pdf','Voir_pdf'];
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
 
@@ -42,7 +42,7 @@ export class ListerBlComponent implements OnInit {
     this.loading = true; 
     this.blService.getAllBL().subscribe((res: any)=>{
       res = res.sort((a:any , b : any )=> b.id_Bl -a.id_Bl);
-    this.dataSourceBl= new MatTableDataSource(res);   
+    this.dataSourceBl= new MatTableDataSource(res);  
     this.dataSourceBl.sort = this.sort; 
     this.dataSourceBl.paginator = this.paginator;
     this.loading = false; 
@@ -776,7 +776,33 @@ export class ListerBlComponent implements OnInit {
       fileReader.readAsDataURL(detail.body);
     });
   }
-
+  abandonnerBL(id: any ){
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui abandonner, -le',
+      cancelButtonText: 'Non, garde le'
+    }).then((res : any)=>{
+      if(res.value){
+        let formData : any = new FormData();  
+        formData.append('Id',id );
+        this.blService.abandonnerBL(formData).subscribe((res:any)=>{});
+        Swal.fire('Le BL est abandonnée avec succés!',
+        '',
+          'success'
+        ).then(()=>{
+          this.getAllBLs();
+        })
+      } else if (res.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire(
+          'Annulé',
+          '',
+          'error'
+        )
+      }
+    });
+  }
   ngOnInit(): void {
   }
 

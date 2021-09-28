@@ -7,7 +7,7 @@
   width: 325px !important;
 }
 .btn-b {
-  color: darkblue;
+  color: darkblue !important;
   cursor: pointer;
 }
 .btn-r {
@@ -25,4 +25,8 @@ th.mat-sort-header-sorted {
   margin: 10px;
   color: rgba(13, 27, 62, 0.7);
   font-weight: bold;
+}
+.add-article {
+  color: #fff;
+  background-color: #3f6ad8;
 }

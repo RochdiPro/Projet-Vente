@@ -283,7 +283,9 @@ export class GenererBlComponent implements OnInit {
     this.devisService.getClientById(id).subscribe(res => {
       this.custemerName = res.body;
       this.nameClient = res.body.nom_Client;
-      this.id_client= res.body.id_Clt;      
+      this.id_client= res.body.id_Clt;   
+      // this.infoFormGroup.controls['custemerName'].setValue(this.custemerName)
+   
       this.loading = true; 
       this.nom_client = this.nameClient;
       this.client_id = this.id_client;
@@ -1326,17 +1328,17 @@ Type_Reglement.appendChild(reglementTrois);
 
 //******* */
 
-Produits.setAttribute('Fournisseur','InfoNet');
-Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
+Produits.setAttribute('Clinet',this.custemerName.nom_Client);
+Produits.setAttribute('Local', this.local.nom_Local);
 
-var nameEtat = "Proforma_BL";
+var nameEtat = "En cours";
 var typeName = "Proforma";
 var locale_depot = this.local.id_Local;
 var devise = this.infoFormGroup.get('devise').value;
 var signaler_Prob = doc.createTextNode("True");
 var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
 var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
-var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value.id_Clt);
+var id_Clt = doc.createTextNode(this.custemerName.id_Clt);
 var id_Fr = doc.createTextNode('1');
 
 

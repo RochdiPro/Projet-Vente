@@ -15,6 +15,7 @@ export class VoirPlusDialogComponent implements OnInit {
   num : any ;
   loading : boolean = true
   qtePerLocals: any = []; 
+  qteTotal : any = 0;
   
   constructor(public dialogRef: MatDialogRef<VoirPlusDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private devisService : DevisService) {
     this.item = data.formPage    
@@ -45,6 +46,7 @@ export class VoirPlusDialogComponent implements OnInit {
       nom_Local = this.locals[i].nom_Local;
       this.devisService.quentiteProdLocal(this.item.id_Produit, nom_Local).subscribe((res: any)=>{
         objectQtePerLocal.num = res.body;
+        this.qteTotal+= objectQtePerLocal.num
         objectQtePerLocal.nom_Local= nom_Local; 
         this.qtePerLocals.push(objectQtePerLocal);
         this.loading = false; 

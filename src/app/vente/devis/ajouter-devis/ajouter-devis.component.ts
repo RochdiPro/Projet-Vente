@@ -1153,8 +1153,8 @@ export class AjouterDevisComponent implements OnInit {
 
    //******* */
 
-    Produits.setAttribute('Fournisseur','InfoNet');
-    Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
+    Produits.setAttribute('Client',this.infoFormGroup.get('custemerName').value.nom_Client);
+    Produits.setAttribute('Local', this.infoFormGroup.get('local').value.nom_Local);
     
     var nameEtat ="En cours";
     var typeName = "Devis";

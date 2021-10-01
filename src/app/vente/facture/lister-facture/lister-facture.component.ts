@@ -26,7 +26,7 @@ export class ListerFactureComponent implements OnInit {
   clt : any;
 
   columns : any = ['ID', 'Nom', 'Prix_U', 'Remise', 'Quantité', 'TVA', 'Total_HT'];
-  displayedColumns: string[] = ['modifier','id_Facture', 'type', 'date_Creation',  'total_ttc','total_Retenues', 'supprimer', 'exporter_pdf','Voir_pdf'];
+  displayedColumns: string[] = ['modifier','id_Facture', 'etat', 'date_Creation',  'total_ttc','total_Retenues','annuler', 'supprimer', 'exporter_pdf','Voir_pdf'];
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
 
@@ -44,7 +44,6 @@ export class ListerFactureComponent implements OnInit {
       let data : any =[]
       data = res ; 
       data.map((ele: any)=>{ 
-        if (ele.etat ==='En cours')
          devis_en_cours.unshift(ele)
       });  
       devis_en_cours = devis_en_cours.sort((a:any , b : any )=> b.id_Facture -a.id_Facture);
@@ -762,7 +761,35 @@ export class ListerFactureComponent implements OnInit {
       fileReader.readAsDataURL(detail.body);
     });
   }
-
+  abandonnerFacture(id: any ){
+    console.log(id);
+    
+    Swal.fire({
+      title: 'Êtes-vous sûr?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Oui abandonner, -le',
+      cancelButtonText: 'Non, garde le'
+    }).then((res : any)=>{
+      if(res.value){
+        let formData : any = new FormData();  
+        formData.append('Id',id );
+        this.factureService.abandonnerFacture(formData).subscribe((res:any)=>{});
+        Swal.fire('Le BL est abandonnée avec succés!',
+        '',
+          'success'
+        ).then(()=>{
+          this.getAllFacture();
+        })
+      } else if (res.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire(
+          'Annulé',
+          '',
+          'error'
+        )
+      }
+    });
+  }
   ngOnInit(): void {
   }
 

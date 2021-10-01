@@ -114,6 +114,9 @@ locals: any = [];
 total_Retenues : any = 0; 
 Droit_timbre = '0.600'
 isAccompli: boolean = true; 
+isFinished: any = 0 ; 
+suivant: boolean= false;
+paid : boolean = false; 
 
 @ViewChild(MatPaginator) paginator: any = MatPaginator;
 @ViewChild(MatSort) sort: any = MatSort;
@@ -201,46 +204,53 @@ isAccompli: boolean = true;
   }
 
     //** infos   */
- completezInof(prod: any , i: any , data: any ){
+    completezInof(prod: any , i: any , data: any ){
+      console.log(data);
+      
+       //** if prod is 4G */ 
+         if(this.factureArticls[i].n_Imei == "true"){
+           const dialogRef = this.dialog.open(InfosDialogComponent,{
+             width:'100%',data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe((res: any)=>{
+             if(res !=undefined){
+           
+               this.factureArticls[i].tableaux_produits_emie = res.data; 
+               if(res.isAccompli == false)[
+                 this.isFinished ++
+               ]
    
-    //** if prod is 4G */ 
-      if(this.factureArticls[i].n_Imei == "true"){
-        const dialogRef = this.dialog.open(InfosDialogComponent,{
-          width:'100%',data : {
-            formPage: prod,
-          }
-        });
-        dialogRef.afterClosed().subscribe((res: any)=>{
-          if(res !=undefined){
-            this.factureArticls[i].tableaux_produits_emie = res.data; 
-            this.isAccompli = res.isAccompli
-
-          }
-        });
-      }
-    //** if prod serie */
-      else if(this.factureArticls[i].n_Serie == "true"){
-        const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
-          width:'100%',data : {
-            formPage: prod
-          }
-        });
-        dialogRef.afterClosed().subscribe((res : any )=>{
-          this.factureArticls[i].tableaux_produits_serie = res.data; 
-          this.isAccompli = res.isAccompli
-        });
-      }else{
-        const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
-          data : {
-            formPage: prod,
-          }
-        });
-        dialogRef.afterClosed().subscribe(()=>{
-          console.log('Closed');
-        });
-      }
-
-  }
+             }
+           });
+         }
+       //** if prod serie */
+         else if(this.factureArticls[i].n_Serie == "true"){
+           const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
+             width:'100%',data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe((res : any )=>{
+             this.factureArticls[i].tableaux_produits_serie = res.data; 
+             if(res.isAccompli == false)[
+               this.isFinished ++
+             ]
+           });
+         }else{
+           const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
+             data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe(()=>{
+             console.log('Closed');
+             this.isFinished ++
+           });
+         }
+    
+     }
 
   //** Error Message
   ErrorMessage(field: string) {
@@ -863,8 +873,17 @@ async getProuduitByCode(){
         }
         this.totalTTc_reg = Number(totalTTc_reg + Number(this.Droit_timbre)).toFixed(3) 
         this.addArticleFormGroup.controls['lengthTableDevis'].setValue(this.factureArticls.length);
-        this.goForward(stepper); 
-        this.isNull = true;
+        if (this.isFinished == this.factureArticls.length){
+          this.suivant = true; 
+        }
+        if(this.suivant == false){
+          Swal.fire( 
+            'veuillez compléter les informations','','warning');
+        }else{
+          this.goForward(stepper); 
+          this.isNull = true;
+        }
+
       }else{
         this.isNull = false;
         Swal.fire( 
@@ -889,8 +908,25 @@ async getProuduitByCode(){
           'Total TTC!',
           'error');
         }else{
-          this.isCompleted= true;
-          this.goForward(stepper)
+          Swal.fire({
+            title: 'Le paiement a-t-il été effectué ?', 
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Oui',
+            cancelButtonText: 'Non!',
+          reverseButtons: true}).then((res)=>{
+            if (res.isConfirmed) {
+              this.paid= true; 
+              this.isCompleted= true;
+              this.goForward(stepper)
+            }else{
+              this.paid= false; 
+              this.isCompleted= true;
+              this.goForward(stepper)
+            }
+        
+          }).catch(()=>{
+          })
         }
   }
   
@@ -1105,6 +1141,7 @@ var valueRegOne = doc.createElement("Value_Reglement_Un"); valueRegOne.innerHTML
 reglementUn.appendChild(codeTypaRegOne);
 reglementUn.appendChild(typeRegOne);
 reglementUn.appendChild(valueRegOne);
+Type_Reglement.appendChild(reglementUn);
 
 // Reglement_Deux
 var reglementDeux = doc.createElement("Reglement");
@@ -1115,6 +1152,7 @@ var valueRegTwo = doc.createElement("Value_Reglement_Deux"); valueRegTwo.innerHT
 reglementDeux.appendChild(codeTypaRegTwo);
 reglementDeux.appendChild(typeRegTwo);
 reglementDeux.appendChild(valueRegTwo);
+Type_Reglement.appendChild(reglementDeux);
 }
 
 // Reglement_Trois
@@ -1127,20 +1165,28 @@ var valueRegTwo = doc.createElement("Value_Reglement_Trois"); valueRegTwo.innerH
 reglementTrois.appendChild(codeTypaRegTree)
 reglementTrois.appendChild(typeRegTwo);
 reglementTrois.appendChild(valueRegTwo);
+Type_Reglement.appendChild(reglementTrois);
 }
 
-Type_Reglement.appendChild(reglementUn);
-Type_Reglement.appendChild(reglementDeux);
-Type_Reglement.appendChild(reglementTrois);
+
+
+
 
 
 //******* */
 
-Produits.setAttribute('Fournisseur','InfoNet');
-Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
+Produits.setAttribute('Client',this.infoFormGroup.get('custemerName').value.nom_Client);
+Produits.setAttribute('Local', this.infoFormGroup.get('local').value.nom_Local);
 
-var nameEtat ="En cours";
-var typeName = "Devis";
+if( this.paid == true ){
+  var nameEtat ="Validée";
+}else if(this.paid== false){
+  var nameEtat= "Conservée"
+}else{
+  var nameEtat = "En cours";
+}
+
+var typeName = "Facture";
 var locale_depot = this.infoFormGroup.get('local').value.id_Local;
 var devise = this.infoFormGroup.get('devise').value;
 var signaler_Prob = doc.createTextNode("True");
@@ -1204,7 +1250,6 @@ for (let i = 0; i < this.factureArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.factureArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.factureArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.factureArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.factureArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.factureArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.factureArticls[i].remise
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.factureArticls[i].totale_TTC
@@ -1225,14 +1270,20 @@ for (let i = 0; i < this.factureArticls.length; i++) {
         vProduit_4Gs.appendChild(Produit_4G);
       }
     }else {
-      var Produit_4G = doc.createElement('Produit_4G');
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-        var E1 = doc.createElement('E1'); E1.innerHTML = '0'
-        var E2 = doc.createElement('E2'); E2.innerHTML = '0'
+      for (let j = 0; j < this.factureArticls[i].quantite; j++) {
+        let tableaux_produits_emie: any = {}; 
+        var Produit_4G = doc.createElement('Produit_4G');
+        tableaux_produits_emie.n_serie= '0',
+        tableaux_produits_emie.e1='0';
+        tableaux_produits_emie.e2='0';
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = tableaux_produits_emie.n_serie
+        var E1 = doc.createElement('E1'); E1.innerHTML = tableaux_produits_emie.e1
+        var E2 = doc.createElement('E2'); E2.innerHTML = tableaux_produits_emie.e2
         Produit_4G.appendChild(N_Serie);
         Produit_4G.appendChild(E1);
         Produit_4G.appendChild(E2);
         vProduit_4Gs.appendChild(Produit_4G);
+      }
     }
 
 
@@ -1249,7 +1300,6 @@ for (let i = 0; i < this.factureArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vProduit_4Gs);
     Produit.appendChild( PrixU)
     Produit.appendChild( TotalFacture )   
@@ -1269,7 +1319,6 @@ for (let i = 0; i < this.factureArticls.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.factureArticls[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.factureArticls[i].M_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.factureArticls[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.factureArticls[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.factureArticls[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.factureArticls[i].remise;
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.factureArticls[i].totale_TTC
@@ -1284,8 +1333,12 @@ for (let i = 0; i < this.factureArticls.length; i++) {
         vN_Series.appendChild(N_Serie);
       }
     }else{
-      var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
+      for (let j = 0; j < this.factureArticls[i].quantite; j++) {
+        let n_serie ='0'
+
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = n_serie
         vN_Series.appendChild(N_Serie);
+      }
     }
 
 
@@ -1302,7 +1355,6 @@ for (let i = 0; i < this.factureArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vN_Series)
     Produit.appendChild(PrixU)
     Produit.appendChild( TotalFacture ) 
@@ -1324,7 +1376,6 @@ for (let i = 0; i < this.factureArticls.length; i++) {
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.factureArticls[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.factureArticls[i].fodec
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.factureArticls[i].prixU
-    var Charge = doc.createElement('charge'); Charge.innerHTML = this.factureArticls[i].ch
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.factureArticls[i].totale_TTC   
     var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.factureArticls[i].prix_U_TTC;
     var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.factureArticls[i].total_HT;
@@ -1344,7 +1395,6 @@ for (let i = 0; i < this.factureArticls.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild( TotalFacture )
     Produit.appendChild( PrixU )
 
@@ -1603,7 +1653,13 @@ return doc
       formData.append('Droit_timbre', this.Droit_timbre );
       formData.append('Id_Responsable','InfoNet' );
       formData.append('Type', 'Facture');
-      formData.append('Etat', 'En cours' );
+      if( this.paid == true ){
+        formData.append('Etat', "Validée" );
+      }else if(this.paid== false){
+        formData.append('Etat', "Conservée" );
+      }else{
+        formData.append('Etat', "En cours" );
+      } 
       formData.append('Frais_Livraison', frais_Livraison);
       formData.append('Date_Creation',  this.latest_date);
       formData.append('Total_HT_Brut', this.totalHTBrut);
@@ -1634,6 +1690,7 @@ return doc
                     this.router.navigate(['Menu/Menu-facture/Lister-Facture']);
                   } else if (result.isDismissed) {
                     console.log('Clicked No, File is safe!');
+                    this.router.navigate(['Menu/Menu-facture/Lister-Facture']);
                   }
                 });
               }});

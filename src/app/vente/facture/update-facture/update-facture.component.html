@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<mat-vertical-stepper linear #stepperUpdateBl *ngIf="loading">
+<mat-vertical-stepper linear #stepperUpdateFacture *ngIf="loading">
     <ng-template matStepLabel>Informations Générales</ng-template>
     <mat-step [stepControl]="infoFormGroup">
         <form [formGroup]="infoFormGroup">
@@ -78,7 +78,6 @@
             </div>
         </form>
     </mat-step>
-
     <!-- Second step -->
     <mat-step [stepControl]="addArticleFormGroup" [completed]="isNull">
         <ng-template matStepLabel>Ajouter Article(s)</ng-template>
@@ -130,7 +129,7 @@
                             <th>Disponibilité</th>
                             <th>Voir plus</th>
                             <th>Supprimer</th>
-                            <th></th>
+                            <th>Compléter les infos</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -178,6 +177,11 @@
                             </td>
                             <td>
                                 <i class="pe-7s-trash" (click)="deleteItemValue(i)" title="Supprimer article"></i>
+                            </td>
+                            <td>
+                                <button mat-raised-button class="add-article "
+                                    (click)="completezInof(item, i ,factureProds)">
+                                    Complétez les informations </button>
                             </td>
                         </tr>
                     </tbody>
@@ -249,11 +253,10 @@
                 </div>
                 <hr><br>
                 <button mat-button matStepperPrevious class="btn ">Retour</button>
-                <button mat-button class="btn btn-primary" (click)="nextStep(stepperUpdateBl)">Suivant</button>
+                <button mat-button class="btn btn-primary" (click)="nextStep(stepperUpdateFacture)">Suivant</button>
             </div>
         </form>
     </mat-step>
-
     <!-- Therd Step -->
     <mat-step [stepControl]="addReglementFormGroup" [completed]="isCompleted">
         <ng-template matStepLabel>Modalité du paiement</ng-template>
@@ -341,48 +344,10 @@
             <br>
             <div>
                 <button mat-button matStepperPrevious>Retour</button>
-                <button mat-button class="btn btn-primary" (click)="checkTotalTTC(stepperUpdateBl)">Suivant</button>
+                <button mat-button class="btn btn-primary"
+                    (click)="checkTotalTTC(stepperUpdateFacture)">Suivant</button>
             </div>
         </form>
-    </mat-step>
-    <!-- 4th step -->
-    <mat-step>
-        <ng-template matStepLabel>Compléter les infos</ng-template>
-        <!-- lister les articles choisie -->
-        <div class="container">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Id produit</th>
-                        <th>Nom produit</th>
-                        <th>infos</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let item of factureProds ; let i = index;">
-                        <td class="id-item">
-                            <input [ngModel]="item.id_Produit" name="id" class="form-control" type="text"
-                                name="{{item.id_Produit}}" disabled />
-                        </td>
-                        <td class="id-name">
-                            <input [ngModel]="item.nom_Produit" name="name" class="form-control" type="text"
-                                name="{{item.nom_Produit}}" disabled />
-                        </td>
-                        <!--Complétez les infos  E1 | E2 | N°serie -->
-                        <td>
-                            <button mat-button class="btn btn-b" (click)="completezInof(item, i)">Complétez
-                                les
-                                infos</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <br>
-        <div>
-            <button mat-button matStepperPrevious>Retour</button>
-            <button mat-button class="btn btn-primary" matStepperNext>Suivant</button>
-        </div>
     </mat-step>
     <!-- Last step -->
     <mat-step label="Enregistrer & imprimer le BL">

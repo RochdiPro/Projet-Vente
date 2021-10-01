@@ -1177,7 +1177,7 @@ if( this.paid == true ){
   var nameEtat = "En cours";
 }
 
-var typeName = "Devis";
+var typeName = "BL";
 var locale_depot = this.infoFormGroup.get('local').value.id_Local;
 var devise = this.infoFormGroup.get('devise').value;
 var signaler_Prob = doc.createTextNode("True");

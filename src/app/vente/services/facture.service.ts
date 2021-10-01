@@ -126,4 +126,8 @@ export class FactureService {
   getDetailsBls(liste: any ): Observable<any>{
     return this.http.post(_url+'Detail_BLs_en_Facture',liste,{observe:'response', responseType : 'blob'});
   }
+  // abandonnerFacture
+  abandonnerFacture(id: any):Observable<any>{
+    return this.http.post(_url+'Abandonner_Facture',id)
+  }
 }

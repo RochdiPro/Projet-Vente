@@ -128,13 +128,14 @@ export class UpdateDevisComponent implements OnInit {
   locals: any = []; 
   local_id: any; 
   local: any;
+  adressClient : any = ''
   
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
   
   constructor(private _formBuilder : FormBuilder,private route : ActivatedRoute,public datepipe: DatePipe, private devisService : DevisService, public dialog: MatDialog, private router: Router) {
     this.latest_date =this.datepipe.transform(this.currentDate, 'dd/MM/YYYY');
-    this.getLocals();
+    
     this.subscription = interval(10000).subscribe((v) => {
       this.calculTotal();
       this.calculAssiettes();
@@ -145,8 +146,10 @@ export class UpdateDevisComponent implements OnInit {
   ngOnInit(): void {
     //** INIT */
       this.devis_ID = this.route.snapshot.params.id;
-      this.getDevisByID(); 
+      this.getLocals();
       this.getAllClient();
+
+      this.getDevisByID(); 
       this.getDetail();
 
       this.infoFormGroup = this._formBuilder.group({
@@ -193,9 +196,10 @@ export class UpdateDevisComponent implements OnInit {
         this.locals = res
       })
     }
-    changeLocal(event : any){
-      // Delete table content if the location changes
-      if(event.value){
+  changeLocal(event : any){
+      // Delete table content if the location changes      
+      if(event){
+        this. getLocalById(event)
         this.devisArticls= []; 
         this.totalHTBrut = 0; 
         this.remiseDiff=0;
@@ -222,8 +226,8 @@ export class UpdateDevisComponent implements OnInit {
     this.devisService.getClientById(id).subscribe(res => {
       this.custemerName = res.body;
       this.nameClient = res.body.nom_Client;
+      this.adressClient = res.body.adresse
       this.id_client= res.body.id_Clt;   
-      // this.infoFormGroup.controls['custemerName'].setValue(this.custemerName);
       this.loading = true; 
     }); 
   }
@@ -357,7 +361,7 @@ export class UpdateDevisComponent implements OnInit {
           
           this.devise= data["Informations-Generales"][0].Devise[0];
           this.local_id= data["Informations-Generales"][0].Depot[0];
-          this.getLocalById(this.local_id)
+          this.getLocalById(this.local_id);
           this.totalHTBrut = data.Total[0].TotalHTBrut[0]; 
           this.totalMontantFodec= data.Total[0].TotalFodec[0];
           this.totalRemise = data.Total[0].TotalRemise[0];
@@ -1585,7 +1589,7 @@ async generatePDF(id :any){
      // check if this "Devis" is Proforma or "simple/estimatif"
         let imgUrl : string ; 
         if( this.typeDevis === 'Estimatif'){
-          imgUrl= "../../../assets/images/template_Devis.jpg"
+          imgUrl= "../../../assets/images/Devis_maquette_finale_.jpg"
         }else{
           imgUrl = "../../../assets/images/template-proforma.jpg"
         }
@@ -1636,11 +1640,13 @@ async generatePDF(id :any){
           content: [
             { columns : [
               {
-                text:'Devis n° ' +id + ' | ' + this.date+ '\n\n',
-                fontSize: 15,
-                alignment: 'left',
+                text:'     '+'\t'+'\t' + this.id_client+ '\n\n'+
+                '     '+'\t'+'\t' + this.nameClient+ '\n\n'+
+                '\t'+'\t' + this.adressClient,
+                fontSize: 12,
+               
                 color: 'black',
-                bold: true
+                bold: false
               },
               ]},
               {
@@ -1661,9 +1667,7 @@ async generatePDF(id :any){
                   text: '\t'
                 },
                 {   
-                  text: 
-                  'Code Client :' + '\t' + this.id_client + '\n'
-                  + 'Nom Client :' + '\t' + this.nameClient + '\n'                  ,
+                  text: '          ' + '\t' + id + '\n'  ,
                   fontSize: 12,
                   alignment: 'left',
                   color: 'black'
@@ -1789,7 +1793,7 @@ async generatePDF(id :any){
               ]
             };
           },
-          pageMargins: [30, 125, 40, 60],
+          pageMargins: [20, 125, 40, 60],
         };
         pdfMake.createPdf(pdf_devis).open();
        },1000)   
@@ -1864,6 +1868,7 @@ saveData(){
                 this.generatePDF(res.id_Devis);
                 this.router.navigate(['Menu/Menu-Devis/Lister-devis']);
               } else if (result.isDismissed) {
+                this.router.navigate(['Menu/Menu-Devis/Lister-devis']);
                 console.log('Clicked No, File is safe!');
               }
             });

@@ -137,6 +137,9 @@ export class UpdateFactureComponent implements OnInit {
   local_id: any ;
   Droit_timbre = '0.600';
   total_Retenues : any = 0; 
+  isFinished: any = 0 ; 
+  suivant: boolean= false;
+  paid : boolean = false; 
 
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
   @ViewChild(MatSort) sort: any = MatSort;
@@ -219,44 +222,54 @@ export class UpdateFactureComponent implements OnInit {
       
     })
   }
-      //** infos   */
-  completezInof(prod: any , i: any  ){
-        //** if prod is 4G */ 
-          if(this.factureProds[i].N_Imei == "true"){
-            const dialogRef = this.dialog.open(InfosDialogComponent,{
-              width:'100%',data : {
-                formPage: prod
-              }
-            });
-            dialogRef.afterClosed().subscribe((res: any)=>{
-              if(res !=undefined){
-                this.factureProds[i].tableaux_produits_emie = res.data; 
-              }
-            });
-          }
-        //** if prod serie */
-          else if(this.factureProds[i].N_Serie == "true"){
-            const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
-              width:'100%',data : {
-                formPage: prod
-              }
-            });
-            dialogRef.afterClosed().subscribe((res : any )=>{
-              if(res !=undefined)
-                this.factureProds[i].tableaux_produits_serie = res.data; 
-            });
-          }else{
-            const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
-              data : {
-                formPage: prod
-              }
-            });
-            dialogRef.afterClosed().subscribe(()=>{
-              console.log('Closed');
-            });
-          }
+    //** infos   */
+    completezInof(prod: any , i: any , data: any ){
+      console.log(data);
+      
+       //** if prod is 4G */ 
+         if(this.factureProds[i].n_Imei == "true"){
+           const dialogRef = this.dialog.open(InfosDialogComponent,{
+             width:'100%',data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe((res: any)=>{
+             if(res !=undefined){
+           
+               this.factureProds[i].tableaux_produits_emie = res.data; 
+               if(res.isAccompli == false)[
+                 this.isFinished ++
+               ]
+   
+             }
+           });
+         }
+       //** if prod serie */
+         else if(this.factureProds[i].n_Serie == "true"){
+           const dialogRef = this.dialog.open(InfoSerieDialogComponent,{
+             width:'100%',data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe((res : any )=>{
+             this.factureProds[i].tableaux_produits_serie = res.data; 
+             if(res.isAccompli == false)[
+               this.isFinished ++
+             ]
+           });
+         }else{
+           const dialogRef = this.dialog.open(InfoSimpleDialogComponent,{
+             data : {
+               formPage: prod
+             }
+           });
+           dialogRef.afterClosed().subscribe(()=>{
+             console.log('Closed');
+             this.isFinished ++
+           });
+         }
     
-      }
+  }
       
   //** Get All Client */
   async getAllClient(){
@@ -481,8 +494,8 @@ export class UpdateFactureComponent implements OnInit {
             this.newAttribute.quantite=(data.Produits[0].Produits_Simples[0].Produit[i].Qte[0]); 
             // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Simples[0].Produit[i].Montant_Tva[0]);
             this.newAttribute.fodec=(data.Produits[0].Produits_Simples[0].Produit[i].fodec[0]);
-            this.newAttribute.N_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
-            this.newAttribute.N_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
+            this.newAttribute.n_Imei = (data.Produits[0].Produits_Simples[0].Produit[i].n_Imei); 
+            this.newAttribute.n_Serie = (data.Produits[0].Produits_Simples[0].Produit[i].n_Serie); 
             this.newAttribute.produits_simple = (data.Produits[0].Produits_Simples[0].Produit[i].produits_simple);           
             this.newAttribute.remise= (data.Produits[0].Produits_Simples[0].Produit[i].Remise[0]);
             this.newAttribute.prix_U_TTC= (data.Produits[0].Produits_Simples[0].Produit[i].PrixUTTC[0]);
@@ -516,8 +529,8 @@ export class UpdateFactureComponent implements OnInit {
               // this.newAttribute.montant_TVA=(data.Produits[0].Produits_4Gs[0].Produit[i].Montant_Tva[0]);
               
               this.newAttribute.fodec=(data.Produits[0].Produits_4Gs[0].Produit[i].fodec[0]);
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Imei); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_4Gs[0].Produit[i].n_Serie); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_4Gs[0].Produit[i].produits_simple); 
               this.newAttribute.tva = data.Produits[0].Produits_4Gs[0].Produit[i].Tva[0];          
               let tableaux_produits_emie = []
@@ -564,8 +577,8 @@ export class UpdateFactureComponent implements OnInit {
               this.newAttribute.quantite=(data.Produits[0].Produits_Series[0].Produit[i].Qte[0]); 
               // this.newAttribute.montant_TVA=(data.Produits[0].Produits_Series[0].Produit[i].Montant_Tva[0]);
               this.newAttribute.fodec=(data.Produits[0].Produits_Series[0].Produit[i].fodec);              
-              this.newAttribute.N_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
-              this.newAttribute.N_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
+              this.newAttribute.n_Imei = (data.Produits[0].Produits_Series[0].Produit[i].n_Imei); 
+              this.newAttribute.n_Serie = (data.Produits[0].Produits_Series[0].Produit[i].n_Serie); 
               this.newAttribute.produits_simple = (data.Produits[0].Produits_Series[0].Produit[i].produits_simple);           
               this.newAttribute.tva = data.Produits[0].Produits_Series[0].Produit[i].Tva[0]; 
               let tableaux_produits_serie = []
@@ -1072,8 +1085,16 @@ async getProuduitByCode(){
       }
       
       this.addArticleFormGroup.controls['lengthTableDevis'].setValue(this.factureProds.length);
-      this.goForward(stepper); 
-      this.isNull = true;
+      if (this.isFinished == this.factureProds.length){
+        this.suivant = true; 
+      }
+      if(this.suivant == false){
+        Swal.fire( 
+          'veuillez compléter les informations','','warning');
+      }else{
+        this.goForward(stepper); 
+        this.isNull = true;
+      }
     }else{
       this.isNull = false;
       Swal.fire( 
@@ -1097,8 +1118,25 @@ async getProuduitByCode(){
       'Total TTC!',
       'error');
     }else{
-      this.isCompleted= true;
-      this.goForward(stepper)
+      Swal.fire({
+        title: 'Le paiement a-t-il été effectué ?', 
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non!',
+      reverseButtons: true}).then((res)=>{
+        if (res.isConfirmed) {
+          this.paid= true; 
+          this.isCompleted= true;
+          this.goForward(stepper)
+        }else{
+          this.paid= false; 
+          this.isCompleted= true;
+          this.goForward(stepper)
+        }
+    
+      }).catch(()=>{
+      });
     }
 }
   // get price of the Reglement one 
@@ -1329,6 +1367,7 @@ var valueRegOne = doc.createElement("Value_Reglement_Un"); valueRegOne.innerHTML
 reglementUn.appendChild(codeTypaRegOne);
 reglementUn.appendChild(typeRegOne);
 reglementUn.appendChild(valueRegOne);
+Type_Reglement.appendChild(reglementUn);
 
 // Reglement_Deux
 var reglementDeux = doc.createElement("Reglement");
@@ -1339,6 +1378,8 @@ var valueRegTwo = doc.createElement("Value_Reglement_Deux"); valueRegTwo.innerHT
 reglementDeux.appendChild(codeTypaRegTwo);
 reglementDeux.appendChild(typeRegTwo);
 reglementDeux.appendChild(valueRegTwo);
+
+Type_Reglement.appendChild(reglementDeux);
 }
 
 // Reglement_Trois
@@ -1351,26 +1392,32 @@ var valueRegTwo = doc.createElement("Value_Reglement_Trois"); valueRegTwo.innerH
 reglementTrois.appendChild(codeTypaRegTree)
 reglementTrois.appendChild(typeRegTwo);
 reglementTrois.appendChild(valueRegTwo);
+
+Type_Reglement.appendChild(reglementTrois);
 }
 
-Type_Reglement.appendChild(reglementUn);
-Type_Reglement.appendChild(reglementDeux);
-Type_Reglement.appendChild(reglementTrois);
+
 
 
 //******* */
 
-Produits.setAttribute('Fournisseur','InfoNet');
-Produits.setAttribute('Local', this.infoFormGroup.get('adresse').value);
+Produits.setAttribute('Clinet',this.custemerName.nom_Client);
+Produits.setAttribute('Local', this.local.nom_Local);
 
-var nameEtat = this.etatFacture;
+if( this.paid == true ){
+  var nameEtat ="Validée";
+}else if(this.paid== false){
+  var nameEtat= "Conservée"
+}else{
+  var nameEtat = "En cours";
+}
 var typeName = "Facture";
-var locale_depot = this.infoFormGroup.get('local').value.id_Local;
+var locale_depot = this.local.nom_Local;
 var devise = this.infoFormGroup.get('devise').value;
 var signaler_Prob = doc.createTextNode("True");
 var modepaiementName = doc.createTextNode(this.infoFormGroup.get('modePaiement').value)
 var adressName = doc.createTextNode(this.infoFormGroup.get('adresse').value)
-var id_Clt = doc.createTextNode(this.infoFormGroup.get('custemerName').value.id_Clt);
+var id_Clt = doc.createTextNode(this.custemerName.id_Clt);
 var id_Fr = doc.createTextNode('1');
 
 
@@ -1428,7 +1475,6 @@ for (let i = 0; i < this.factureProds.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.factureProds[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.factureProds[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.factureProds[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.factureProds[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.factureProds[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.factureProds[i].remise
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.factureProds[i].totale_TTC
@@ -1449,14 +1495,20 @@ for (let i = 0; i < this.factureProds.length; i++) {
         vProduit_4Gs.appendChild(Produit_4G);
       }
     }else {
-      var Produit_4G = doc.createElement('Produit_4G');
-        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
-        var E1 = doc.createElement('E1'); E1.innerHTML = '0'
-        var E2 = doc.createElement('E2'); E2.innerHTML = '0'
+      for (let j = 0; j < this.factureProds[i].quantite; j++) {
+        let tableaux_produits_emie: any = {}; 
+        var Produit_4G = doc.createElement('Produit_4G');
+        tableaux_produits_emie.n_serie= '0',
+        tableaux_produits_emie.e1='0';
+        tableaux_produits_emie.e2='0';
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = tableaux_produits_emie.n_serie
+        var E1 = doc.createElement('E1'); E1.innerHTML = tableaux_produits_emie.e1
+        var E2 = doc.createElement('E2'); E2.innerHTML = tableaux_produits_emie.e2
         Produit_4G.appendChild(N_Serie);
         Produit_4G.appendChild(E1);
         Produit_4G.appendChild(E2);
         vProduit_4Gs.appendChild(Produit_4G);
+      }
     }
 
 
@@ -1473,7 +1525,6 @@ for (let i = 0; i < this.factureProds.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vProduit_4Gs);
     Produit.appendChild( PrixU)
     Produit.appendChild( TotalFacture )   
@@ -1493,7 +1544,6 @@ for (let i = 0; i < this.factureProds.length; i++) {
     var Tva = doc.createElement('Tva'); Tva.innerHTML = this.factureProds[i].tva
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.factureProds[i].M_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.factureProds[i].fodec
-    var Charge = doc.createElement('Charge'); Charge.innerHTML = this.factureProds[i].ch
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.factureProds[i].prixU
     var Remise = doc.createElement('Remise'); Remise.innerHTML = this.factureProds[i].remise;
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML = this.factureProds[i].totale_TTC
@@ -1508,8 +1558,12 @@ for (let i = 0; i < this.factureProds.length; i++) {
         vN_Series.appendChild(N_Serie);
       }
     }else{
-      var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = '0'
+      for (let j = 0; j < this.factureProds[i].quantite; j++) {
+        let n_serie ='0'
+
+        var N_Serie = doc.createElement('N_Serie'); N_Serie.innerHTML = n_serie
         vN_Series.appendChild(N_Serie);
+      }
     }
 
 
@@ -1526,7 +1580,6 @@ for (let i = 0; i < this.factureProds.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild(vN_Series)
     Produit.appendChild(PrixU)
     Produit.appendChild( TotalFacture ) 
@@ -1548,7 +1601,6 @@ for (let i = 0; i < this.factureProds.length; i++) {
     var m_Tva = doc.createElement('Montant_Tva'); m_Tva.innerHTML = this.factureProds[i].montant_TVA
     var fodec = doc.createElement('fodec'); fodec.innerHTML = this.factureProds[i].fodec
     var  PrixU = doc.createElement('PrixU'); PrixU.innerHTML = this.factureProds[i].prixU
-    var Charge = doc.createElement('charge'); Charge.innerHTML = this.factureProds[i].ch
     var TotalFacture = doc.createElement('TotalFacture'); TotalFacture.innerHTML =this.factureProds[i].totale_TTC   
     var Prix_U_TTC= doc.createElement('PrixUTTC'); Prix_U_TTC.innerHTML= this.factureProds[i].prix_U_TTC;
     var Total_HT = doc.createElement('Total_HT');Total_HT.innerHTML = this.factureProds[i].total_HT;
@@ -1568,7 +1620,6 @@ for (let i = 0; i < this.factureProds.length; i++) {
     Produit.appendChild(Tva);
     Produit.appendChild(m_Tva);
     Produit.appendChild(fodec);
-    Produit.appendChild(Charge);
     Produit.appendChild( TotalFacture )
     Produit.appendChild( PrixU )
 
@@ -1874,12 +1925,18 @@ return doc
       var myDetail = this.convertFileXml(myBlob,url);
       console.log(this.facture_ID);
       
-      formData.append('Id_Clt',this.infoFormGroup.get('custemerName').value.id_Clt);
+      formData.append('Id', this.facture_ID)
+      formData.append('Id_Clt',this.client_id );
       formData.append('Droit_timbre', this.Droit_timbre );
       formData.append('Id_Responsable','InfoNet' );
       formData.append('Type', 'Facture');
-      formData.append('Etat', 'En cours' );
-      formData.append('Frais_Livraison', frais_Livraison);
+      if( this.paid == true ){
+        formData.append('Etat', "Validée" );
+      }else if(this.paid== false){
+        formData.append('Etat', "Conservée" );
+      }else{
+        formData.append('Etat', "En cours" );
+      }      formData.append('Frais_Livraison', frais_Livraison);
       formData.append('Date_Creation',  this.latest_date);
       formData.append('Total_HT_Brut', this.totalHTBrut);
       formData.append('Total_Remise', this.remiseDiff);
@@ -1891,7 +1948,7 @@ return doc
       formData.append('Mode_Paiement', this.infoFormGroup.get('modePaiement').value);
       formData.append('Description', this.addReglementFormGroup.get('note').value);
       formData.append('Detail',myDetail); 
-            //** send data to the API */
+            // ** send data to the API */
             this.factureService.updateFacture(formData).subscribe((res)=>{
               console.log(res);
               
@@ -1911,6 +1968,7 @@ return doc
                     this.router.navigate(['Menu/Menu-facture/Lister-Facture']);
                   } else if (result.isDismissed) {
                     console.log('Clicked No, File is safe!');
+                    this.router.navigate(['Menu/Menu-facture/Lister-Facture']);
                   }
                 });
               }});

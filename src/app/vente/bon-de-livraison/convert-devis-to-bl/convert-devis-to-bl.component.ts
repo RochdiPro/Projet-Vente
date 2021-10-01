@@ -1152,6 +1152,7 @@ convertDevisDL(){
               this.generatePDF(res.id_Bl , res.id_Devis);
               this.router.navigate(['Menu/Menu-BonLivraison/Lister-BL']);
             } else if (result.isDismissed) {
+              this.router.navigate(['Menu/Menu-BonLivraison/Lister-BL']);
               console.log('Clicked No, File is safe!');
             }
           });

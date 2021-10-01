@@ -59,7 +59,7 @@
             <ng-container matColumnDef="supprimer">
                 <th mat-header-cell *matHeaderCellDef> </th>
                 <td mat-cell *matCellDef="let element"> <i class="pe-7s-trash btn-r" title="Supprimer Le Devis"
-                        (click)="deleteBL(element.id_Bl)"></i> </td>
+                        *ngIf="element.etat != 'Validée'" (click)="deleteBL(element.id_Bl)"></i> </td>
             </ng-container>
             <ng-container matColumnDef="Voir_pdf">
                 <th mat-header-cell *matHeaderCellDef> </th>

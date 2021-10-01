@@ -40,6 +40,8 @@ export class InfoSerieDialogComponent implements OnInit {
   // get all info for prod serie
   getAllInfoSerie(id: any){
     this.bLservice.getAllInfoSerie(id).subscribe((res : any )=>{
+      console.log(res.body);
+      
       res.body.forEach((ele: any) => {
         this.numero_Serie.push({ name : ele.n_Serie,  selected: false});
       });

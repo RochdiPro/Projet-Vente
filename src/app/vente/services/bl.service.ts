@@ -189,7 +189,14 @@ export class BlService {
       });
     }
   
+    // Abandonner BL
+
     abandonnerBL(id: any ):Observable<any>{
       return this.http.post(_url+"Abandonner_BL", id); 
+    }
+
+    // Sortie_Produits_BL_Stock
+    sortieProduitsBLStock(id: any):Observable<any>{
+      return this.http.post(_url+'Sortie_Produits_BL_Stock',id);
     }
 }

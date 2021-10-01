@@ -1934,6 +1934,11 @@ return doc
                     this.router.navigate(['Menu/Menu-BonLivraison/Lister-BL']);
                     console.log('Clicked No, File is safe!');
                   }
+                  // Sortie_Produits_BL_Stock
+              let idData : any = new FormData();
+              idData.append('Id', res.id_Bl)
+              this.bLservice.sortieProduitsBLStock(idData).subscribe((res:any)=>{console.log(res.body);
+              });
                 });
               }});
             }, (err)=> {

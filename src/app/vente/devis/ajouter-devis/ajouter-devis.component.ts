@@ -1659,6 +1659,7 @@ export class AjouterDevisComponent implements OnInit {
                   this.router.navigate(['Menu/Menu-Devis/Lister-devis']);
                 } else if (result.isDismissed) {
                   console.log('Clicked No, File is safe!');
+                  this.router.navigate(['Menu/Menu-Devis/Lister-devis']);
                 }
               });
             }});

@@ -1431,9 +1431,9 @@ export class AjouterDevisComponent implements OnInit {
         // check if this "Devis" is Proforma or "simple/estimatif"
         let imgUrl : string ; 
         if( this.typeDevis === 'Estimatif'){
-          imgUrl= "../../../assets/images/template_Devis.jpg"
+          imgUrl= "../../../assets/images/Devis_maquette_finale_.jpg"
         }else{
-          imgUrl = "../../../assets/images/template-proforma.jpg"
+          imgUrl = "../../../assets/images/proforma_.jpg"
         }
         this.devisService.getQuoteByID(id).subscribe((res: any)=>{  
           this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
@@ -1449,160 +1449,176 @@ export class AjouterDevisComponent implements OnInit {
           content: [
            { columns : [
             {
-              text:'Devis n° ' +id + ' | ' + this.date+ '\n\n',
-              fontSize: 15,
-              alignment: 'left',
+              text: '' + this.date ,
+              fontSize: 10,
               color: 'black',
-              bold: true
-            },
-            ]},
-            {
-              text: '\n'
-            },
-            {
-              columns: [
-                {   
-                  text: 
-                  'Type Devis :'+ '\t' + this.infoFormGroup.get('typeDevis').value + '\n' 
-                  + 'Édité par :' + '\t' + '' + '\n\n'
-                ,
-                fontSize: 12,
-                alignment: 'left',
-                color: 'black',
+              bold: true,
+              relativePosition: {x:500, y:-29}
               },
-                {
-                  text: '\t'
-                },
-                {   
-                  text: 
-                 'Code Client :' + '\t' + this.infoFormGroup.get('custemerName').value.id_Clt + '\n'
-                  + 'Nom Client :' + '\t' + this.infoFormGroup.get('custemerName').value.nom_Client + '\n'
-                  ,
-                  fontSize: 12,
-                  alignment: 'left',
-                  color: 'black'
-                }
-              ]
-            },
-            {
-              text: '\n'
-            },
-            {
-              text: 'Modalité du paiement :' ,
-              fontSize: 20,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              text: '\t'
-            },
-            {
-              columns: [
-                {
-                  ul : [
-                    typeRegOne +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
-                  ]
-                },{
-                  ul : [
-                    (typeRegTwo !== undefined)?
-                    typeRegTwo +' : '+Number( this.addReglementFormGroup.get('valueTwo').value).toFixed(3)+'\n' : 
-                    ''
-                    ]
-                },{
-                  ul:[
-                    (typeRegTree !==  undefined)?
-                    typeRegTree +' : '+ Number(this.addReglementFormGroup.get('valueTree').value).toFixed(3)+'\n' : 
-                    ''
-                  ]
-                }
-              ]
-            },
-            {
-              text: '\n\n'
-            },
-            {
-              text: 'Détails :' + '\t',
-              fontSize: 20,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              text: '\n\n'
-            },
-            this.generateTable(this.devisArticls, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+this.infoFormGroup.get('devise').value+')', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
-            {
-              text: '\n\n\n'
-            },
-            , {
-              columns: [
-                {
-                  table: {
-                    alignment: 'right',
-                    body: [
-                      [{ text: 'T.V.A %', alignment: 'left' }, '7%', '13%', '19%'],
-                      [{ text: 'Assiette', alignment: 'left' }, this.assiette7, this.assiette13, this.assiette19],
-                      [{ text: 'Montant', alignment: 'left' }, this.montant7, this.montant13, this.montant19],
-                    ]
-                  },
-                  layout: 'lightHorizontalLines',
-                  alignment: 'right',
-                },
-                {
-                  style: 'tableExample',
-                  table: {
-                    heights: [20],
-                    body: [
-                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff +' ' +this.infoFormGroup.get('devise').value ,alignment: 'right' }],
-                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                    ]
-                  },
-                  layout: 'lightHorizontalLines',
-                }]
-            },   
-             {
-              text: 'Note :' + '\n\n',
-              fontSize: 15,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              columns: [
-                {   
-                  text:this.addReglementFormGroup.get('note').value + '\n\n' 
-                ,
-                fontSize: 12,
-                alignment: 'left',
-                color: 'black',
-              },
-                {
-                  text: '\t'
-                },
-              ]
-            },
-          ],
-          footer: function (currentPage: any, pageCount: any) {
-            return {
-              margin: 35,
-              columns: [
-                {
-                  fontSize: 9,
-                  text: [
-                    {
-                      text: currentPage.toString() + '/' + pageCount,
-                    }
-                  ],
-                  alignment: 'center'
-                }
-              ]
-            };
+         
+            ]
           },
+          {
+            columns: [
+                {
+                  text: '' + id + '\n\n',
+                  fontSize: 15,
+                  color: 'black',
+                  bold: true,
+                  relativePosition: {x:410, y:61}
+                  }, 
+            ]
+          },
+          {
+            columns: [
+              {
+                text: '' + this.infoFormGroup.get('custemerName').value.id_Clt + '\n\n',
+                fontSize: 11,
+                color: 'black',
+                bold: false,
+                relativePosition: {x:45, y:-20}
+                },
+                {
+                  text: '' + this.infoFormGroup.get('custemerName').value.nom_Client + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:-105, y:-20}
+                  },
+            ]
+          },
+
+          {
+            columns: [
+              {
+                text: '' + this.infoFormGroup.get('custemerName').value.nom_Client + '\n\n',
+                fontSize: 11,
+                color: 'black',
+                bold: false,
+                relativePosition: {x:65, y:5}
+                },
+            ]
+          },{
+            columns: [
+              {
+                text: '' + this.infoFormGroup.get('custemerName').value.adresse + '\n\n',
+                fontSize: 11,
+                color: 'black',
+                bold: false,
+                relativePosition: {x:60, y:30}
+                },
+            ]
+          },
+          {
+            columns: [
+              {
+                text: '' + this.infoFormGroup.get('custemerName').value.contact + '\n\n',
+                fontSize: 11,
+                color: 'black',
+                bold: false,
+                relativePosition: {x:60, y:54}
+                },
+                {
+                  text: '' + this.infoFormGroup.get('custemerName').value.tel1 + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:-105, y:54}
+                  },
+            ]
+          },
+          {
+            columns: [
+              {
+                text: '' + this.devisArticls[0].id_Produit + '\n\n',
+                fontSize: 11,
+                color: 'black',
+                bold: false,
+                relativePosition: {x:-5, y:140}
+                },
+                {
+                  text: '' + this.devisArticls[0].nom_Produit + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:0, y:140}
+                },
+                {
+                    text: '' + this.devisArticls[0].quantite + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:160, y:140}
+                },
+                {
+                  text: '' + this.devisArticls[0].prixU + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:120, y:140}
+                },
+                  {
+                    text: '' + this.devisArticls[0].tva + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:98, y:140}
+                  },
+                {
+                  text: '' + this.devisArticls[0].totale_TTC + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:75, y:140}
+               },
+            ]
+          }
+            // this.generateTable(this.devisArticls, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+this.infoFormGroup.get('devise').value+')', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
+            // , {
+            //   columns: [
+            //     {
+            //       table: {
+            //         alignment: 'right',
+            //         body: [
+            //           [{ text: 'T.V.A %', alignment: 'left' }, '7%', '13%', '19%'],
+            //           [{ text: 'Assiette', alignment: 'left' }, this.assiette7, this.assiette13, this.assiette19],
+            //           [{ text: 'Montant', alignment: 'left' }, this.montant7, this.montant13, this.montant19],
+            //         ]
+            //       },
+            //       layout: 'lightHorizontalLines',
+            //       alignment: 'right',
+            //     },
+            //     {
+            //       style: 'tableExample',
+            //       table: {
+            //         heights: [20],
+            //         body: [
+            //           [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+            //           [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff +' ' +this.infoFormGroup.get('devise').value ,alignment: 'right' }],
+            //           [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+            //           [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+            //           [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+            //           [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
+            //         ]
+            //       },
+            //       layout: 'lightHorizontalLines',
+            //     }]
+            // },   ,
+            // {
+            //   columns: [
+            //     {   
+            //       text:this.addReglementFormGroup.get('note').value + '\n\n' 
+            //     ,
+            //     fontSize: 12,
+            //     alignment: 'left',
+            //     color: 'black',
+            //   },
+            //     {
+            //       text: '\t'
+            //     },
+            //   ]
+            // },
+          ],
           pageMargins: [30, 125, 40, 60],
         };
         pdfMake.createPdf(pdf_devis).open();

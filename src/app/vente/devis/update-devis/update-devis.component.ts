@@ -1591,44 +1591,13 @@ async generatePDF(id :any){
         if( this.typeDevis === 'Estimatif'){
           imgUrl= "../../../assets/images/Devis_maquette_finale_.jpg"
         }else{
-          imgUrl = "../../../assets/images/template-proforma.jpg"
-        }
-
-        // check type de reglement 
-        let typeRegOne : any ; 
-        let typeRegTwo : any ; 
-        let typeRegTree: any ; 
-          if(this.addReglementFormGroup.get('typeRegOne').value=='4')
-          typeRegOne ='Espèces';
-        else if (this.addReglementFormGroup.get('typeRegOne').value=='1'){
-          typeRegOne ='Virement';
-        }else if (this.addReglementFormGroup.get('typeRegOne').value=='2'){
-          typeRegOne ='Chèque';
-        }else if (this.addReglementFormGroup.get('typeRegOne').value=='3'){
-                    typeRegOne ='Monétique';
-        }
-        if(this.addReglementFormGroup.get('typeRegTwo').value=='4')
-          typeRegTwo ='Espèces';
-        else if (this.addReglementFormGroup.get('typeRegTwo').value=='1'){
-          typeRegTwo ='Virement';
-        }else if (this.addReglementFormGroup.get('typeRegTwo').value=='2'){
-          typeRegTwo ='Chèque';
-        }else if (this.addReglementFormGroup.get('typeRegTwo').value=='3'){
-                    typeRegTwo ='Monétique';
-        }
-        if(this.addReglementFormGroup.get('typeRegTree').value=='4')
-          typeRegTree ='Espèces';
-        else if (this.addReglementFormGroup.get('typeRegTree').value=='1'){
-          typeRegTree ='Virement';
-        }else if (this.addReglementFormGroup.get('typeRegTree').value=='2'){
-          typeRegTree ='Chèque';
-        }else if (this.addReglementFormGroup.get('typeRegTree').value=='3'){
-          typeRegTree ='Monétique';
+          imgUrl = "../../../assets/images/proforma_.jpg"
         }
 
         this.devisService.getQuoteByID(id).subscribe((res: any)=>{  
           this.date =  this.datepipe.transform(res.body.date_Creation, 'dd/MM/YYYY'); 
        });
+
        setTimeout(async ()=>{
         //** Generate the pdf file */ 
         let pdf_devis = {
@@ -1640,163 +1609,244 @@ async generatePDF(id :any){
           content: [
             { columns : [
               {
-                text:'     '+'\t'+'\t' + this.id_client+ '\n\n'+
-                '     '+'\t'+'\t' + this.nameClient+ '\n\n'+
-                '\t'+'\t' + this.adressClient,
-                fontSize: 12,
-               
+                text: '' + this.date ,
+                fontSize: 10,
                 color: 'black',
-                bold: false
-              },
-              ]},
-              {
-                text: '\n'
-              },
-            {
-              columns: [
-                {   
-                  text: 
-                  'Type Devis :'+ '\t' + this.infoFormGroup.get('typeDevis').value + '\n' 
-                  + 'Édité par :' + '\t' + '' + '\n\n'
-                ,
-                fontSize: 12,
-                alignment: 'left',
-                color: 'black',
-              },
-                {
-                  text: '\t'
+                bold: true,
+                relativePosition: {x:500, y:-29}
                 },
-                {   
-                  text: '          ' + '\t' + id + '\n'  ,
-                  fontSize: 12,
-                  alignment: 'left',
-                  color: 'black'
-                }
+           
               ]
             },
             {
-              text: '\n'
+              columns: [
+                  {
+                    text: '' + id + '\n\n',
+                    fontSize: 15,
+                    color: 'black',
+                    bold: true,
+                    relativePosition: {x:410, y:61}
+                    }, 
+              ]
             },
-            {
-              text: 'Modalité du paiement :' ,
-              fontSize: 20,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              text: '\t'
+             { 
+
             },
             {
               columns: [
                 {
-                  ul : [
-                    typeRegOne +' : '+ Number(this.addReglementFormGroup.get('valueOne').value).toFixed(3)  +'\n'
-                  ]
-                },{
-                  ul : [
-                    (typeRegTwo !== undefined)?
-                    typeRegTwo +' : '+Number( this.addReglementFormGroup.get('valueTwo').value).toFixed(3)+'\n' : 
-                    ''
-                    ]
-                },{
-                  ul:[
-                    (typeRegTree !==  undefined)?
-                    typeRegTree +' : '+ Number(this.addReglementFormGroup.get('valueTree').value).toFixed(3)+'\n' : 
-                    ''
-                  ]
-                }
+                  text: '' +  this.id_client + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:45, y:-20}
+                  },
+                  {
+                    text: '' + this.nameClient + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:-105, y:-20}
+                    },
               ]
             },
             {
-              text: '\n\n'
-            },
-            {
-              text: 'Détails :' + '\t',
-              fontSize: 20,
-              alignment: 'left',
-              color: 'black',
-              bold: true
-            },
-            {
-              text: '\n\n'
-            },
-            this.generateTable(this.devisArticls, ['Id_Produit', 'Nom_Produit', 'Prix U HT ('+this.infoFormGroup.get('devise').value+')', 'Remise', 'Quantite', 'TVA', 'Total_HT']),
-            {
-              text: '\n\n\n'
-            },
-            , {
               columns: [
                 {
-                  table: {
-                    alignment: 'right',
-                    body: [
-                      [{ text: 'T.V.A %', alignment: 'left' }, '7%', '13%', '19%'],
-                      [{ text: 'Assiette', alignment: 'left' }, this.assiette7, this.assiette13, this.assiette19],
-                      [{ text: 'Montant', alignment: 'left' }, this.montant7, this.montant13, this.montant19],
-                    ]
+                  text: '' + this.nameClient + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:65, y:5}
                   },
-                  layout: 'lightHorizontalLines',
-                  alignment: 'right',
-                },
+              ]
+            },{
+              columns: [
                 {
-                  style: 'tableExample',
-                  table: {
-                    heights: [20],
-                    body: [
-                      [{ text: 'Total H.T Brut', alignment: 'left' }, { text: this.totalHTBrut+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total Remise', alignment: 'left' }, { text: this.remiseDiff+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total H.T Net', alignment: 'left' }, { text: this.totalHT +' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total Fodec', alignment: 'left' }, { text: this.totalMontantFodec+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total T.V.A', alignment: 'left' }, { text: this.totalMontantTVA+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                      [{ text: 'Total T.T.C', alignment: 'left' }, { text: this.totalTTc+' ' +this.infoFormGroup.get('devise').value, alignment: 'right' }],
-                    ]
+                  text: '' + this.adressClient + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:60, y:30}
                   },
-                  layout: 'lightHorizontalLines',
-                }]
-            },
-            {
-              text: 'Note :' + '\n\n',
-              fontSize: 15,
-              alignment: 'left',
-              color: 'black',
-              bold: true
+              ]
             },
             {
               columns: [
-                {   
-                  text:this.addReglementFormGroup.get('note').value + '\n\n' 
-                ,
-                fontSize: 12,
-                alignment: 'left',
-                color: 'black',
-              },
                 {
-                  text: '\t'
+                  text: '' + this.custemerName.contact + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:60, y:54}
+                  },
+                  {
+                    text: '' + this.custemerName.tel1 + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:-105, y:54}
+                    },
+              ]
+            },
+        
+            {
+              columns: [
+                {
+                  text: '' + this.devisArticls[0].id_Produit + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:-5, y:140}
+                  },
+                  {
+                    text: '' + this.devisArticls[0].nom_Produit + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:0, y:140}
+                  },
+                  {
+                      text: '' + this.devisArticls[0].quantite + '\n\n',
+                      fontSize: 11,
+                      color: 'black',
+                      bold: false,
+                      relativePosition: {x:160, y:140}
+                  },
+                  {
+                    text: '' + this.devisArticls[0].prixU + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:120, y:140}
+                  },
+                    {
+                      text: '' + this.devisArticls[0].tva + '\n\n',
+                      fontSize: 11,
+                      color: 'black',
+                      bold: false,
+                      relativePosition: {x:98, y:140}
+                    },
+                  {
+                    text: '' + this.devisArticls[0].totale_TTC + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:75, y:140}
+                 },
+              ]
+            },
+            {
+              columns: [
+                {
+                  text: '' + this.totalHTBrut + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:40, y:511}
+                  },
+                  {
+                    text: '' + this.remiseDiff + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:-118, y:511  }
+                    }
+              ]
+            },
+            {
+              columns: [
+                {
+                  text: '' + 'oui' + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:300, y:511}
                 },
+                {
+                  text: '' + this.totalTTc + '\n\n',
+                  fontSize: 15,
+                  color: 'white',
+                  bold: true,
+                  relativePosition: {x:200, y:512}
+                }
+              ]
+            },
+            
+            {
+              columns: [
+                {
+                  text: '' + this.totalMontantTVA + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:40, y:535}
+                  },
+                  {
+                    text: '' + this.totalMontantFodec + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:-118, y:535  }
+                    },
+              ]
+            },
+            {
+              columns: [
+                {
+                  text: '' + this.assiette19 + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:90, y:640}
+                  },
+                  {
+                    text: '' + this.assiette13 + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:-18, y:640  }
+                    },
+                    {
+                      text: '' + this.assiette7 + '\n\n',
+                      fontSize: 11,
+                      color: 'black',
+                      bold: false,
+                      relativePosition: {x:-118, y:640  }
+                      },
+              ]
+            },
+            {
+              columns: [
+                {
+                  text: '' + this.montant19 + '\n\n',
+                  fontSize: 11,
+                  color: 'black',
+                  bold: false,
+                  relativePosition: {x:90, y:665}
+                  },
+                  {
+                    text: '' + this.montant13 + '\n\n',
+                    fontSize: 11,
+                    color: 'black',
+                    bold: false,
+                    relativePosition: {x:-18, y:665  }
+                    },
+                    {
+                      text: '' + this.montant7 + '\n\n',
+                      fontSize: 11,
+                      color: 'black',
+                      bold: false,
+                      relativePosition: {x:-118, y:665  }
+                      },
               ]
             },
           ],
-          footer: function (currentPage: any, pageCount: any) {
-            return {
-              margin: 35,
-              columns: [
-                {
-                  fontSize: 9,
-                  text: [
-                    {
-                      text: currentPage.toString() + '/' + pageCount,
-                    }
-                  ],
-                  alignment: 'center'
-                }
-              ]
-            };
-          },
+ 
           pageMargins: [20, 125, 40, 60],
         };
         pdfMake.createPdf(pdf_devis).open();
-       },1000)   
+       },2000)   
 
 
   }

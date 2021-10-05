@@ -168,8 +168,8 @@ export class ListerDevisComponent implements OnInit {
   viewPDF(devis: any){
         // check if this "Devis" is Proforma or "simple/estimatif"
         let imgUrl : string ; 
-        if( devis.type === 'Estimatif'){
-          imgUrl= "../../../assets/images/template_Devis.jpg"
+        if( devis.type  === 'Estimatif'){
+          imgUrl= "../../../assets/images/Devis_maquette_finale_.jpg"
         }else{
           imgUrl = "../../../assets/images/template-proforma.jpg"
         }
@@ -306,6 +306,13 @@ export class ListerDevisComponent implements OnInit {
               ],
               content: [
                 { columns : [
+                  {
+                    text: '' + devis.id_Devis + '\n\n',
+                    fontSize: 15,
+                    color: 'black',
+                    bold: true,
+                    relativePosition: {x:400, y:10}
+                    },
                   {
                     text:'Devis n° ' +devis.id_Devis +' | ' +  this.date+'\n\n',
                     fontSize: 15,
